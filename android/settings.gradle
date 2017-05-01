@@ -1,0 +1,3 @@
+rootProject.name = 'powerline'
+
+include ':app'
