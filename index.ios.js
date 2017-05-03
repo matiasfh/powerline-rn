@@ -12,7 +12,7 @@ import {
   View
 } from 'react-native';
 
-export default class powerline extends Component {
+export default class Powerline extends Component {
   render() {
     return (
       <View style={styles.container}>
@@ -50,4 +50,4 @@ const styles = StyleSheet.create({
   },
 });
 
-AppRegistry.registerComponent('powerline', () => powerline);
+AppRegistry.registerComponent('Powerline', () => Powerline);
