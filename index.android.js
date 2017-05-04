@@ -11,8 +11,15 @@ import {
   Text,
   View
 } from 'react-native';
+import SplashScreen from 'react-native-splash-screen'
 
 export default class Powerline extends Component {
+
+  componentDidMount() {
+    	// do anything while splash screen keeps, use await to wait for an async task.
+      SplashScreen.hide();
+  }
+
   render() {
     return (
       <View style={styles.container}>
