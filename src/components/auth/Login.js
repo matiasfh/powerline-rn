@@ -67,6 +67,14 @@ export class Login extends Component {
 
   async logIn() {
     const { dispatch, onLoggedIn } = this.props;
+    if (this.state.username == "") {
+      alert("Username is empty.");
+      return;
+    }
+    if (this.state.password == "") {
+      alert("Password is empty.");
+      return;
+    }
     this.setState({ isLoading: true });
     try {
       await Promise.race([
@@ -76,7 +84,7 @@ export class Login extends Component {
     } catch (e) {
       const message = e.message || e;
       if (message !== 'Timed out' && message !== 'Canceled by user') {
-        alert(message);
+        alert('Incorrect username or password.');
         console.warn(e);
       }
       return;
@@ -158,7 +166,6 @@ export class Login extends Component {
   render() {
     return (
       <LinearGradient colors={['#afcbe6', '#fff', '#afcbe6']} style={styles.container}>
-        <Spinner visible={this.state.isLoading} />
         <Image source={require("img/logo.png")} style={styles.imgLogo} />
         {this.renderLoginForm()}
         {this.renderFBLoginForm()}
