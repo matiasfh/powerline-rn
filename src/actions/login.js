@@ -26,18 +26,21 @@ async function logIn(username: string, password: string): Promise<Action> {
       })
     });
     let user = await response.json();
-    // console.error(user);
-    const action = {
-      type: 'LOGGED_IN',
-      data: {
-        id: user.id,
-        username: user.username,
-        token: user.token,
-        is_registration_complete: user.is_registration_complete,
-      },
-    };
-    // console.error(action);
-    return Promise.resolve(action);
+    if (user.token) {
+      const action = {
+        type: 'LOGGED_IN',
+        data: {
+          id: user.id,
+          username: user.username,
+          token: user.token,
+          is_registration_complete: user.is_registration_complete,
+        },
+      };
+      return Promise.resolve(action);
+    }
+    else {
+      return Promise.reject(user);
+    }
   } catch (error) {
     console.error(error);
   }
