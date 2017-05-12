@@ -1,6 +1,8 @@
 import React, { Component, PropTypes } from "react";
 import { View, StyleSheet } from "react-native";
-import { Login } from "PLComponents";
+
+var Login = require('../../components/auth/Login')
+var { connect } = require('react-redux');
 
 const styles = StyleSheet.create({
   container: {
@@ -27,8 +29,10 @@ export class LoginScene extends Component {
     const { navigation } = this.props;
     return (
       <View style={styles.container}>
-        <Login navigation={navigation} />
+        <Login />
       </View>
     );
   }
 }
+
+module.exports = connect()(LoginScene);
