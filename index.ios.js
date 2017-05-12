@@ -1,4 +1,6 @@
-import { AppRegistry } from "react-native";
-import { App } from "./src/app";
+'use strict';
 
-AppRegistry.registerComponent("Powerline", () => App);
+const { AppRegistry } = require('react-native');
+const setup = require('./src/PLSetup');
+
+AppRegistry.registerComponent('Powerline', setup);
