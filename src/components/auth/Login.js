@@ -9,13 +9,13 @@ import {
   TouchableOpacity
 } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
+import Spinner from 'react-native-loading-spinner-overlay';
 import PLColors from "PLColors";
 import PLConstants from "PLConstants";
 import FBLoginButton from "FBLoginButton";
 import PLButton from "PLButton";
 import { logInManually } from "PLActions";
 
-// const { logInManually } = require('../../actions');
 const { connect } = require('react-redux');
 
 export class Login extends Component {
@@ -115,7 +115,7 @@ export class Login extends Component {
           <Switch onTintColor="#030366" disabled={true} value={false} />
         </View>
         <PLButton
-          caption="Login"
+          caption={this.state.isLoading ? "Please wait..." : "Login"}
           style={styles.loginButton}
           onPress={() => this.logIn()}
         />
@@ -158,6 +158,7 @@ export class Login extends Component {
   render() {
     return (
       <LinearGradient colors={['#afcbe6', '#fff', '#afcbe6']} style={styles.container}>
+        <Spinner visible={this.state.isLoading} />
         <Image source={require("img/logo.png")} style={styles.imgLogo} />
         {this.renderLoginForm()}
         {this.renderFBLoginForm()}
