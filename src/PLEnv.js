@@ -2,7 +2,7 @@
 
 module.exports = {
   testMenuEnabled: true,
-  serverURL: 'http://localhost:8080',
+  API_URL: 'https://api-dev.powerli.ne/api',
   version: 101,
   fontFamily: undefined,
 };
