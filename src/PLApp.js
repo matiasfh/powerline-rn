@@ -7,18 +7,22 @@
 
 var React = require('React');
 var AppState = require('AppState');
+var Platform = require('Platform');
 var LoginScene = require('./scenes/auth/LoginScene');
 var StyleSheet = require('StyleSheet');
 var PLNavigator = require('PLNavigator');
 var View = require('View');
 var StatusBar = require('StatusBar');
+var SplashScreen = require('react-native-splash-screen');
 var { connect } = require('react-redux');
-
 var { version } = require('./PLEnv.js');
 
 var PLApp = React.createClass({
   displayName: 'PLApp',
   componentDidMount: function () {
+    if (Platform.OS === 'android') {
+      SplashScreen.hide();
+    }
     AppState.addEventListener('change', this.handleAppStateChange);
   },
 
