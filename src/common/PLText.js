@@ -7,18 +7,18 @@
 'use strict';
 
 import React from 'react';
-import ReactNative, {StyleSheet, Dimensions} from 'react-native';
+import ReactNative, { StyleSheet, Dimensions } from 'react-native';
 import PLColors from 'PLColors';
 
-export function Text({style, ...props}: Object): ReactElement {
+export function Text({ style, ...props }: Object): ReactElement {
   return <ReactNative.Text style={[styles.font, style]} {...props} />;
 }
 
-export function Heading1({style, ...props}: Object): ReactElement {
+export function Heading1({ style, ...props }: Object): ReactElement {
   return <ReactNative.Text style={[styles.font, styles.h1, style]} {...props} />;
 }
 
-export function Paragraph({style, ...props}: Object): ReactElement {
+export function Paragraph({ style, ...props }: Object): ReactElement {
   return <ReactNative.Text style={[styles.font, styles.p, style]} {...props} />;
 }
 
@@ -30,7 +30,7 @@ function normalize(size: number): number {
 
 const styles = StyleSheet.create({
   font: {
-    fontFamily: require('../env').fontFamily,
+    fontFamily: require('../PLEnv').fontFamily,
     backgroundColor: 'transparent'
   },
   h1: {
