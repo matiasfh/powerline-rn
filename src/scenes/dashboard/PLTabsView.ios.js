@@ -10,17 +10,14 @@ var React = require('React');
 var TabBarIOS = require('TabBarIOS');
 var TabBarItemIOS = require('TabBarItemIOS');
 var PLNewsfeed = require('PLNewsfeed');
-
 var { switchTab } = require('../../actions');
 var { connect } = require('react-redux');
-
-import type { Tab, Day } from '../../reducers/navigation';
-import { Navigator } from "react-native-deprecated-custom-components";
+var { Tab } = require('../../reducers/navigation');
+var { Navigator } = require('react-native-deprecated-custom-components');
 
 class PLTabsView extends React.Component {
   props: {
     tab: Tab;
-    day: Day;
     onTabSelect: (tab: Tab) => void;
     navigator: Navigator;
   };
@@ -82,8 +79,7 @@ class PLTabsView extends React.Component {
 
 function select(store) {
   return {
-    tab: store.navigation.tab,
-    day: store.navigation.day,
+    tab: store.navigation.tab
   };
 }
 

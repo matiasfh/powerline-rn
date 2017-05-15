@@ -6,29 +6,30 @@
 
 'use strict';
 
-import React from 'react';
-import ReactNative, { StyleSheet, Dimensions } from 'react-native';
-import PLColors from 'PLColors';
+var React = require('react');
+var ReactNative = require('react-native');
+var { StyleSheet, Dimensions } = require('react-native');
+var PLColors = require('PLColors');
 
-export function Text({ style, ...props }: Object): ReactElement {
+function Text({ style, ...props }: Object): ReactElement {
   return <ReactNative.Text style={[styles.font, style]} {...props} />;
 }
 
-export function Heading1({ style, ...props }: Object): ReactElement {
+function Heading1({ style, ...props }: Object): ReactElement {
   return <ReactNative.Text style={[styles.font, styles.h1, style]} {...props} />;
 }
 
-export function Paragraph({ style, ...props }: Object): ReactElement {
+function Paragraph({ style, ...props }: Object): ReactElement {
   return <ReactNative.Text style={[styles.font, styles.p, style]} {...props} />;
 }
 
-const scale = Dimensions.get('window').width / 375;
+var scale = Dimensions.get('window').width / 375;
 
 function normalize(size: number): number {
   return Math.round(scale * size);
 }
 
-const styles = StyleSheet.create({
+var styles = StyleSheet.create({
   font: {
     fontFamily: require('../PLEnv').fontFamily,
     backgroundColor: 'transparent'
@@ -46,3 +47,5 @@ const styles = StyleSheet.create({
     color: PLColors.lightText
   },
 });
+
+module.exports = { Text, Heading1, Paragraph };

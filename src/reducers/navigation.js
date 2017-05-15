@@ -3,7 +3,8 @@
  */
 'use strict';
 
-import type {Action } from '../actions/types';
+var type = require('../actions/types');
+var Action = require('../actions/types');
 
 export type Tab =
   'newsfeed'
@@ -13,14 +14,11 @@ export type Tab =
   | 'notifications'
   ;
 
-export type Day = 1 | 2;
-
 type State = {
   tab: Tab;
-  day: Day;
 };
 
-const initialState: State = { tab: 'newsfeed', day: 1 };
+var initialState: State = { tab: 'newsfeed' };
 
 function navigation(state: State = initialState, action: Action): State {
   if (action.type === 'SWITCH_TAB') {

@@ -4,7 +4,7 @@
 
 'use strict';
 
-import type { Action } from './types';
+var { Action } = require('./types');
 
 type Tab = 'newsfeed' | 'friends' | 'new' | 'messages' | 'notifications';
 

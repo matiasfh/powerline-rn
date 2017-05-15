@@ -5,7 +5,8 @@
 
 'use strict';
 
-import type {Action } from '../actions/types';
+var type = require('../actions/types');
+var Action = require('../actions/types');
 
 export type State = {
   isLoggedIn: boolean;
@@ -15,7 +16,7 @@ export type State = {
   token: ?string;
 };
 
-const initialState = {
+var initialState = {
   isLoggedIn: false,
   is_registeration_complete: null,
   id: null,

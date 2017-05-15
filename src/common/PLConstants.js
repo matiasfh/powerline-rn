@@ -2,9 +2,12 @@
  * @providesModule PLConstants
  **/
 
-import { Dimensions } from "react-native";
+'use strict';
 
-const { width, height } = Dimensions.get("window");
+var { Dimensions } = require('react-native');
+var { width, height } = Dimensions.get('window');
 
-export const WINDOW_WIDTH = width;
-export const WINDOW_HEIGHT = height;
+module.exports = {
+    WINDOW_WIDTH: width,
+    WINDOW_HEIGHT: height
+};

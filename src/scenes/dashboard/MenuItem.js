@@ -12,7 +12,6 @@ var PLTouchable = require('PLTouchable');
 var Image = require('Image');
 var StyleSheet = require('StyleSheet');
 
-
 class MenuItem extends React.Component {
   props: {
     icon: number;

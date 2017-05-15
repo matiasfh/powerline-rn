@@ -4,17 +4,15 @@
 
 'use strict';
 
-const ActionSheetIOS = require('ActionSheetIOS');
-const { Platform } = require('react-native');
-const Alert = require('Alert');
-
-import type { Action, ThunkAction } from './types';
-
-const { API_URL } = require('../PLEnv');
+var ActionSheetIOS = require('ActionSheetIOS');
+var { Platform } = require('react-native');
+var Alert = require('Alert');
+var { API_URL } = require('../PLEnv');
+var { Action, ThunkAction } = require('./types');
 
 async function logIn(username: string, password: string): Promise<Action> {
   try {
-    let response = await fetch(`${API_URL}/secure/login`, {
+    var response = await fetch(`${API_URL}/secure/login`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -25,7 +23,7 @@ async function logIn(username: string, password: string): Promise<Action> {
         password: password,
       })
     });
-    let user = await response.json();
+    var user = await response.json();
     if (user.token) {
       const action = {
         type: 'LOGGED_IN',
@@ -48,7 +46,7 @@ async function logIn(username: string, password: string): Promise<Action> {
 
 function logInManually(username: string, password: string): ThunkAction {
   return (dispatch) => {
-    const login = logIn(username, password);
+    var login = logIn(username, password);
     login.then(
       (result) => {
         dispatch(result);
@@ -57,6 +55,5 @@ function logInManually(username: string, password: string): ThunkAction {
     return login;
   }
 }
-
 
 module.exports = { logInManually };

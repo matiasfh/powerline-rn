@@ -5,12 +5,8 @@
 
 'use strict';
 
-import React from 'react';
-import {
-  TouchableHighlight,
-  TouchableNativeFeedback,
-  Platform,
-} from 'react-native';
+var React = require('react');
+var { TouchableHighlight, TouchableNativeFeedback, Platform } = require('react-native');
 
 function PLTouchableIOS(props: Object): ReactElement {
   return (
@@ -22,7 +18,7 @@ function PLTouchableIOS(props: Object): ReactElement {
   );
 }
 
-const PLTouchable = Platform.OS === 'android'
+var PLTouchable = Platform.OS === 'android'
   ? TouchableNativeFeedback
   : PLTouchableIOS;
 

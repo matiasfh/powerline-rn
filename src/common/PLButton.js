@@ -6,17 +6,13 @@
 
 'use strict';
 
-import React, { PropTypes, Component } from "react";
-import {
-  StyleSheet,
-  View,
-  Image,
-  TouchableOpacity
-} from "react-native";
+var React = require('react');
+var { StyleSheet, View, Image, TouchableOpacity } = require('react-native');
+var PLColors = require('PLColors');
+var PLConstants = require('PLConstants');
+var { Text } = require('PLText');
+
 import LinearGradient from "react-native-linear-gradient";
-import PLColors from "PLColors";
-import PLConstants from "PLConstants";
-import { Text } from "PLText";
 
 class PLButton extends React.Component {
   props: {
@@ -32,16 +28,16 @@ class PLButton extends React.Component {
   };
 
   render() {
-    const caption = this.props.caption.toUpperCase();
+    var caption = this.props.caption.toUpperCase();
     let icon;
     if (this.props.icon) {
       icon = <Image source={this.props.icon} style={styles.icon} />;
     }
-    let content;
+    var content;
     if (this.props.type === 'primary') {
       content = (
         <LinearGradient
-          start={{x: 0.5, y: 1.0}} end={{x: 1.0, y: 1.0}}
+          start={{ x: 0.5, y: 1.0 }} end={{ x: 1.0, y: 1.0 }}
           colors={['#6A6AD5', '#6F86D9']}
           style={[styles.button, styles.primaryButton]}>
           {icon}

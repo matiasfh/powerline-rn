@@ -10,7 +10,6 @@ var React = require('React');
 var TabBarIOS = require('TabBarIOS');
 var TabBarItemIOS = require('TabBarItemIOS');
 var PLNewsfeed = require('PLNewsfeed');
-
 var StyleSheet = require('StyleSheet');
 var TouchableOpacity = require('TouchableOpacity');
 var Image = require('Image');

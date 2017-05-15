@@ -1,24 +1,16 @@
-import React, { PropTypes, Component } from "react";
-import {
-  StyleSheet,
-  View,
-  Image,
-  Text,
-  TextInput,
-  Switch,
-  TouchableOpacity
-} from "react-native";
+var React = require('react');
+var { StyleSheet, View, Image, Text, Switch, TextInput, TouchableOpacity } = require('react-native');
+var PLColors = require('PLColors');
+var PLConstants = require('PLConstants');
+var FBLoginButton = require('FBLoginButton');
+var PLButton = require('PLButton');
+var { logInManually } = require('PLActions');
+var { connect } = require('react-redux');
+
 import LinearGradient from "react-native-linear-gradient";
 import Spinner from 'react-native-loading-spinner-overlay';
-import PLColors from "PLColors";
-import PLConstants from "PLConstants";
-import FBLoginButton from "FBLoginButton";
-import PLButton from "PLButton";
-import { logInManually } from "PLActions";
 
-const { connect } = require('react-redux');
-
-export class Login extends Component {
+class Login extends React.Component {
   props: {
     dispatch: (action: any) => Promise;
     onLoggedIn: ?() => void;
@@ -82,7 +74,7 @@ export class Login extends Component {
         timeout(15000),
       ]);
     } catch (e) {
-      const message = e.message || e;
+      var message = e.message || e;
       if (message !== 'Timed out' && message !== 'Canceled by user') {
         alert('Incorrect username or password.');
         console.warn(e);
@@ -96,7 +88,7 @@ export class Login extends Component {
   }
 
   renderLoginForm = () => {
-    const { username, password } = this.state;
+    var { username, password } = this.state;
     return (
       <View style={styles.loginFormContainer}>
         <View style={styles.nameContainer}>

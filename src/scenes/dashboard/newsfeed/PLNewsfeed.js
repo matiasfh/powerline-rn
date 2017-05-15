@@ -4,7 +4,6 @@
  */
 'use strict';
 
-// var ListContainer = require('ListContainer');
 var React = require('React');
 var View = require('View');
 var Text = require('Text');
@@ -18,7 +17,7 @@ function PLNewsfeed() {
   );
 }
 
-const styles = StyleSheet.create({
+var styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',

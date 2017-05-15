@@ -1,16 +1,16 @@
-import React, { Component, PropTypes } from "react";
-import { View, StyleSheet } from "react-native";
-
+var React = require('react');
+var { Component, PropTypes } = require('react');
+var { StyleSheet, View } = require('react-native');
 var Login = require('../../components/auth/Login')
 var { connect } = require('react-redux');
 
-const styles = StyleSheet.create({
+var styles = StyleSheet.create({
   container: {
     flex: 1
   }
 });
 
-export class LoginScene extends Component {
+class LoginScene extends Component {
   static propTypes = {
     navigation: PropTypes.object
   };
@@ -26,7 +26,7 @@ export class LoginScene extends Component {
   }
 
   render() {
-    const { navigation } = this.props;
+    var { navigation } = this.props;
     return (
       <View style={styles.container}>
         <Login />
