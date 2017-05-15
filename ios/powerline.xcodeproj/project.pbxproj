@@ -1129,7 +1129,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.Powerline;
 				PRODUCT_NAME = Powerline;
-				PROVISIONING_PROFILE = "6a3b46f0-b083-4121-9353-308400e589c2";
+				PROVISIONING_PROFILE = "38664658-c22d-4a0f-82a7-b2cc4e4f3e01";
 				PROVISIONING_PROFILE_SPECIFIER = powerline_dev;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
