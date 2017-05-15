@@ -50,15 +50,19 @@ class Login extends React.Component {
   };
 
   onForgotPassword = () => {
-    alert("onForgotPassword");
+    alert("This feature will be ready soon.");
   };
 
   onSignUp = () => {
-    alert("onSignUp");
+    alert("This feature will be ready soon.");
+  };
+
+  onTermsAndPolicy = () => {
+    alert("This feature will be ready soon.");
   };
 
   async logIn() {
-    const { dispatch, onLoggedIn } = this.props;
+    var { dispatch, onLoggedIn } = this.props;
     if (this.state.username == "") {
       alert("Username is empty.");
       return;
@@ -121,11 +125,11 @@ class Login extends React.Component {
         />
         <View style={styles.termsContainner}>
           <Text style={styles.termsText}>By logging in, you agree to our </Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={this.onTermsAndPolicy}>
             <Text style={styles.termsUnderlineText}>Terms of Service </Text>
           </TouchableOpacity>
           <Text style={styles.termsText}>and </Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={this.onTermsAndPolicy}>
             <Text style={styles.termsUnderlineText}>Privacy Policy</Text>
           </TouchableOpacity>
         </View>
@@ -173,13 +177,14 @@ async function timeout(ms: number): Promise {
   });
 }
 
-const styles = StyleSheet.create({
+var styles = StyleSheet.create({
   container: {
     flex: 1,
   },
   imgLogo: {
-    marginTop: 30,
-    resizeMode: "center"
+    marginTop: 50,
+    resizeMode: "center",
+    alignSelf: "center"
   },
   loginFormContainer: {
     marginHorizontal: 40,
