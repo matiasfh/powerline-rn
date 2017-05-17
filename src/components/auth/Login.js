@@ -14,6 +14,7 @@ class Login extends React.Component {
   props: {
     dispatch: (action: any) => Promise;
     onLoggedIn: ?() => void;
+    openTerms: ?() => void;
   };
 
   state: {
@@ -57,8 +58,14 @@ class Login extends React.Component {
     alert("This feature will be ready soon.");
   };
 
-  onTermsAndPolicy = () => {
-    alert("This feature will be ready soon.");
+  onTermsOfService = () => {
+    var { openTerms } = this.props;
+    openTerms && openTerms();
+  };
+
+  onPrivacyPolicy = () => {
+    var { openPolicy } = this.props;
+    openPolicy && openPolicy();
   };
 
   async logIn() {
@@ -125,11 +132,11 @@ class Login extends React.Component {
         />
         <View style={styles.termsContainner}>
           <Text style={styles.termsText}>By logging in, you agree to our </Text>
-          <TouchableOpacity onPress={this.onTermsAndPolicy}>
+          <TouchableOpacity onPress={this.onTermsOfService}>
             <Text style={styles.termsUnderlineText}>Terms of Service </Text>
           </TouchableOpacity>
           <Text style={styles.termsText}>and </Text>
-          <TouchableOpacity onPress={this.onTermsAndPolicy}>
+          <TouchableOpacity onPress={this.onPrivacyPolicy}>
             <Text style={styles.termsUnderlineText}>Privacy Policy</Text>
           </TouchableOpacity>
         </View>
@@ -229,7 +236,8 @@ var styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 10
+    marginTop: 10,
+    marginBottom: 20
   },
   termsText: {
     color: PLColors.lightText,
@@ -243,7 +251,7 @@ var styles = StyleSheet.create({
     backgroundColor: 'transparent'
   },
   forgotText: {
-    marginTop: 15,
+    marginTop: 10,
     color: PLColors.actionText,
     fontSize: 12,
     alignSelf: "flex-end",

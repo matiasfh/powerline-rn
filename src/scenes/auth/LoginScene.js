@@ -11,25 +11,19 @@ var styles = StyleSheet.create({
 });
 
 class LoginScene extends Component {
-  static propTypes = {
-    navigation: PropTypes.object
-  };
-
   static navigationOptions = {
     title: "Login",
     header: null
   };
 
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
-
   render() {
-    var { navigation } = this.props;
+    var { navigate } = this.props.navigation;
     return (
       <View style={styles.container}>
-        <Login />
+        <Login
+          openTerms={() => navigate('TermsAndPolicy', { isTerms: true })}
+          openPolicy={() => navigate('TermsAndPolicy', { isTerms: false })}
+        />
       </View>
     );
   }
