@@ -23,6 +23,7 @@ class LoginScene extends Component {
         <Login
           openTerms={() => navigate('TermsAndPolicy', { isTerms: true })}
           openPolicy={() => navigate('TermsAndPolicy', { isTerms: false })}
+          forgotPassword={() => navigate('ForgotPassword')}
         />
       </View>
     );

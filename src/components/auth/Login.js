@@ -15,6 +15,7 @@ class Login extends React.Component {
     onLoggedIn: ?() => void;
     openTerms: ?() => void;
     openPolicy: ?() => void;
+    forgotPassword: ?() => void;
   };
 
   state: {
@@ -51,7 +52,8 @@ class Login extends React.Component {
   };
 
   onForgotPassword = () => {
-    alert("This feature will be ready soon.");
+    var { forgotPassword } = this.props;
+    forgotPassword && forgotPassword();
   };
 
   onSignUp = () => {
@@ -230,7 +232,7 @@ var styles = StyleSheet.create({
     height: 44,
     borderRadius: 5,
     borderWidth: 1,
-    borderColor: PLColors.loginInputBorder,
+    borderColor: PLColors.textInputBorder,
     justifyContent: "center",
     paddingHorizontal: 10,
     backgroundColor: 'white',

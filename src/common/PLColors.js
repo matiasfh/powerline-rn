@@ -12,5 +12,5 @@ module.exports = {
   lightText: '#798ca6',
   cellBorder: '#EEEEEE',
   darkBackground: '#183E63',
-  loginInputBorder: '#a5bbd9'
+  textInputBorder: '#a5bbd9'
 };

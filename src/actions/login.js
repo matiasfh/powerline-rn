@@ -91,4 +91,23 @@ function logInWithFacebook(): ThunkAction {
   };
 }
 
-module.exports = { logInManually, logInWithFacebook };
+async function forgotPassword(email: string) {
+  try {
+    let response = await fetch(`${API_URL}/secure/forgot-password`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: email,
+      })
+    });
+    let responseJson = await response.json();
+    return responseJson;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+module.exports = { logInManually, logInWithFacebook, forgotPassword };
