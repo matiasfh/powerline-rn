@@ -2,9 +2,8 @@ var React = require('react');
 var { StyleSheet, View, Image, Text, Switch, TextInput, TouchableOpacity } = require('react-native');
 var PLColors = require('PLColors');
 var PLConstants = require('PLConstants');
-var FBLoginButton = require('FBLoginButton');
 var PLButton = require('PLButton');
-var { logInManually } = require('PLActions');
+var { logInManually, logInWithFacebook } = require('PLActions');
 var { connect } = require('react-redux');
 
 import LinearGradient from "react-native-linear-gradient";
@@ -15,6 +14,7 @@ class Login extends React.Component {
     dispatch: (action: any) => Promise;
     onLoggedIn: ?() => void;
     openTerms: ?() => void;
+    openPolicy: ?() => void;
   };
 
   state: {
@@ -68,7 +68,7 @@ class Login extends React.Component {
     openPolicy && openPolicy();
   };
 
-  async logIn() {
+  async onLogIn() {
     var { dispatch, onLoggedIn } = this.props;
     if (this.state.username == "") {
       alert("Username is empty.");
@@ -88,6 +88,29 @@ class Login extends React.Component {
       var message = e.message || e;
       if (message !== 'Timed out' && message !== 'Canceled by user') {
         alert('Incorrect username or password.');
+        console.warn(e);
+      }
+      return;
+    } finally {
+      this._isMounted && this.setState({ isLoading: false });
+    }
+
+    onLoggedIn && onLoggedIn();
+  }
+
+  async onLogInWithFacebook() {
+    var { dispatch, onLoggedIn } = this.props;
+    this.setState({ isLoading: true });
+    try {
+      await Promise.race([
+        dispatch(logInWithFacebook()),
+        timeout(15000),
+      ]);
+    } catch (e) {
+      const message = e.message || e;
+      console.error(message);
+      if (message !== 'Timed out' && message !== 'Canceled by user') {
+        alert(message);
         console.warn(e);
       }
       return;
@@ -128,7 +151,7 @@ class Login extends React.Component {
         <PLButton
           caption={this.state.isLoading ? "Please wait..." : "Login"}
           style={styles.loginButton}
-          onPress={() => this.logIn()}
+          onPress={() => this.onLogIn()}
         />
         <View style={styles.termsContainner}>
           <Text style={styles.termsText}>By logging in, you agree to our </Text>
@@ -149,7 +172,12 @@ class Login extends React.Component {
   renderFBLoginForm = () => {
     return (
       <View style={styles.fbLoginContainer}>
-        <FBLoginButton source="First screen" />
+        <PLButton
+          style={styles.fbLoginButton}
+          icon={require('img/f-logo.png')}
+          caption="Log in with Facebook"
+          onPress={() => this.onLogInWithFacebook()}
+        />
         <Text style={styles.fbTermsText}>Powerline will not post to Facebook without your permission</Text>
       </View>
     )
@@ -263,6 +291,10 @@ var styles = StyleSheet.create({
     marginHorizontal: 40,
     justifyContent: 'center',
     alignItems: 'center'
+  },
+  fbLoginButton: {
+    alignSelf: 'center',
+    width: 270,
   },
   fbTermsText: {
     marginTop: 10,
