@@ -9,6 +9,7 @@ var { Platform } = require('react-native');
 var Alert = require('Alert');
 var { API_URL } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
+var FacebookSDK = require('FacebookSDK');
 
 async function logIn(username: string, password: string): Promise<Action> {
   try {
@@ -56,4 +57,38 @@ function logInManually(username: string, password: string): ThunkAction {
   }
 }
 
-module.exports = { logInManually };
+async function queryFacebookAPI(path, ...args): Promise {
+  return new Promise((resolve, reject) => {
+    FacebookSDK.api(path, ...args, (response) => {
+      if (response && !response.error) {
+        resolve(response);
+      } else {
+        reject(response && response.error);
+      }
+    });
+  });
+}
+
+function logInWithFacebook(): ThunkAction {
+  return (dispatch) => {
+    FacebookSDK.login((result) => {
+      if (result.error) {
+        return;
+      } else {
+        var response = result.authResponse;
+        const action = {
+          type: 'LOGGED_IN',
+          data: {
+            id: "test_fbuser_id",
+            username: "test_fbuser_name",
+            token: "test_fbuser_token",
+            is_registration_complete: false,
+          },
+        };
+        dispatch(action);
+      }
+    }, {});
+  };
+}
+
+module.exports = { logInManually, logInWithFacebook };
