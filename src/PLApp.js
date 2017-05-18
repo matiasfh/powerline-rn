@@ -10,6 +10,7 @@ var AppState = require('AppState');
 var Platform = require('Platform');
 var LoginScene = require('./scenes/auth/LoginScene');
 var TermsPolicyScene = require('./scenes/auth/TermsPolicyScene');
+var ForgotPasswordScene = require('./scenes/auth/ForgotPasswordScene');
 var StyleSheet = require('StyleSheet');
 var PLNavigator = require('PLNavigator');
 var View = require('View');
@@ -65,6 +66,7 @@ var LoginStack = StackNavigator({
   initialRouteName: { screen: LoginScene },
   Login: { screen: LoginScene },
   TermsAndPolicy: { screen: TermsPolicyScene },
+  ForgotPassword: { screen: ForgotPasswordScene },
 });
 
 TermsPolicyScene.navigationOptions = props => {
