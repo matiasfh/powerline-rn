@@ -6,7 +6,12 @@
 
 var { combineReducers } = require('redux');
 
+import drawer from './drawer';
+import user from './user';
+import navigation from './navigation';
+
 module.exports = combineReducers({
-  user: require('./user'),
-  navigation: require('./navigation'),
+  user,
+  drawer,
+  navigation,
 });
