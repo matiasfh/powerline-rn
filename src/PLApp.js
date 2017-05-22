@@ -42,16 +42,7 @@ var PLApp = React.createClass({
     if (!this.props.isLoggedIn) {
       return <LoginStack />;
     }
-    return (
-      <View style={styles.container}>
-        <StatusBar
-          translucent={true}
-          backgroundColor="rgba(0, 0, 0, 0.2)"
-          barStyle="light-content"
-        />
-        <PLNavigator />
-      </View>
-    );
+    return <PLNavigator />;
   },
 
 });
@@ -79,10 +70,12 @@ TermsPolicyScene.navigationOptions = props => {
   };
 };
 
-function select(store) {
+function mapStateToProps(store) {
   return {
     isLoggedIn: store.user.isLoggedIn,
+    drawerState: store.drawer.drawerState,
+    navigation: store.cardNavigation,
   };
 }
 
-module.exports = connect(select)(PLApp);
+module.exports = connect(mapStateToProps)(PLApp);
