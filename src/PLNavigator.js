@@ -64,39 +64,39 @@ class PLNavigator extends React.Component {
   render() {
     return (
       <StyleProvider style={getTheme((this.props.themeState === 'material') ? material : undefined)}>
-      <Drawer
-        ref={(ref) => { this._drawer = ref; }}
-        type="overlay"
-        tweenDuration={150}
-        content={<SideBar />}
-        tapToClose
-        acceptPan={false}
-        onClose={() => this.closeDrawer()}
-        openDrawerOffset={0.2}
-        panCloseMask={0.2}
-        styles={{
-          drawer: {
-            shadowColor: '#000000',
-            shadowOpacity: 0.8,
-            shadowRadius: 3,
-          },
-        }}
-        tweenHandler={(ratio) => {  //eslint-disable-line
-          return {
-            drawer: { shadowRadius: ratio < 0.2 ? ratio * 5 * 5 : 5 },
-            main: {
-              opacity: (2 - ratio) / 2,
+        <Drawer
+          ref={(ref) => { this._drawer = ref; }}
+          type="overlay"
+          tweenDuration={150}
+          content={<SideBar />}
+          tapToClose
+          acceptPan={false}
+          onClose={() => this.closeDrawer()}
+          openDrawerOffset={0.3}
+          panCloseMask={0.2}
+          styles={{
+            drawer: {
+              shadowColor: '#000000',
+              shadowOpacity: 0.8,
+              shadowRadius: 3,
             },
-          };
-        }}
-        negotiatePan
+          }}
+          tweenHandler={(ratio) => {  //eslint-disable-line
+            return {
+              drawer: { shadowRadius: ratio < 0.2 ? ratio * 5 * 5 : 5 },
+              main: {
+                opacity: (2 - ratio) / 2,
+              },
+            };
+          }}
+          negotiatePan
         >
-        <RouterWithRedux>
-          <Scene key="root">
-            <Scene key="home" component={Home} hideNavBar initial />
-          </Scene>
-        </RouterWithRedux>
-      </Drawer>
+          <RouterWithRedux>
+            <Scene key="root">
+              <Scene key="home" component={Home} hideNavBar initial />
+            </Scene>
+          </RouterWithRedux>
+        </Drawer>
       </StyleProvider>
     );
   }
