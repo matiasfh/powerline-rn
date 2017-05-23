@@ -71,7 +71,7 @@ class Home extends Component {
         </Header>
 
         <Content padder />
-        
+
         <Footer>
           <FooterTab>
             <Button active={this.state.tab1} onPress={() => this.toggleTab1()} >
@@ -80,18 +80,18 @@ class Home extends Component {
             </Button>
             <Button active={this.state.tab2} onPress={() => this.toggleTab2()} >
               <Icon active={this.state.tab2} name="md-people" />
-              <Text>Camera</Text>
+              <Text>Friends</Text>
             </Button>
             <Button>
               <Icon name="ios-add-circle" style={{fontSize: 40, color: '#030366'}} />
             </Button>
             <Button active={this.state.tab3} onPress={() => this.toggleTab3()} >
               <Icon active={this.state.tab3} name="md-mail" />
-              <Text>Compass</Text>
+              <Text>Messages</Text>
             </Button>
             <Button active={this.state.tab4} onPress={() => this.toggleTab4()} >
               <Icon active={this.state.tab4} name="md-notifications" />
-              <Text>Contact</Text>
+              <Text>Notifications</Text>
             </Button>
           </FooterTab>
         </Footer>
