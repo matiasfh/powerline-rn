@@ -68,9 +68,11 @@ class Home extends Component {
     return (
       <Container style={styles.container}>
         <Header searchBar rounded style={styles.header}>
-          <Button transparent onPress={this.props.openDrawer}>
-            <Icon active name="menu" style={{ color: 'white' }} />
-          </Button>
+          <Left style={{ flex: 0.1 }}>
+            <Button transparent onPress={this.props.openDrawer}>
+              <Icon active name="menu" style={{ color: 'white' }} />
+            </Button>
+          </Left>
           <Item style={styles.searchBar}>
             <Input style={styles.searchInput} placeholder="Search groups, people, topics" />
             <Icon active name="search" />
