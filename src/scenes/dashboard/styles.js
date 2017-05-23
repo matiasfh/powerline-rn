@@ -18,4 +18,13 @@ export default {
   header: {
     backgroundColor: PLColors.main,
   },
+  searchBar: {
+    backgroundColor: '#030747',
+    marginLeft: 15,
+    paddingHorizontal: 10,
+  },
+  searchInput: {
+    fontSize: 12,
+    color: 'white',
+  },
 };

@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions, ActionConst } from 'react-native-router-flux';
-import { Container, Header, Title, Content, Button, Footer, FooterTab, Text, Body, Left, Right, Icon } from 'native-base';
+import { Container, Header, Title, Content, Button, Footer, FooterTab, Text, Body, Left, Right, Icon, Item, Input } from 'native-base';
 
 import { openDrawer } from '../../actions/drawer';
 import styles from './styles';
@@ -62,12 +62,14 @@ class Home extends Component {
   render() {
     return (
       <Container style={styles.container}>
-        <Header style={styles.header}>
-          <Left>
-            <Button transparent onPress={this.props.openDrawer}>
-              <Icon active name="menu" style={{color: 'white'}}/>
-            </Button>
-          </Left>
+        <Header searchBar rounded style={styles.header}>
+          <Button transparent onPress={this.props.openDrawer}>
+            <Icon active name="menu" style={{ color: 'white' }} />
+          </Button>
+          <Item style={styles.searchBar}>
+            <Input style={styles.searchInput} placeholder="Search groups, people, topics" />
+            <Icon active name="search" />
+          </Item>
         </Header>
 
         <Content padder />
@@ -83,7 +85,7 @@ class Home extends Component {
               <Text>Friends</Text>
             </Button>
             <Button>
-              <Icon name="ios-add-circle" style={{fontSize: 40, color: '#030366'}} />
+              <Icon name="ios-add-circle" style={{ fontSize: 40, color: '#030366' }} />
             </Button>
             <Button active={this.state.tab3} onPress={() => this.toggleTab3()} >
               <Icon active={this.state.tab3} name="md-mail" />
