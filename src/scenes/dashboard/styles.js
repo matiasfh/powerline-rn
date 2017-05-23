@@ -7,14 +7,6 @@ export default {
   container: {
     backgroundColor: '#FFF',
   },
-  text: {
-    alignSelf: 'center',
-    marginBottom: 7,
-    fontSize: 10,
-  },
-  mb: {
-    marginBottom: 15,
-  },
   header: {
     backgroundColor: PLColors.main,
   },
@@ -25,6 +17,42 @@ export default {
   },
   searchInput: {
     fontSize: 12,
+    color: 'white',
+  },
+  col: {
+    alignItems: 'center',
+    paddingHorizontal: 3,
+  },
+  row: {
+    paddingBottom: 20,
+  },
+  groupSelector: {
+    paddingVertical: 5,
+    backgroundColor: PLColors.main,
+  },
+  iconActiveButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'white',
+  },
+  iconButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#555aa0',
+  },
+  icon: {
+    color: PLColors.main,
+    fontSize: 18,
+  },
+  iconText: {
+    paddingVertical: 5,
+    fontSize: 11,
     color: 'white',
   },
 };

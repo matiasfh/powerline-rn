@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions, ActionConst } from 'react-native-router-flux';
-import { Container, Header, Title, Content, Button, Footer, FooterTab, Text, Body, Left, Right, Icon, Item, Input } from 'native-base';
+import { Container, Header, Title, Content, Button, Footer, FooterTab, Text, Body, Left, Right, Icon, Item, Input, Grid, Row, Col } from 'native-base';
 
 import { openDrawer } from '../../actions/drawer';
 import styles from './styles';
@@ -16,10 +16,11 @@ class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      tab1: false,
+      tab1: true,
       tab2: false,
-      tab3: true,
+      tab3: false,
       tab4: false,
+      group: 'all',
     };
   }
 
@@ -59,6 +60,10 @@ class Home extends Component {
     });
   }
 
+  selectGroup(group: string) {
+    this.setState({ group: group });
+  }
+
   render() {
     return (
       <Container style={styles.container}>
@@ -72,7 +77,42 @@ class Home extends Component {
           </Item>
         </Header>
 
-        <Content padder />
+        <Content>
+          <Grid style={styles.groupSelector}>
+            <Row>
+              <Col style={styles.col}>
+                <Button style={this.state.group == 'all' ? styles.iconActiveButton : styles.iconButton} onPress={() => this.selectGroup('all')}>
+                  <Icon active name="walk" style={styles.icon} />
+                </Button>
+                <Text style={styles.iconText}>All</Text>
+              </Col>
+              <Col style={styles.col}>
+                <Button style={this.state.group == 'town' ? styles.iconActiveButton : styles.iconButton} onPress={() => this.selectGroup('town')}>
+                  <Icon active name="pin" style={styles.icon} />
+                </Button>
+                <Text style={styles.iconText}>Town</Text>
+              </Col>
+              <Col style={styles.col}>
+                <Button style={this.state.group == 'state' ? styles.iconActiveButton : styles.iconButton} onPress={() => this.selectGroup('state')}>
+                  <Icon active name="pin" style={styles.icon} />
+                </Button>
+                <Text style={styles.iconText}>State</Text>
+              </Col>
+              <Col style={styles.col}>
+                <Button style={this.state.group == 'country' ? styles.iconActiveButton : styles.iconButton} onPress={() => this.selectGroup('country')}>
+                  <Icon active name="pin" style={styles.icon} />
+                </Button>
+                <Text style={styles.iconText}>Country</Text>
+              </Col>
+              <Col style={styles.col}>
+                <Button style={styles.iconButton}>
+                  <Icon active name="more" style={styles.icon} />
+                </Button>
+                <Text style={styles.iconText}>More</Text>
+              </Col>
+            </Row>
+          </Grid>
+        </Content>
 
         <Footer>
           <FooterTab>
