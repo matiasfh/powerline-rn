@@ -2,6 +2,9 @@
 var React = require('react-native');
 var { StyleSheet } = React;
 var PLColors = require('PLColors');
+var { Platform } = require('react-native');
+
+const platform = Platform.OS;
 
 export default {
   container: {
@@ -48,7 +51,7 @@ export default {
   },
   icon: {
     color: PLColors.main,
-    fontSize: 18,
+    fontSize: (platform === 'ios') ? 18 : 15,
   },
   iconText: {
     paddingVertical: 5,
