@@ -1,10 +1,11 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Content, Text, ListItem, List, Left, Icon, Right } from 'native-base';
+import { Container, Content, Text, ListItem, List, Left, Icon, Right } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 
 import { closeDrawer } from '../../actions/drawer';
+import { logOut, logOutWithPrompt } from 'PLActions';
 
 import styles from './style';
 
@@ -98,7 +99,7 @@ const datas = [
 class SideBar extends Component {
 
   static propTypes = {
-    // setIndex: React.PropTypes.func,
+    logOut: React.PropTypes.func,
     closeDrawer: React.PropTypes.func,
     navigateTo: React.PropTypes.func,
   }
@@ -107,28 +108,39 @@ class SideBar extends Component {
     this.props.navigateTo(route, 'home');
   }
 
+  onSelectItem(route: string) {
+    if (route == 'logout') {
+      this.props.logOut();
+    } else {
+      Actions['home']();
+    }
+    this.props.closeDrawer();
+  }
+
   render() {
     return (
-      <Content style={styles.sidebar} >
-        <List
-          dataArray={datas} renderRow={data =>
-            <ListItem button noBorder onPress={() => { Actions['home'](); this.props.closeDrawer() }} >
-              <Left>
-                <Icon active name={data.icon} style={{ color: 'white', fontSize: 26, width: 30 }} />
-                <Text style={styles.text}>{data.name}</Text>
-              </Left>
-              {(data.types) &&
-                <Right style={{ flex: 1 }}>
-                  <Badge
-                    style={{ borderRadius: 3, height: 25, width: 72, backgroundColor: data.bg }}
-                  >
-                    <Text style={styles.badgeText}>{`${data.types} Types`}</Text>
-                  </Badge>
-                </Right>
-              }
-            </ListItem>}
-        />
-      </Content>
+      <Container style={styles.sidebar}>
+        <Content>
+          <List
+            dataArray={datas} renderRow={data =>
+              <ListItem button noBorder onPress={() => this.onSelectItem(data.route)} >
+                <Left>
+                  <Icon active name={data.icon} style={{ color: 'white', fontSize: 26, width: 30 }} />
+                  <Text style={styles.text}>{data.name}</Text>
+                </Left>
+                {(data.types) &&
+                  <Right style={{ flex: 1 }}>
+                    <Badge
+                      style={{ borderRadius: 3, height: 25, width: 72, backgroundColor: data.bg }}
+                    >
+                      <Text style={styles.badgeText}>{`${data.types} Types`}</Text>
+                    </Badge>
+                  </Right>
+                }
+              </ListItem>}
+          />
+        </Content>
+      </Container>
     );
   }
 }
@@ -136,6 +148,7 @@ class SideBar extends Component {
 function bindAction(dispatch) {
   return {
     closeDrawer: () => dispatch(closeDrawer()),
+    logOut: () => dispatch(logOutWithPrompt()),
   };
 }
 
