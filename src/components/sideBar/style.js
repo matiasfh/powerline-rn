@@ -9,7 +9,7 @@ const PLColors = require('PLColors');
 
 export default {
   sidebar: {
-    paddingTop: 25,
+    paddingTop: 30,
     flex: 1,
     backgroundColor: PLColors.main,
   },
