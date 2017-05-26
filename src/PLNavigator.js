@@ -8,85 +8,99 @@
 var React = require('React');
 var Platform = require('Platform');
 var BackAndroid = require('BackAndroid');
-var PLTabsView = require('PLTabsView');
 var StyleSheet = require('StyleSheet');
+var { Router, Scene } = require('react-native-router-flux');
 var { connect } = require('react-redux');
-var { Navigator } = require('react-native-deprecated-custom-components');
+var { StatusBar } = require('react-native');
 
-var PLNavigator = React.createClass({
-  _handlers: ([]: Array<() => boolean >),
+import { Drawer } from 'native-base';
+import { closeDrawer } from './actions/drawer';
+import Home from './scenes/dashboard/';
+import SideBar from './components/sideBar';
+import getTheme from '../native-base-theme/components';
+import material from '../native-base-theme/variables/material';
+import { StyleProvider, variables } from 'native-base';
 
-componentDidMount: function() {
-  BackAndroid.addEventListener('hardwareBackPress', this.handleBackButton);
-},
+var RouterWithRedux = connect()(Router);
 
-componentWillUnmount: function() {
-  BackAndroid.removeEventListener('hardwareBackPress', this.handleBackButton);
-},
+class PLNavigator extends React.Component {
 
-getChildContext() {
-  return {
-    addBackButtonListener: this.addBackButtonListener,
-    removeBackButtonListener: this.removeBackButtonListener,
-  };
-},
+  static propTypes = {
+    drawerState: React.PropTypes.string,
+    closeDrawer: React.PropTypes.func,
+  }
 
-addBackButtonListener: function(listener) {
-  this._handlers.push(listener);
-},
 
-removeBackButtonListener: function(listener) {
-  this._handlers = this._handlers.filter((handler) => handler !== listener);
-},
+  componentDidUpdate() {
+    if (this.props.drawerState === 'opened') {
+      this.openDrawer();
+    }
 
-handleBackButton: function() {
-  for (let i = this._handlers.length - 1; i >= 0; i--) {
-    if (this._handlers[i]()) {
-      return true;
+    if (this.props.drawerState === 'closed') {
+      this._drawer._root.close();
     }
   }
 
-  var { navigator } = this.refs;
-  if (navigator && navigator.getCurrentRoutes().length > 1) {
-    navigator.pop();
-    return true;
+
+  openDrawer() {
+    this._drawer._root.open();
   }
 
-  return false;
-},
+  closeDrawer() {
+    if (this.props.drawerState === 'opened') {
+      this.props.closeDrawer();
+    }
+  }
 
-render: function() {
-  return (
-    <Navigator
-      ref="navigator"
-      style={styles.container}
-      configureScene={(route) => {
-        if (Platform.OS === 'android') {
-          return Navigator.SceneConfigs.FloatFromBottomAndroid;
-        }
-      }}
-      initialRoute={{}}
-      renderScene={this.renderScene}
-    />
-  );
-},
+  _renderScene(props) { // eslint-disable-line class-methods-use-this
+    switch (props.scene.route.key) {
+      case 'home':
+        return <Home />;
+      default:
+        return <Home />;
+    }
+  }
 
-renderScene: function(route, navigator) {
-  return <PLTabsView navigator={navigator} />;
-},
-});
-
-PLNavigator.childContextTypes = {
-  addBackButtonListener: React.PropTypes.func,
-  removeBackButtonListener: React.PropTypes.func,
-};
-
-var styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'black',
-  },
-});
+  render() {
+    return (
+      <StyleProvider style={getTheme((this.props.themeState === 'material') ? material : undefined)}>
+        <Drawer
+          ref={(ref) => { this._drawer = ref; }}
+          type="overlay"
+          tweenDuration={150}
+          content={<SideBar />}
+          tapToClose
+          acceptPan={false}
+          onClose={() => this.closeDrawer()}
+          openDrawerOffset={0.3}
+          panCloseMask={0.2}
+          styles={{
+            drawer: {
+              shadowColor: '#000000',
+              shadowOpacity: 0.8,
+              shadowRadius: 3,
+            },
+          }}
+          tweenHandler={(ratio) => {  //eslint-disable-line
+            return {
+              drawer: { shadowRadius: ratio < 0.2 ? ratio * 5 * 5 : 5 },
+              main: {
+                opacity: (2 - ratio) / 2,
+              },
+            };
+          }}
+          negotiatePan
+        >
+          <RouterWithRedux>
+            <Scene key="root">
+              <Scene key="home" component={Home} hideNavBar initial />
+            </Scene>
+          </RouterWithRedux>
+        </Drawer>
+      </StyleProvider>
+    );
+  }
+}
 
 function select(store) {
   return {
@@ -95,4 +109,15 @@ function select(store) {
   };
 }
 
-module.exports = connect(select)(PLNavigator);
+function bindAction(dispatch) {
+  return {
+    closeDrawer: () => dispatch(closeDrawer()),
+  };
+}
+
+const mapStateToProps = state => ({
+  drawerState: state.drawer.drawerState,
+  navigation: state.cardNavigation,
+});
+
+module.exports = connect(mapStateToProps, bindAction)(PLNavigator);

@@ -110,4 +110,45 @@ async function forgotPassword(email: string) {
   }
 }
 
-module.exports = { logInManually, logInWithFacebook, forgotPassword };
+function logOut(): ThunkAction {
+  return (dispatch) => {
+    FacebookSDK.logout();
+
+    return dispatch({
+      type: 'LOGGED_OUT',
+    });
+  };
+}
+
+function logOutWithPrompt(): ThunkAction {
+  return (dispatch, getState) => {
+    let name = getState().user.username || 'there';
+
+    if (Platform.OS === 'ios') {
+      ActionSheetIOS.showActionSheetWithOptions(
+        {
+          title: `Hi, ${name}`,
+          options: ['Log out', 'Cancel'],
+          destructiveButtonIndex: 0,
+          cancelButtonIndex: 1,
+        },
+        (buttonIndex) => {
+          if (buttonIndex === 0) {
+            dispatch(logOut());
+          }
+        }
+      );
+    } else {
+      Alert.alert(
+        `Hi, ${name}`,
+        'Log out from Powerline?',
+        [
+          { text: 'Cancel' },
+          { text: 'Log out', onPress: () => dispatch(logOut()) },
+        ]
+      );
+    }
+  };
+}
+
+module.exports = { logInManually, logInWithFacebook, forgotPassword, logOut, logOutWithPrompt };

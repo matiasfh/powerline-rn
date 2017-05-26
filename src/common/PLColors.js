@@ -5,7 +5,7 @@
 'use strict';
 
 module.exports = {
-  main: '#030366',
+  main: '#020860',
   actionText: '#006',
   inactiveText: '#9B9B9B',
   darkText: '#032250',
