@@ -58,4 +58,15 @@ export default {
     fontSize: 11,
     color: 'white',
   },
+  backdrop: {
+    backgroundColor: 'black',
+    opacity: 0.5,
+  },
+  menuIcon: {
+    color: '#223549',
+    width: 25,
+  },
+  menuText: {
+    color: '#293f53',
+  }
 };
