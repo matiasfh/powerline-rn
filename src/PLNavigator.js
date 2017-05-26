@@ -16,6 +16,7 @@ var { StatusBar } = require('react-native');
 import { Drawer } from 'native-base';
 import { closeDrawer } from './actions/drawer';
 import Home from './scenes/dashboard/';
+import GroupSelector from './scenes/dashboard/groupSelector/'
 import SideBar from './components/sideBar';
 import getTheme from '../native-base-theme/components';
 import material from '../native-base-theme/variables/material';
@@ -94,6 +95,7 @@ class PLNavigator extends React.Component {
           <RouterWithRedux>
             <Scene key="root">
               <Scene key="home" component={Home} hideNavBar initial />
+              <Scene key="groupSelector" component={GroupSelector} />
             </Scene>
           </RouterWithRedux>
         </Drawer>
