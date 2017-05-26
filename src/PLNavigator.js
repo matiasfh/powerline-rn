@@ -31,7 +31,6 @@ class PLNavigator extends React.Component {
     closeDrawer: React.PropTypes.func,
   }
 
-
   componentDidUpdate() {
     if (this.props.drawerState === 'opened') {
       this.openDrawer();
@@ -41,7 +40,6 @@ class PLNavigator extends React.Component {
       this._drawer._root.close();
     }
   }
-
 
   openDrawer() {
     this._drawer._root.open();
@@ -104,13 +102,6 @@ class PLNavigator extends React.Component {
   }
 }
 
-function select(store) {
-  return {
-    tab: store.navigation.tab,
-    isLoggedIn: store.user.isLoggedIn,
-  };
-}
-
 function bindAction(dispatch) {
   return {
     closeDrawer: () => dispatch(closeDrawer()),
@@ -119,7 +110,6 @@ function bindAction(dispatch) {
 
 const mapStateToProps = state => ({
   drawerState: state.drawer.drawerState,
-  navigation: state.cardNavigation,
 });
 
 module.exports = connect(mapStateToProps, bindAction)(PLNavigator);

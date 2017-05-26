@@ -70,12 +70,8 @@ TermsPolicyScene.navigationOptions = props => {
   };
 };
 
-function mapStateToProps(store) {
-  return {
-    isLoggedIn: store.user.isLoggedIn,
-    drawerState: store.drawer.drawerState,
-    navigation: store.cardNavigation,
-  };
-}
+const mapStateToProps = state => ({
+  isLoggedIn: state.user.isLoggedIn,
+});
 
 module.exports = connect(mapStateToProps)(PLApp);
