@@ -15,6 +15,7 @@ export type Action =
   | { type: 'REPLACE_OR_PUSH_ROUTE', route: string }
   | { type: 'OPEN_DRAWER' }
   | { type: 'CLOSE_DRAWER' }
+  | { type: 'LOADED_GROUPS', data: { page: number; items: number; payload: Array<Object> } }
 
 export type Dispatch = (action: Action | ThunkAction | PromiseAction | Array<Action>) => any;
 export type GetState = () => Object;
