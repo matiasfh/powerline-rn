@@ -5,7 +5,7 @@ const { StyleSheet } = React;
 
 export default {
     container: {
-        backgroundColor: '#FBFAFA',
+        backgroundColor: '#f5f9fc',
     },
     header: {
         backgroundColor: PLColors.main,
@@ -18,5 +18,20 @@ export default {
     searchInput: {
         fontSize: 12,
         color: 'white',
+    },
+    titleText: {
+        fontSize: 20,
+        color: '#2e3f50',
+        marginLeft: 10,
+        fontWeight: '500',
+    },
+    buttonText: {
+        fontSize: 12,
+        color: PLColors.main,
+        marginLeft: -7,
+    },
+    buttonIcon: {
+        fontSize: 15,
+        color: PLColors.main,
     },
 };
