@@ -22,9 +22,11 @@ export type State = {
     payload: Array<Group>;
 };
 
+const itemsPerPage = 20;
+
 const initialState = {
     page: 0,
-    items: 20,
+    items: itemsPerPage,
     payload: [],
 };
 
@@ -38,6 +40,10 @@ function groups(state: State = initialState, action: Action): State {
             items: action.data.items,
             payload: payloadStack,
         };
+    }
+    if (action.type === 'CLEAR_CACHED_GROUPS') {
+        payloadStack = [];
+        return initialState;
     }
     return state;
 }

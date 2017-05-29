@@ -15,6 +15,7 @@ import Menu, {
 } from 'react-native-popup-menu';
 
 import { openDrawer } from '../../actions/drawer';
+import { loadGroups, clearGroupsInCache } from 'PLActions';
 import styles from './styles';
 
 const { SlideInMenu } = renderers;
@@ -85,6 +86,7 @@ class Home extends Component {
   }
 
   goToGroupSelector() {
+    this.props.dispatch(clearGroupsInCache());
     Actions.groupSelector();
   }
 

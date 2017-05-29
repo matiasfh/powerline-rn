@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import { Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, Spinner, ListItem, Thumbnail, List } from 'native-base';
 import { View, RefreshControl } from 'react-native';
-import { loadGroups } from 'PLActions';
+import { loadGroups, clearGroupsInCache } from 'PLActions';
 import styles from './styles';
 
 const PLColors = require('PLColors');

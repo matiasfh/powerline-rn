@@ -30,6 +30,15 @@ async function loadGroups(token: string, page: ?number, perPage: ?number): Promi
     }
 }
 
+function clearGroupsInCache(): ThunkAction {
+    return (dispatch) => {
+        return dispatch({
+            type: 'CLEAR_CACHED_GROUPS',
+        });
+    };
+}
+
 module.exports = {
     loadGroups,
+    clearGroupsInCache,
 }

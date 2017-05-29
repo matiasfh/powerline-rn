@@ -16,6 +16,7 @@ export type Action =
   | { type: 'OPEN_DRAWER' }
   | { type: 'CLOSE_DRAWER' }
   | { type: 'LOADED_GROUPS', data: { page: number; items: number; payload: Array<Object> } }
+  | { type: 'CLEAR_CACHED_GROUPS' }
 
 export type Dispatch = (action: Action | ThunkAction | PromiseAction | Array<Action>) => any;
 export type GetState = () => Object;
