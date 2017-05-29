@@ -2,6 +2,8 @@
 const React = require('react-native');
 const PLColors = require('PLColors');
 const { StyleSheet } = React;
+const { Platform } = require('react-native');
+const platform = Platform.OS;
 
 export default {
     container: {
@@ -33,5 +35,29 @@ export default {
     buttonIcon: {
         fontSize: 15,
         color: PLColors.main,
+    },
+    thumbnail: {
+        borderWidth: 1,
+        borderColor: PLColors.cellBorder,
+    },
+    iconButton: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        marginLeft: -3,
+        alignSelf: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'white',
+        borderWidth: 1,
+        borderColor: PLColors.cellBorder,
+    },
+    icon: {
+        color: 'black',
+        fontSize: (platform === 'ios') ? 18 : 15,
+    },
+    cellText: {
+        color: PLColors.cellText,
+        fontWeight: '300',
+        fontSize: 14,
     },
 };
