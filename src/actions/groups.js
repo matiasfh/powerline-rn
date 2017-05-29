@@ -4,7 +4,7 @@ var { Action, ThunkAction } = require('./types');
 
 async function loadGroups(token: string, page: ?number, perPage: ?number): Promise<Action> {
     try {
-        var response = await fetch(`${API_URL}/v2/groups?_format=json&page=${page}&per_page=${perPage}`, {
+        var response = await fetch(`${API_URL}/v2/groups?_format=json&page=${page + 1}&per_page=${perPage}`, {
             method: 'GET',
             headers: {
                 'token': token,

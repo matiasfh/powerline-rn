@@ -2,8 +2,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
-import { Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, Spinner } from 'native-base';
-import { View } from 'react-native';
+import { Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, Spinner, ListItem, Thumbnail, List } from 'native-base';
+import { View, RefreshControl } from 'react-native';
 import { loadGroups } from 'PLActions';
 import styles from './styles';
 
@@ -25,11 +25,20 @@ class GroupSelector extends Component {
     componentDidMount() {
         const { props: { token, page, perPage, groups } } = this;
         this.setState({ isLoading: true });
+        this.props.dispatch(loadGroups(token, 0, perPage));
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.setState({ isLoading: false });
+    }
+
+    _onRefresh() {
+        const { props: { token, page, perPage } } = this;
         this.props.dispatch(loadGroups(token, page, perPage));
     }
 
     _renderLoading() {
-        if (this.props.groups.length == 0) {
+        if (this.state.isLoading == true) {
             return (
                 <Spinner color={PLColors.main} />
             );
@@ -39,6 +48,7 @@ class GroupSelector extends Component {
     }
 
     render() {
+        const { props: { groups } } = this;
         return (
             <Container style={styles.container}>
                 <Header searchBar rounded style={styles.header}>
@@ -53,21 +63,66 @@ class GroupSelector extends Component {
                     </Item>
                 </Header>
 
-                <Content padder>
-                    <Grid style={{ marginTop: 10 }}>
-                        <Row>
-                            <Col style={{ alignItems: 'flex-start' }}>
-                                <Text style={styles.titleText}>Choose Group</Text>
-                            </Col>
-                            <Col>
-                                <Button small iconLeft transparent style={{ alignSelf: 'flex-end' }}>
-                                    <Icon name="ios-add-circle" style={styles.buttonIcon} />
-                                    <Text style={styles.buttonText}>ADD GROUP</Text>
-                                </Button>
-                            </Col>
-                        </Row>
-                    </Grid>
-                    {this._renderLoading()}
+                <Content padder
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={this.state.isLoading}
+                            onRefresh={this._onRefresh.bind(this)}
+                        />
+                    }>
+                    <ListItem itemHeader first style={{ borderBottomWidth: 0 }}>
+                        <Left>
+                            <Text style={styles.titleText}>Choose Group</Text>
+                        </Left>
+                        <Right>
+                            <Button small iconLeft transparent style={{ alignSelf: 'flex-end', width: 100 }}>
+                                <Icon name="ios-add-circle" style={styles.buttonIcon} />
+                                <Text style={styles.buttonText}>ADD GROUP</Text>
+                            </Button>
+                        </Right>
+                    </ListItem>
+                    <ListItem icon style={{ paddingVertical: 5 }}>
+                        <Left>
+                            <Button style={styles.iconButton}>
+                                <Icon active name="pin" style={styles.icon} />
+                            </Button>
+                        </Left>
+                        <Body>
+                            <Text style={styles.cellText}>Town</Text>
+                        </Body>
+                    </ListItem>
+                    <ListItem icon style={{ paddingVertical: 5 }}>
+                        <Left>
+                            <Button style={styles.iconButton}>
+                                <Icon active name="pin" style={styles.icon} />
+                            </Button>
+                        </Left>
+                        <Body>
+                            <Text style={styles.cellText}>State</Text>
+                        </Body>
+                    </ListItem>
+                    <ListItem icon style={{ paddingVertical: 5 }}>
+                        <Left>
+                            <Button style={styles.iconButton}>
+                                <Icon active name="pin" style={styles.icon} />
+                            </Button>
+                        </Left>
+                        <Body>
+                            <Text style={styles.cellText}>Country</Text>
+                        </Body>
+                    </ListItem>
+                    <List
+                        dataArray={groups} renderRow={(group) =>
+                            <ListItem avatar style={{ paddingVertical: 5 }}>
+                                <Left>
+                                    <Thumbnail small source={{ uri: group.avatar_file_path ? group.avatar_file_path : 'https://www.gstatic.com/webp/gallery3/2_webp_a.png' }} style={styles.thumbnail} />
+                                </Left>
+                                <Body>
+                                    <Text style={styles.cellText}>{group.official_name}</Text>
+                                </Body>
+                            </ListItem>
+                        }>
+                    </List>
                 </Content>
             </Container>
         );
