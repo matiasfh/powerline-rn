@@ -23,14 +23,21 @@ export type State = {
 };
 
 const initialState = {
-    page: 1,
-    items: 10,
+    page: 0,
+    items: 20,
     payload: [],
 };
 
+const payloadStack: Array<Group> = [];
+
 function groups(state: State = initialState, action: Action): State {
     if (action.type === 'LOADED_GROUPS') {
-        return action.data;
+        payloadStack = payloadStack.concat(action.data.payload);
+        return {
+            page: action.data.page,
+            items: action.data.items,
+            payload: payloadStack,
+        };
     }
     return state;
 }
