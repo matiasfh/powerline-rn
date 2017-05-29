@@ -16,6 +16,7 @@ var { StatusBar } = require('react-native');
 import { Drawer } from 'native-base';
 import { closeDrawer } from './actions/drawer';
 import Home from './scenes/dashboard/';
+import GroupSelector from './scenes/dashboard/groupSelector/'
 import SideBar from './components/sideBar';
 import getTheme from '../native-base-theme/components';
 import material from '../native-base-theme/variables/material';
@@ -30,7 +31,6 @@ class PLNavigator extends React.Component {
     closeDrawer: React.PropTypes.func,
   }
 
-
   componentDidUpdate() {
     if (this.props.drawerState === 'opened') {
       this.openDrawer();
@@ -40,7 +40,6 @@ class PLNavigator extends React.Component {
       this._drawer._root.close();
     }
   }
-
 
   openDrawer() {
     this._drawer._root.open();
@@ -94,19 +93,13 @@ class PLNavigator extends React.Component {
           <RouterWithRedux>
             <Scene key="root">
               <Scene key="home" component={Home} hideNavBar initial />
+              <Scene key="groupSelector" component={GroupSelector} />
             </Scene>
           </RouterWithRedux>
         </Drawer>
       </StyleProvider>
     );
   }
-}
-
-function select(store) {
-  return {
-    tab: store.navigation.tab,
-    isLoggedIn: store.user.isLoggedIn,
-  };
 }
 
 function bindAction(dispatch) {
@@ -117,7 +110,6 @@ function bindAction(dispatch) {
 
 const mapStateToProps = state => ({
   drawerState: state.drawer.drawerState,
-  navigation: state.cardNavigation,
 });
 
 module.exports = connect(mapStateToProps, bindAction)(PLNavigator);

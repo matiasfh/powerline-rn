@@ -8,10 +8,10 @@ var { combineReducers } = require('redux');
 
 import drawer from './drawer';
 import user from './user';
-import navigation from './navigation';
+import groups from './groups';
 
 module.exports = combineReducers({
   user,
   drawer,
-  navigation,
+  groups,
 });

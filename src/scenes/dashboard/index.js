@@ -15,6 +15,7 @@ import Menu, {
 } from 'react-native-popup-menu';
 
 import { openDrawer } from '../../actions/drawer';
+import { loadGroups, clearGroupsInCache } from 'PLActions';
 import styles from './styles';
 
 const { SlideInMenu } = renderers;
@@ -84,6 +85,11 @@ class Home extends Component {
     this.bottomMenu = r;
   }
 
+  goToGroupSelector() {
+    this.props.dispatch(clearGroupsInCache());
+    Actions.groupSelector();
+  }
+
   render() {
     return (
       <MenuContext customStyles={menuContextStyles}>
@@ -128,7 +134,7 @@ class Home extends Component {
                   <Text style={styles.iconText}>Country</Text>
                 </Col>
                 <Col style={styles.col}>
-                  <Button style={styles.iconButton}>
+                  <Button style={styles.iconButton} onPress={() => this.goToGroupSelector()}>
                     <Icon active name="more" style={styles.icon} />
                   </Button>
                   <Text style={styles.iconText}>More</Text>
