@@ -15,8 +15,11 @@ import Menu, {
 } from 'react-native-popup-menu';
 
 import { openDrawer } from '../../actions/drawer';
-import { loadGroups, clearGroupsInCache } from 'PLActions';
+import { loadGroups, clearGroupsInCache, loadBookmarks, resetBookmarks } from 'PLActions';
 import styles from './styles';
+
+// Tab Scenes
+import Newsfeed from './newsfeed/'
 
 const { SlideInMenu } = renderers;
 
@@ -35,6 +38,34 @@ class Home extends Component {
       tab4: false,
       group: 'all',
     };
+  }
+
+  // Newsfeed
+  async onNewsfeedTab() {
+    const { props: { token, bookmarksPage, dispatch, items } } = this;
+    this.toggleTab1();
+    try {
+      if (bookmarksPage === 0) {
+        await Promise.race([
+          dispatch(loadBookmarks(token)),
+          timeout(15000),
+        ]);
+      }
+    } catch (e) {
+      const message = e.message || e;
+      if (message !== 'Timed out') {
+        alert(message);
+      }
+      else {
+        alert('Timed out. Please check internet connection');
+      }
+      dispatch(resetBookmarks());
+      return;
+    } finally {
+      if (items.length === 0) {
+        alert('No newsfeed yet');
+      }
+    }
   }
 
   toggleTab1() {
@@ -90,6 +121,14 @@ class Home extends Component {
     Actions.groupSelector();
   }
 
+  renderSelectedTab() {
+    if (this.state.tab1 === true) {
+      return (<Newsfeed />);
+    } else {
+      return null;
+    }
+  }
+
   render() {
     return (
       <MenuContext customStyles={menuContextStyles}>
@@ -105,8 +144,7 @@ class Home extends Component {
               <Icon active name="search" />
             </Item>
           </Header>
-
-          <Content style={styles.container}>
+          <View style={styles.container}>
             <Grid style={styles.groupSelector}>
               <Row>
                 <Col style={styles.col}>
@@ -141,11 +179,12 @@ class Home extends Component {
                 </Col>
               </Row>
             </Grid>
-          </Content>
+            {this.renderSelectedTab()}
+          </View>
 
           <Footer style={styles.footer}>
             <FooterTab>
-              <Button active={this.state.tab1} onPress={() => this.toggleTab1()} >
+              <Button active={this.state.tab1} onPress={() => this.onNewsfeedTab()} >
                 <Icon active={this.state.tab1} name="ios-flash" />
                 <Text>Newsfeed</Text>
               </Button>
@@ -244,7 +283,15 @@ function bindAction(dispatch) {
   };
 }
 
+async function timeout(ms: number): Promise {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => reject(new Error('Timed out')), ms);
+  });
+}
+
 const mapStateToProps = state => ({
+  token: state.user.token,
+  bookmarksPage: state.bookmarks.page,
 });
 
 export default connect(mapStateToProps, bindAction)(Home);
