@@ -106,7 +106,7 @@ class Home extends Component {
             </Item>
           </Header>
 
-          <Content>
+          <Content style={styles.container}>
             <Grid style={styles.groupSelector}>
               <Row>
                 <Col style={styles.col}>
@@ -143,7 +143,7 @@ class Home extends Component {
             </Grid>
           </Content>
 
-          <Footer>
+          <Footer style={styles.footer}>
             <FooterTab>
               <Button active={this.state.tab1} onPress={() => this.toggleTab1()} >
                 <Icon active={this.state.tab1} name="ios-flash" />

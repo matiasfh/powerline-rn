@@ -8,7 +8,7 @@ const platform = Platform.OS;
 
 export default {
   container: {
-    backgroundColor: '#FFF',
+    backgroundColor: '#e2e7ea',
   },
   header: {
     backgroundColor: PLColors.main,
@@ -68,5 +68,10 @@ export default {
   },
   menuText: {
     color: '#293f53',
-  }
+  },
+  footer: {
+    borderTopWidth: 2,
+    borderTopColor: '#d8dddf',
+    backgroundColor: 'white',
+  },
 };
