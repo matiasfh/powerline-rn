@@ -110,7 +110,6 @@ class Login extends React.Component {
       ]);
     } catch (e) {
       const message = e.message || e;
-      console.error(message);
       if (message !== 'Timed out' && message !== 'Canceled by user') {
         alert(message);
         console.warn(e);
