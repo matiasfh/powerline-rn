@@ -151,31 +151,31 @@ class Home extends Component {
                   <Button style={this.state.group == 'all' ? styles.iconActiveButton : styles.iconButton} onPress={() => this.selectGroup('all')}>
                     <Icon active name="walk" style={styles.icon} />
                   </Button>
-                  <Text style={styles.iconText}>All</Text>
+                  <Text style={styles.iconText} onPress={() => this.selectGroup('all')}>All</Text>
                 </Col>
                 <Col style={styles.col}>
                   <Button style={this.state.group == 'town' ? styles.iconActiveButton : styles.iconButton} onPress={() => this.selectGroup('town')}>
                     <Icon active name="pin" style={styles.icon} />
                   </Button>
-                  <Text style={styles.iconText}>Town</Text>
+                  <Text style={styles.iconText} onPress={() => this.selectGroup('town')}>Town</Text>
                 </Col>
                 <Col style={styles.col}>
                   <Button style={this.state.group == 'state' ? styles.iconActiveButton : styles.iconButton} onPress={() => this.selectGroup('state')}>
                     <Icon active name="pin" style={styles.icon} />
                   </Button>
-                  <Text style={styles.iconText}>State</Text>
+                  <Text style={styles.iconText} onPress={() => this.selectGroup('state')}>State</Text>
                 </Col>
                 <Col style={styles.col}>
                   <Button style={this.state.group == 'country' ? styles.iconActiveButton : styles.iconButton} onPress={() => this.selectGroup('country')}>
                     <Icon active name="pin" style={styles.icon} />
                   </Button>
-                  <Text style={styles.iconText}>Country</Text>
+                  <Text style={styles.iconText} onPress={() => this.selectGroup('country')}>Country</Text>
                 </Col>
                 <Col style={styles.col}>
                   <Button style={styles.iconButton} onPress={() => this.goToGroupSelector()}>
                     <Icon active name="more" style={styles.icon} />
                   </Button>
-                  <Text style={styles.iconText}>More</Text>
+                  <Text style={styles.iconText} onPress={() => this.goToGroupSelector()}>More</Text>
                 </Col>
               </Row>
             </Grid>
