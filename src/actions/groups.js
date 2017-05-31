@@ -2,12 +2,13 @@
 var { API_URL } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
 
-async function loadGroups(token: string, page: ?number, perPage: ?number): Promise<Action> {
+async function loadUserGroups(token: string, page: ?number, perPage: ?number): Promise<Action> {
     try {
-        var response = await fetch(`${API_URL}/v2/groups?_format=json&page=${page + 1}&per_page=${perPage}`, {
+        var response = await fetch(`${API_URL}/v2/user/groups?_format=json&page=${page + 1}&per_page=${perPage}`, {
             method: 'GET',
             headers: {
                 'token': token,
+                'Content-Type': 'application/json',
             }
         });
         var groups = await response.json();
@@ -39,6 +40,6 @@ function clearGroupsInCache(): ThunkAction {
 }
 
 module.exports = {
-    loadGroups,
+    loadUserGroups,
     clearGroupsInCache,
 }

@@ -15,7 +15,7 @@ import Menu, {
 } from 'react-native-popup-menu';
 
 import { openDrawer } from '../../actions/drawer';
-import { loadGroups, clearGroupsInCache, loadBookmarks, resetBookmarks } from 'PLActions';
+import { loadUserGroups, clearGroupsInCache, loadBookmarks, resetBookmarks } from 'PLActions';
 import styles from './styles';
 
 // Tab Scenes
