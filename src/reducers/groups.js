@@ -41,7 +41,7 @@ function groups(state: State = initialState, action: Action): State {
             payload: payloadStack,
         };
     }
-    if (action.type === 'CLEAR_CACHED_GROUPS') {
+    if (action.type === 'CLEAR_CACHED_GROUPS' || action.type === 'LOGGED_OUT') {
         payloadStack = [];
         return initialState;
     }

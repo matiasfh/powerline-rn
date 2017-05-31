@@ -28,7 +28,7 @@ function bookmarks(state: State = initialState, action: Action): State {
             totalPages: action.data.totalPages,
         };
     }
-    if (action.type === 'RESET_BOOKMARKS') {
+    if (action.type === 'RESET_BOOKMARKS' || action.type === 'LOGGED_OUT') {
         itemsStack = [];
         return initialState;
     }
