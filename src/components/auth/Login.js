@@ -164,9 +164,6 @@ class Login extends React.Component {
             <Text style={styles.termsUnderlineText}>Privacy Policy</Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity onPress={this.onForgotPassword}>
-          <Text style={styles.forgotText}>Forgot Password</Text>
-        </TouchableOpacity>
       </View>
     );
   };
@@ -191,6 +188,9 @@ class Login extends React.Component {
           caption="Sign Up With E-mail"
           onPress={this.onSignUp}
         />
+        <TouchableOpacity onPress={this.onForgotPassword}>
+          <Text style={styles.forgotText}>Forgot Password</Text>
+        </TouchableOpacity>
       </View>
     );
   };
@@ -288,7 +288,7 @@ var styles = StyleSheet.create({
     backgroundColor: 'transparent'
   },
   fbLoginContainer: {
-    marginTop: 30,
+    marginTop: 15,
     marginHorizontal: 40,
     justifyContent: 'center',
     alignItems: 'center'
