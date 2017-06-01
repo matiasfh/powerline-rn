@@ -26,20 +26,13 @@ class Newsfeed extends Component {
     componentWillMount() {
         const { props: { page, items } } = this;
         if (page === 0) {
-            this.setState({ isLoading: true });
             this.loadInitialBookmarks();
         }
     }
 
-    componentWillReceiveProps(nextProps) {
-        this.setState({ isLoading: false });
-        if (this.props.totalItems === 0) {
-            alert('No newsfeed yet');
-        }
-    }
-
     async loadInitialBookmarks() {
-        const { props: { token, dispatch, totalItems } } = this;
+        this.setState({ isLoading: true });
+        const { props: { token, dispatch } } = this;
         try {
             await Promise.race([
                 dispatch(loadBookmarks(token)),
@@ -60,7 +53,8 @@ class Newsfeed extends Component {
     }
 
     _onRefresh() {
-        console.log('loading');
+        this.props.dispatch(resetBookmarks());
+        this.loadInitialBookmarks();
     }
 
     postCard(item) {
