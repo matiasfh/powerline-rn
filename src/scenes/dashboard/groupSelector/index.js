@@ -22,19 +22,38 @@ class GroupSelector extends Component {
         };
     }
 
-    componentDidMount() {
-        const { props: { token, page, perPage, groups } } = this;
-        this.setState({ isLoading: true });
-        this.props.dispatch(loadUserGroups(token, 0, perPage));
+    componentWillMount() {
+        const { props: { page } } = this;
+        if (page === 0) {
+            this.loadInitialGroups();
+        }
     }
 
-    componentWillReceiveProps(nextProps) {
-        this.setState({ isLoading: false });
+    async loadInitialGroups() {
+        this.setState({ isLoading: true });
+        const { props: { token, dispatch } } = this;
+        try {
+            await Promise.race([
+                dispatch(loadUserGroups(token)),
+                timeout(15000),
+            ]);
+        } catch (e) {
+            const message = e.message || e;
+            if (message !== 'Timed out') {
+                alert(message);
+            }
+            else {
+                alert('Timed out. Please check internet connection');
+            }
+            return;
+        } finally {
+            this.setState({ isLoading: false });
+        }
     }
 
     _onRefresh() {
-        const { props: { token, page, perPage } } = this;
-        this.props.dispatch(loadUserGroups(token, page, perPage));
+        this.props.dispatch(clearGroupsInCache());
+        this.loadInitialGroups();
     }
 
     _renderLoading() {
@@ -48,7 +67,7 @@ class GroupSelector extends Component {
     }
 
     render() {
-        const { props: { groups } } = this;
+        const { props: { payload } } = this;
         return (
             <Container style={styles.container}>
                 <Header searchBar rounded style={styles.header}>
@@ -112,7 +131,7 @@ class GroupSelector extends Component {
                         </Body>
                     </ListItem>
                     <List
-                        dataArray={groups} renderRow={(group) =>
+                        dataArray={payload} renderRow={(group) =>
                             <ListItem avatar style={{ paddingVertical: 5 }}>
                                 <Left>
                                     <Thumbnail small source={{ uri: group.avatar_file_path ? group.avatar_file_path : 'https://www.gstatic.com/webp/gallery3/2_webp_a.png' }} style={styles.thumbnail} />
@@ -129,11 +148,17 @@ class GroupSelector extends Component {
     }
 }
 
+async function timeout(ms: number): Promise {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => reject(new Error('Timed out')), ms);
+    });
+}
+
 const mapStateToProps = state => ({
     token: state.user.token,
     page: state.groups.page,
     perPage: state.groups.items,
-    groups: state.groups.payload,
+    payload: state.groups.payload,
 });
 
 
