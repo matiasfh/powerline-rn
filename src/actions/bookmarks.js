@@ -8,6 +8,7 @@ async function loadBookmarks(token: string, page: ?number = 0, type: ?string = '
             method: 'GET',
             headers: {
                 'token': token,
+                'Content-Type': 'application/json',
             }
         });
         var json = await response.json();

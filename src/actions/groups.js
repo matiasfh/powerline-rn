@@ -1,8 +1,8 @@
 
-var { API_URL } = require('../PLEnv');
+var { API_URL, PER_PAGE } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
 
-async function loadUserGroups(token: string, page: ?number, perPage: ?number): Promise<Action> {
+async function loadUserGroups(token: string, page: ?number = 0, perPage: ?number = PER_PAGE): Promise<Action> {
     try {
         var response = await fetch(`${API_URL}/v2/user/groups?_format=json&page=${page + 1}&per_page=${perPage}`, {
             method: 'GET',
@@ -12,7 +12,7 @@ async function loadUserGroups(token: string, page: ?number, perPage: ?number): P
             }
         });
         var groups = await response.json();
-        if (groups.totalItems) {
+        if (groups.items) {
             const action = {
                 type: 'LOADED_GROUPS',
                 data: {
