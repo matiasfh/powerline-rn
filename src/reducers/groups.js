@@ -1,6 +1,8 @@
 'use strict';
 
-import type {Action } from '../actions/types';
+import type { Action } from '../actions/types';
+
+const { PER_PAGE } = require('PLEnv');
 
 export type Group = {
     avatar_file_path: ?string;
@@ -19,10 +21,10 @@ export type Group = {
 export type State = {
     page: number;
     items: number;
-    payload: Array<Group>;
+    payload: Array<Object>;
 };
 
-const itemsPerPage = 20;
+const itemsPerPage = PER_PAGE;
 
 const initialState = {
     page: 0,
@@ -30,7 +32,7 @@ const initialState = {
     payload: [],
 };
 
-const payloadStack: Array<Group> = [];
+const payloadStack: Array<Object> = [];
 
 function groups(state: State = initialState, action: Action): State {
     if (action.type === 'LOADED_GROUPS') {
