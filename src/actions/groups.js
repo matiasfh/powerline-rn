@@ -13,7 +13,7 @@ async function loadUserGroups(token: string, page: ?number = 0, perPage: ?number
         });
         var groups = await response.json();
         if (groups.items) {
-            const action = {
+            var action = {
                 type: 'LOADED_GROUPS',
                 data: {
                     page: groups.page,
@@ -21,6 +21,16 @@ async function loadUserGroups(token: string, page: ?number = 0, perPage: ?number
                     payload: groups.payload,
                 },
             };
+            if (groups.payload.length === 0) {
+                action = {
+                    type: 'LOADED_GROUPS',
+                    data: {
+                        page: groups.page - 1,
+                        items: 0,
+                        payload: [],
+                    },
+                };
+            }
             return Promise.resolve(action);
         }
         else {
