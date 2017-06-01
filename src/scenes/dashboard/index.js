@@ -40,34 +40,7 @@ class Home extends Component {
     };
   }
 
-  // Newsfeed
-  async onNewsfeedTab() {
-    const { props: { token, bookmarksPage, dispatch, items } } = this;
-    this.toggleTab1();
-    try {
-      if (bookmarksPage === 0) {
-        await Promise.race([
-          dispatch(loadBookmarks(token)),
-          timeout(15000),
-        ]);
-      }
-    } catch (e) {
-      const message = e.message || e;
-      if (message !== 'Timed out') {
-        alert(message);
-      }
-      else {
-        alert('Timed out. Please check internet connection');
-      }
-      dispatch(resetBookmarks());
-      return;
-    } finally {
-      if (items.length === 0) {
-        alert('No newsfeed yet');
-      }
-    }
-  }
-
+  // Newsfeed Tab
   toggleTab1() {
     this.setState({
       tab1: true,
@@ -77,6 +50,7 @@ class Home extends Component {
     });
   }
 
+  // Friends Tab
   toggleTab2() {
     this.setState({
       tab1: false,
@@ -86,6 +60,7 @@ class Home extends Component {
     });
   }
 
+  // Messages Tab
   toggleTab3() {
     this.setState({
       tab1: false,
@@ -95,6 +70,7 @@ class Home extends Component {
     });
   }
 
+  // Notifications Tab
   toggleTab4() {
     this.setState({
       tab1: false,
@@ -117,7 +93,6 @@ class Home extends Component {
   }
 
   goToGroupSelector() {
-    this.props.dispatch(clearGroupsInCache());
     Actions.groupSelector();
   }
 
@@ -184,7 +159,7 @@ class Home extends Component {
 
           <Footer style={styles.footer}>
             <FooterTab>
-              <Button active={this.state.tab1} onPress={() => this.onNewsfeedTab()} >
+              <Button active={this.state.tab1} onPress={() => this.toggleTab1()} >
                 <Icon active={this.state.tab1} name="ios-flash" />
                 <Text>Newsfeed</Text>
               </Button>
