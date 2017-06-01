@@ -147,7 +147,7 @@ export default {
   activeTab: (platform === 'ios') ? '#007aff' : '#fff',
   sTabBarActiveTextColor: '#007aff',
   tabBarActiveTextColor: PLColors.main,
-  tabActiveBgColor: (platform === 'ios') ? '#cde1f9' : '#3F51B5',
+  tabActiveBgColor: 'white',
 
   // Tab
   tabDefaultBg: (platform === 'ios') ? '#F8F8F8' : '#3F51B5',

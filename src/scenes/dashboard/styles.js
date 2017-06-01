@@ -71,6 +71,5 @@ export default {
   footer: {
     borderTopWidth: 2,
     borderTopColor: '#d8dddf',
-    backgroundColor: 'white',
   },
 };
