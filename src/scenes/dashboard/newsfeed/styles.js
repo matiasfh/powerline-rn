@@ -1,7 +1,20 @@
 var PLColors = require('PLColors');
-var { Platform } = require('react-native');
+var { StyleSheet, Platform } = require('react-native');
 
 const platform = Platform.OS;
+const { WINDOW_WIDTH: viewportWidth, WINDOW_HEIGHT: viewportHeight } = require('PLConstants');
+
+function wp(percentage) {
+    const value = (percentage * viewportWidth) / 100;
+    return Math.round(value);
+}
+
+const slideHeight = viewportHeight * 0.3;
+const slideWidth = wp(75);
+const itemHorizontalMargin = wp(2);
+
+export const sliderWidth = viewportWidth;
+export const itemWidth = slideWidth + itemHorizontalMargin * 2;
 
 export default {
     fullName: {
@@ -42,5 +55,25 @@ export default {
         fontSize: 11,
         color: '#8694ab',
         fontWeight: '500',
-    }
+    },
+    footerButton: {
+        marginHorizontal: 5,
+    },
+    slideInnerContainer: {
+        width: itemWidth,
+        height: slideHeight,
+        paddingHorizontal: itemHorizontalMargin,
+        paddingBottom: 18 // needed for shadow
+    },
+    imageContainer: {
+        flex: 1,
+        backgroundColor: 'white',
+    },
+    imageContainerEven: {
+        backgroundColor: 'black'
+    },
+    image: {
+        ...StyleSheet.absoluteFillObject,
+        resizeMode: 'cover',
+    },
 }
