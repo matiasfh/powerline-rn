@@ -2,8 +2,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
-import { Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, Spinner, ListItem, Thumbnail, List, Card, CardItem } from 'native-base';
-import { View, RefreshControl } from 'react-native';
+import { Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, Spinner, ListItem, Thumbnail, List, Card, CardItem, Label } from 'native-base';
+import { View, RefreshControl, TouchableOpacity } from 'react-native';
 import { loadActivities, resetActivities } from 'PLActions';
 import styles from './styles';
 import TimeAgo from 'react-native-timeago';
@@ -58,6 +58,13 @@ class Newsfeed extends Component {
         this.loadInitialActivities();
     }
 
+    _renderZoneIcon(item) {
+        if (item.zone === 'prioritized') {
+            return (<Icon active name="ios-flash" style={styles.zoneIcon} />);
+        } else {
+            return null;
+        }
+    }
     postCard(item) {
         return (
             <Card>
@@ -68,11 +75,20 @@ class Newsfeed extends Component {
                             <Text style={styles.fullName}>{item.owner.first_name} {item.owner.last_name}</Text>
                             <Text note style={styles.subtitle}>{item.group.official_name} • <TimeAgo time={item.sent_at} hideAgo={true} /></Text>
                         </Body>
+                        <Right style={{ flex: 0.2 }}>
+                            <TouchableOpacity style={styles.dropDownIconContainer}>
+                                <Icon name="arrow-down" style={styles.dropDownIcon} />
+                            </TouchableOpacity>
+                        </Right>
                     </Left>
                 </CardItem>
 
                 <CardItem>
-                    <Body>
+                    <Left style={{ flex: 0.15, flexDirection: 'column', marginTop: -10 }}>
+                        {this._renderZoneIcon(item)}
+                        <Label style={styles.commentCount}>{item.comments_count}</Label>
+                    </Left>
+                    <Body style={{ marginVertical: -15, marginLeft: 10 }}>
                         <Text style={styles.description}>{item.description}</Text>
                     </Body>
                 </CardItem>
