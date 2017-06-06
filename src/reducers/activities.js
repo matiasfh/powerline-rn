@@ -19,7 +19,7 @@ const initialState = {
 const payloadStack: Array<Object> = [];
 
 function activities(state: State = initialState, action: Action): State {
-    if (action.type === 'LOADED_ACTIVITES') {
+    if (action.type === 'LOADED_ACTIVITIES') {
         payloadStack = payloadStack.concat(action.data.payload);
         return {
             page: action.data.page,

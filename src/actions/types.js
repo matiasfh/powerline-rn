@@ -19,7 +19,7 @@ export type Action =
   | { type: 'CLEAR_CACHED_GROUPS' }
   | { type: 'LOADED_BOOKMARKS', data: { page: number; totalPages: number; totalItems: number; items: Array<Object> } }
   | { type: 'RESET_BOOKMARKS' }
-  | { type: 'LOADED_ACTVITIES', data: { page: number; items: number; totalItems: number; payload: Array<Object> } }
+  | { type: 'LOADED_ACTIVITIES', data: { page: number; items: number; totalItems: number; payload: Array<Object> } }
   | { type: 'RESET_ACTIVITIES' }
 
 export type Dispatch = (action: Action | ThunkAction | PromiseAction | Array<Action>) => any;
