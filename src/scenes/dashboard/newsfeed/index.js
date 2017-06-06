@@ -83,35 +83,31 @@ class Newsfeed extends Component {
                     </Left>
                 </CardItem>
 
-                <CardItem>
+                <CardItem bordered>
                     <Left style={{ flex: 0.15, flexDirection: 'column', marginTop: -10 }}>
                         {this._renderZoneIcon(item)}
-                        <Label style={styles.commentCount}>{item.comments_count}</Label>
+                        <Label style={styles.commentCount}>{item.responses_count}</Label>
                     </Left>
-                    <Body style={{ marginVertical: -15, marginLeft: 10 }}>
+                    <Body style={{ marginTop: -15, marginLeft: 10 }}>
                         <Text style={styles.description}>{item.description}</Text>
                     </Body>
                 </CardItem>
 
-                <CardItem style={{ paddingVertical: 0 }}>
-                    <Left>
-                        <Button iconLeft dark transparent>
-                            <Icon active name="thumbs-up" />
-                            <Text>Upvote 12</Text>
+                <CardItem footer style={{ height: 35 }}>
+                    <Left style={{ justifyContent: 'flex-end' }}>
+                        <Button iconLeft transparent>
+                            <Icon name="md-arrow-dropdown" style={styles.footerIcon} />
+                            <Label style={styles.footerText}>Upvote {item.rate_up ? item.rate_up : 0}</Label>
+                        </Button>
+                        <Button iconLeft transparent>
+                            <Icon active name="md-arrow-dropup" style={styles.footerIcon} />
+                            <Label style={styles.footerText}>Downvote {item.rate_up ? item.rate_down : 0}</Label>
+                        </Button>
+                        <Button iconLeft transparent>
+                            <Icon active name="undo" style={styles.footerIcon} />
+                            <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
                         </Button>
                     </Left>
-                    <Body>
-                        <Button iconLeft dark transparent>
-                            <Icon active name="thumbs-down" />
-                            <Text>Downvote 4</Text>
-                        </Button>
-                    </Body>
-                    <Right>
-                        <Button iconLeft dark transparent>
-                            <Icon active name="undo" />
-                            <Text>Reply 3</Text>
-                        </Button>
-                    </Right>
                 </CardItem>
             </Card>
         );

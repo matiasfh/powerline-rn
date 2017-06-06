@@ -32,5 +32,15 @@ export default {
     commentCount: {
         fontSize: 12,
         color: '#8694ab',
+    },
+    footerIcon: {
+        fontSize: 15,
+        color: '#8694ab',
+        marginRight: 5,
+    },
+    footerText: {
+        fontSize: 11,
+        color: '#8694ab',
+        fontWeight: '500',
     }
 }
