@@ -3,9 +3,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import { Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, Spinner, ListItem, Thumbnail, List, Card, CardItem, Label } from 'native-base';
-import { View, RefreshControl, TouchableOpacity } from 'react-native';
+import { View, RefreshControl, TouchableOpacity, Image } from 'react-native';
+import Carousel from 'react-native-snap-carousel';
 import { loadActivities, resetActivities } from 'PLActions';
-import styles from './styles';
+import styles, { sliderWidth, itemWidth } from './styles';
 import TimeAgo from 'react-native-timeago';
 
 const PLColors = require('PLColors');
@@ -40,7 +41,6 @@ class Newsfeed extends Component {
             ]);
         } catch (e) {
             const message = e.message || e;
-            console.error(e);
             if (message !== 'Timed out') {
                 alert(message);
             }
@@ -65,26 +65,109 @@ class Newsfeed extends Component {
             return null;
         }
     }
+
+    _renderCarousel(item) {
+        if (item.poll) {
+            const slides = item.poll.educational_context.map((entry, index) => {
+                return (
+                    <TouchableOpacity
+                        key={`entry-${index}`}
+                        activeOpacity={0.7}
+                        style={styles.slideInnerContainer}
+                        onPress={() => { alert(`You've clicked '${title}'`); }}
+                    >
+                        <View style={[styles.imageContainer, (index + 1) % 2 === 0 ? styles.imageContainerEven : {}]}>
+                            <Image
+                                source={{ uri: entry.imageSrc }}
+                                style={styles.image}
+                            />
+                            <View style={[styles.radiusMask, (index + 1) % 2 === 0 ? styles.radiusMaskEven : {}]} />
+                        </View>
+                    </TouchableOpacity>
+                );
+            });
+
+            return (
+                <CardItem cardBody bordered>
+                    <Carousel
+                        sliderWidth={sliderWidth}
+                        itemWidth={itemWidth}
+                        inactiveSlideScale={1}
+                        inactiveSlideOpacity={1}
+                        enableMomentum={true}
+                        autoplay={true}
+                        autoplayDelay={500}
+                        autoplayInterval={2500}
+                        containerCustomStyle={styles.slider}
+                        contentContainerCustomStyle={styles.sliderContainer}
+                        showsHorizontalScrollIndicator={false}
+                        snapOnAndroid={true}
+                        removeClippedSubviews={false}
+                    >
+                        {slides}
+                    </Carousel>
+                </CardItem>
+            );
+        } else {
+            return null;
+        }
+    }
+
+    _renderHeader(item) {
+        switch (item.entity.type) {
+            default:
+                return (
+                    <CardItem>
+                        <Left>
+                            <Thumbnail small source={{ uri: item.owner.avatar_file_path ? item.owner.avatar_file_path : 'https://www.gstatic.com/webp/gallery3/2_webp_a.png' }} />
+                            <Body>
+                                <Text style={styles.fullName}>{item.owner.first_name} {item.owner.last_name}</Text>
+                                <Text note style={styles.subtitle}>{item.group.official_name} • <TimeAgo time={item.sent_at} hideAgo={true} /></Text>
+                            </Body>
+                            <Right style={{ flex: 0.2 }}>
+                                <TouchableOpacity style={styles.dropDownIconContainer}>
+                                    <Icon name="arrow-down" style={styles.dropDownIcon} />
+                                </TouchableOpacity>
+                            </Right>
+                        </Left>
+                    </CardItem>
+                );
+                break;
+        }
+    }
+
+    _renderFooter(item) {
+        switch (item.entity.type) {
+            default:
+                return (
+                    <CardItem footer style={{ height: 35 }}>
+                        <Left style={{ justifyContent: 'flex-end' }}>
+                            <Button iconLeft transparent style={styles.footerButton}>
+                                <Icon name="md-arrow-dropdown" style={styles.footerIcon} />
+                                <Label style={styles.footerText}>Upvote {item.rate_up ? item.rate_up : 0}</Label>
+                            </Button>
+                            <Button iconLeft transparent style={styles.footerButton}>
+                                <Icon active name="md-arrow-dropup" style={styles.footerIcon} />
+                                <Label style={styles.footerText}>Downvote {item.rate_up ? item.rate_down : 0}</Label>
+                            </Button>
+                            <Button iconLeft transparent style={styles.footerButton}>
+                                <Icon active name="undo" style={styles.footerIcon} />
+                                <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
+                            </Button>
+                        </Left>
+                    </CardItem>
+                );
+                break;
+        }
+    }
+
     postCard(item) {
         return (
             <Card>
-                <CardItem>
-                    <Left>
-                        <Thumbnail small source={{ uri: item.owner.avatar_file_path ? item.owner.avatar_file_path : 'https://www.gstatic.com/webp/gallery3/2_webp_a.png' }} />
-                        <Body>
-                            <Text style={styles.fullName}>{item.owner.first_name} {item.owner.last_name}</Text>
-                            <Text note style={styles.subtitle}>{item.group.official_name} • <TimeAgo time={item.sent_at} hideAgo={true} /></Text>
-                        </Body>
-                        <Right style={{ flex: 0.2 }}>
-                            <TouchableOpacity style={styles.dropDownIconContainer}>
-                                <Icon name="arrow-down" style={styles.dropDownIcon} />
-                            </TouchableOpacity>
-                        </Right>
-                    </Left>
-                </CardItem>
+                {this._renderHeader(item)}
 
                 <CardItem bordered>
-                    <Left style={{ flex: 0.15, flexDirection: 'column', marginTop: -10 }}>
+                    <Left style={{ flex: 0.15, flexDirection: 'column', marginTop: -10, alignSelf: 'flex-start' }}>
                         {this._renderZoneIcon(item)}
                         <Label style={styles.commentCount}>{item.responses_count}</Label>
                     </Left>
@@ -93,24 +176,34 @@ class Newsfeed extends Component {
                     </Body>
                 </CardItem>
 
-                <CardItem footer style={{ height: 35 }}>
-                    <Left style={{ justifyContent: 'flex-end' }}>
-                        <Button iconLeft transparent>
-                            <Icon name="md-arrow-dropdown" style={styles.footerIcon} />
-                            <Label style={styles.footerText}>Upvote {item.rate_up ? item.rate_up : 0}</Label>
-                        </Button>
-                        <Button iconLeft transparent>
-                            <Icon active name="md-arrow-dropup" style={styles.footerIcon} />
-                            <Label style={styles.footerText}>Downvote {item.rate_up ? item.rate_down : 0}</Label>
-                        </Button>
-                        <Button iconLeft transparent>
-                            <Icon active name="undo" style={styles.footerIcon} />
-                            <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
-                        </Button>
-                    </Left>
-                </CardItem>
+                {this._renderFooter(item)}
             </Card>
         );
+    }
+
+    groupPetitionCard(item) {
+        return (
+            <Card>
+                {this._renderHeader(item)}
+
+                <CardItem>
+                    <Left style={{ flex: 0.15, flexDirection: 'column', marginTop: -10, alignSelf: 'flex-start' }}>
+                        {this._renderZoneIcon(item)}
+                        <Label style={styles.commentCount}>{item.responses_count}</Label>
+                    </Left>
+                    <Body style={{ marginTop: -15, marginLeft: 10, flex: 1 }}>
+                        <Text style={styles.description}>{item.description}</Text>
+                    </Body>
+                </CardItem>
+
+                {this._renderCarousel(item)}
+                {this._renderFooter(item)}
+            </Card>
+        );
+    }
+
+    groupDiscussionCard(item) {
+        return null;
     }
 
     render() {
@@ -128,6 +221,12 @@ class Newsfeed extends Component {
                     switch (item.entity.type) {
                         case 'post':
                             return this.postCard(item);
+                            break;
+                        case 'petition':
+                            return this.groupPetitionCard(item);
+                            break;
+                        case 'leader-news':
+                            return this.groupDiscussionCard(item);
                             break;
                         default:
                             return null;
