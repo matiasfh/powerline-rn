@@ -4,11 +4,11 @@ import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import { Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, Spinner, ListItem, Thumbnail, List, Card, CardItem } from 'native-base';
 import { View, RefreshControl } from 'react-native';
-import { loadBookmarks, resetBookmarks } from 'PLActions';
+import { loadActivities, resetActivities } from 'PLActions';
 import styles from './styles';
+import TimeAgo from 'react-native-timeago';
 
 const PLColors = require('PLColors');
-const datas = ['Simon Mignolet11', 'Nathaniel Clyne', 'Dejan Lovren', 'Mama Sakho', 'Alberto Moreno', 'Emre Can', 'Joe Allen', 'Phil Coutinho'];
 
 class Newsfeed extends Component {
 
@@ -24,22 +24,23 @@ class Newsfeed extends Component {
     }
 
     componentWillMount() {
-        const { props: { page, items } } = this;
+        const { props: { page } } = this;
         if (page === 0) {
-            this.loadInitialBookmarks();
+            this.loadInitialActivities();
         }
     }
 
-    async loadInitialBookmarks() {
+    async loadInitialActivities() {
         this.setState({ isLoading: true });
         const { props: { token, dispatch } } = this;
         try {
             await Promise.race([
-                dispatch(loadBookmarks(token)),
+                dispatch(loadActivities(token)),
                 timeout(15000),
             ]);
         } catch (e) {
             const message = e.message || e;
+            console.error(e);
             if (message !== 'Timed out') {
                 alert(message);
             }
@@ -53,8 +54,8 @@ class Newsfeed extends Component {
     }
 
     _onRefresh() {
-        this.props.dispatch(resetBookmarks());
-        this.loadInitialBookmarks();
+        this.props.dispatch(resetActivities());
+        this.loadInitialActivities();
     }
 
     postCard(item) {
@@ -62,17 +63,17 @@ class Newsfeed extends Component {
             <Card>
                 <CardItem>
                     <Left>
-                        <Thumbnail small source={{ uri: item.detail.owner.avatar_file_path ? item.detail.owner.avatar_file_path : 'https://www.gstatic.com/webp/gallery3/2_webp_a.png' }} />
+                        <Thumbnail small source={{ uri: item.owner.avatar_file_path ? item.owner.avatar_file_path : 'https://www.gstatic.com/webp/gallery3/2_webp_a.png' }} />
                         <Body>
-                            <Text style={styles.fullName}>{item.detail.owner.first_name} {item.detail.owner.last_name}</Text>
-                            <Text note style={styles.subtitle}>{item.detail.group.official_name}</Text>
+                            <Text style={styles.fullName}>{item.owner.first_name} {item.owner.last_name}</Text>
+                            <Text note style={styles.subtitle}>{item.group.official_name} • <TimeAgo time={item.sent_at} hideAgo={true} /></Text>
                         </Body>
                     </Left>
                 </CardItem>
 
                 <CardItem>
                     <Body>
-                        <Text style={styles.description}>{item.detail.description}</Text>
+                        <Text style={styles.description}>{item.description}</Text>
                     </Body>
                 </CardItem>
 
@@ -101,7 +102,8 @@ class Newsfeed extends Component {
     }
 
     render() {
-        const { props: { page, items, totalItems, totalPages } } = this;
+        const { props: { payload } } = this;
+        console.log("payload = ", payload);
         return (
             <Content
                 refreshControl={
@@ -110,8 +112,8 @@ class Newsfeed extends Component {
                         onRefresh={this._onRefresh.bind(this)}
                     />
                 }>
-                <List dataArray={items} renderRow={item => {
-                    switch (item.type) {
+                <List dataArray={payload} renderRow={item => {
+                    switch (item.entity.type) {
                         case 'post':
                             return this.postCard(item);
                             break;
@@ -134,10 +136,9 @@ async function timeout(ms: number): Promise {
 
 const mapStateToProps = state => ({
     token: state.user.token,
-    page: state.bookmarks.page,
-    totalItems: state.bookmarks.totalItems,
-    totalPages: state.bookmarks.totalPages,
-    items: state.bookmarks.items,
+    page: state.activities.page,
+    totalItems: state.activities.totalItems,
+    payload: state.activities.payload,
 });
 
 export default connect(mapStateToProps)(Newsfeed);
