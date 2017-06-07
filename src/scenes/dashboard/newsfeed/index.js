@@ -155,8 +155,8 @@ class Newsfeed extends Component {
     }
 
     _renderHeader(item) {
-        var thumbnail: string = "";
-        var title: string = "";
+        var thumbnail: string = '';
+        var title: string = '';
 
         switch (item.entity.type) {
             case 'post' || 'user-petition':
@@ -171,7 +171,7 @@ class Newsfeed extends Component {
         return (
             <CardItem>
                 <Left>
-                    <Thumbnail small source={{ uri: thumbnail }} />
+                    <Thumbnail small source={{ uri: thumbnail }} defaultSource={require("img/blank_person.png")} />
                     <Body>
                         <Text style={styles.title}>{title}</Text>
                         <Text note style={styles.subtitle}>{item.group.official_name} • <TimeAgo time={item.sent_at} hideAgo={true} /></Text>
