@@ -155,26 +155,35 @@ class Newsfeed extends Component {
     }
 
     _renderHeader(item) {
+        var thumbnail: string = "";
+        var title: string = "";
+
         switch (item.entity.type) {
+            case 'post' || 'user-petition':
+                thumbnail = item.owner.avatar_file_path ? item.owner.avatar_file_path : '';
+                title = item.owner.first_name + ' ' + item.owner.last_name;
+                break;
             default:
-                return (
-                    <CardItem>
-                        <Left>
-                            <Thumbnail small source={{ uri: item.owner.avatar_file_path ? item.owner.avatar_file_path : 'https://www.gstatic.com/webp/gallery3/2_webp_a.png' }} />
-                            <Body>
-                                <Text style={styles.title}>{item.owner.first_name} {item.owner.last_name}</Text>
-                                <Text note style={styles.subtitle}>{item.group.official_name} • <TimeAgo time={item.sent_at} hideAgo={true} /></Text>
-                            </Body>
-                            <Right style={{ flex: 0.2 }}>
-                                <TouchableOpacity style={styles.dropDownIconContainer}>
-                                    <Icon name="arrow-down" style={styles.dropDownIcon} />
-                                </TouchableOpacity>
-                            </Right>
-                        </Left>
-                    </CardItem>
-                );
+                thumbnail = item.group.avatar_file_path ? item.group.avatar_file_path : '';
+                title = item.user.full_name;
                 break;
         }
+        return (
+            <CardItem>
+                <Left>
+                    <Thumbnail small source={{ uri: thumbnail }} />
+                    <Body>
+                        <Text style={styles.title}>{title}</Text>
+                        <Text note style={styles.subtitle}>{item.group.official_name} • <TimeAgo time={item.sent_at} hideAgo={true} /></Text>
+                    </Body>
+                    <Right style={{ flex: 0.2 }}>
+                        <TouchableOpacity style={styles.dropDownIconContainer}>
+                            <Icon name="arrow-down" style={styles.dropDownIcon} />
+                        </TouchableOpacity>
+                    </Right>
+                </Left>
+            </CardItem>
+        );
     }
 
     _renderFooter(item) {
