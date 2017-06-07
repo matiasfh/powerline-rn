@@ -26,6 +26,7 @@ function activities(state: State = initialState, action: Action): State {
             items: action.data.items,
             totalItems: action.data.totalItems,
             payload: payloadStack,
+            count: action.data.payload.length,
         };
     }
     if (action.type === 'RESET_ACTIVITIES' || action.type === 'LOGGED_OUT') {
