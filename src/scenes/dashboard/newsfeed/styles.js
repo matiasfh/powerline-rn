@@ -17,7 +17,7 @@ export const sliderWidth = viewportWidth;
 export const itemWidth = slideWidth + itemHorizontalMargin * 2;
 
 export default {
-    fullName: {
+    title: {
         color: '#21354a',
         fontSize: 12,
         fontWeight: 'bold',
@@ -75,5 +75,12 @@ export default {
     image: {
         ...StyleSheet.absoluteFillObject,
         resizeMode: 'cover',
+    },
+    textContainer: {
+        justifyContent: 'center',
+        paddingTop: 20,
+        paddingBottom: 20,
+        paddingHorizontal: 16,
+        backgroundColor: 'white',
     },
 }
