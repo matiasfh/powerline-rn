@@ -8,6 +8,7 @@ import Carousel from 'react-native-snap-carousel';
 import { loadActivities, resetActivities } from 'PLActions';
 import styles, { sliderWidth, itemWidth } from './styles';
 import TimeAgo from 'react-native-timeago';
+import ImageLoad from 'react-native-image-placeholder';
 
 const PLColors = require('PLColors');
 const { WINDOW_HEIGHT } = require('PLConstants');
@@ -118,7 +119,8 @@ class Newsfeed extends Component {
                         onPress={() => { alert(`You've clicked '${title}'`); }}
                     >
                         <View style={[styles.imageContainer, (index + 1) % 2 === 0 ? styles.imageContainerEven : {}]}>
-                            <Image
+                            <ImageLoad
+                                placeholderSource={require('img/empty_image.png')}
                                 source={{ uri: entry.imageSrc }}
                                 style={styles.image}
                             />
@@ -245,7 +247,8 @@ class Newsfeed extends Component {
                         style={styles.slideInnerContainer}
                         onPress={() => { alert(`You've clicked '${title}'`); }}>
                         <View style={styles.imageContainer}>
-                            <Image
+                            <ImageLoad
+                                placeholderSource={require('img/empty_image.png')}
                                 source={{ uri: item.metadata.image }}
                                 style={styles.image}
                             />
