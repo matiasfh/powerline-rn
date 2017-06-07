@@ -121,7 +121,7 @@ class Newsfeed extends Component {
                         <Left>
                             <Thumbnail small source={{ uri: item.owner.avatar_file_path ? item.owner.avatar_file_path : 'https://www.gstatic.com/webp/gallery3/2_webp_a.png' }} />
                             <Body>
-                                <Text style={styles.fullName}>{item.owner.first_name} {item.owner.last_name}</Text>
+                                <Text style={styles.title}>{item.owner.first_name} {item.owner.last_name}</Text>
                                 <Text note style={styles.subtitle}>{item.group.official_name} • <TimeAgo time={item.sent_at} hideAgo={true} /></Text>
                             </Body>
                             <Right style={{ flex: 0.2 }}>
@@ -161,21 +161,63 @@ class Newsfeed extends Component {
         }
     }
 
+    _renderDescription(item) {
+        var isBordered = true;
+        switch (item.entity.type) {
+            case 'post' || 'user-petition':
+                isBordered = (item.metadata && item.metadata.image) ? false : true;
+                break;
+            case 'petition':
+                isBordered = (item.poll && item.poll.educational_context.length) ? false : true;
+                break;
+            default:
+                break;
+        }
+        return (
+            <CardItem bordered={isBordered}>
+                <Left style={{ flex: 0.15, flexDirection: 'column', marginTop: -10, alignSelf: 'flex-start' }}>
+                    {this._renderZoneIcon(item)}
+                    <Label style={styles.commentCount}>{item.responses_count}</Label>
+                </Left>
+                <Body style={{ marginTop: -15, marginLeft: 10 }}>
+                    <Text style={styles.description}>{item.description}</Text>
+                </Body>
+            </CardItem>
+        );
+    }
+
+    _renderMetadata(item) {
+        if (item.metadata && item.metadata.image) {
+            return (
+                <CardItem bordered body>
+                    <TouchableOpacity
+                        activeOpacity={0.7}
+                        style={styles.slideInnerContainer}
+                        onPress={() => { alert(`You've clicked '${title}'`); }}>
+                        <View style={styles.imageContainer}>
+                            <Image
+                                source={{ uri: item.metadata.image }}
+                                style={styles.image}
+                            />
+                        </View>
+                        <View style={styles.textContainer}>
+                            <Text style={styles.title} numberOfLines={2}>{item.metadata.title}</Text>
+                            <Text style={styles.description} numberOfLines={2}>{item.metadata.description}</Text>
+                        </View>
+                    </TouchableOpacity>
+                </CardItem>
+            );
+        } else {
+            return null;
+        }
+    }
+
     postCard(item) {
         return (
             <Card>
                 {this._renderHeader(item)}
-
-                <CardItem bordered>
-                    <Left style={{ flex: 0.15, flexDirection: 'column', marginTop: -10, alignSelf: 'flex-start' }}>
-                        {this._renderZoneIcon(item)}
-                        <Label style={styles.commentCount}>{item.responses_count}</Label>
-                    </Left>
-                    <Body style={{ marginTop: -15, marginLeft: 10 }}>
-                        <Text style={styles.description}>{item.description}</Text>
-                    </Body>
-                </CardItem>
-
+                {this._renderDescription(item)}
+                {this._renderMetadata(item)}
                 {this._renderFooter(item)}
             </Card>
         );
@@ -185,17 +227,7 @@ class Newsfeed extends Component {
         return (
             <Card>
                 {this._renderHeader(item)}
-
-                <CardItem>
-                    <Left style={{ flex: 0.15, flexDirection: 'column', marginTop: -10, alignSelf: 'flex-start' }}>
-                        {this._renderZoneIcon(item)}
-                        <Label style={styles.commentCount}>{item.responses_count}</Label>
-                    </Left>
-                    <Body style={{ marginTop: -15, marginLeft: 10, flex: 1 }}>
-                        <Text style={styles.description}>{item.description}</Text>
-                    </Body>
-                </CardItem>
-
+                {this._renderDescription(item)}
                 {this._renderCarousel(item)}
                 {this._renderFooter(item)}
             </Card>
