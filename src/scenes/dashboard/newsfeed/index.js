@@ -10,6 +10,7 @@ import styles, { sliderWidth, itemWidth } from './styles';
 import TimeAgo from 'react-native-timeago';
 
 const PLColors = require('PLColors');
+const { WINDOW_HEIGHT } = require('PLConstants');
 
 class Newsfeed extends Component {
 
@@ -21,6 +22,7 @@ class Newsfeed extends Component {
         super(props);
         this.state = {
             isLoading: false,
+            isLoadingTail: false,
         };
     }
 
@@ -53,9 +55,48 @@ class Newsfeed extends Component {
         }
     }
 
+    async loadNextActivities() {
+        this.setState({ isLoadingTail: true });
+        const { props: { token, page, dispatch } } = this;
+        try {
+            await Promise.race([
+                dispatch(loadActivities(token, page)),
+                timeout(15000),
+            ]);
+        } catch (e) {
+            const message = e.message || e;
+            if (message !== 'Timed out') {
+                alert(message);
+            }
+            else {
+                alert('Timed out. Please check internet connection');
+            }
+            return;
+        } finally {
+            this.setState({ isLoadingTail: false });
+        }
+    }
+
     _onRefresh() {
         this.props.dispatch(resetActivities());
         this.loadInitialActivities();
+    }
+
+    _onEndReached() {
+        const { props: { page, count } } = this;
+        if (this.state.isLoadingTail === false && count > 0) {
+            this.loadNextActivities();
+        }
+    }
+
+    _renderTailLoading() {
+        if (this.state.isLoadingTail === true) {
+            return (
+                <Spinner color='gray' />
+            );
+        } else {
+            return null;
+        }
     }
 
     _renderZoneIcon(item) {
@@ -248,7 +289,14 @@ class Newsfeed extends Component {
                         refreshing={this.state.isLoading}
                         onRefresh={this._onRefresh.bind(this)}
                     />
-                }>
+                }
+                onScroll={(e) => {
+                    var height = e.nativeEvent.contentSize.height;
+                    var offset = e.nativeEvent.contentOffset.y;
+                    if ((WINDOW_HEIGHT + offset) >= height && offset > 0) {
+                        this._onEndReached();
+                    }
+                }}>
                 <List dataArray={payload} renderRow={item => {
                     switch (item.entity.type) {
                         case 'post':
@@ -266,6 +314,7 @@ class Newsfeed extends Component {
                     }
                 }}
                 />
+                {this._renderTailLoading()}
             </Content >
         );
     }
@@ -282,6 +331,7 @@ const mapStateToProps = state => ({
     page: state.activities.page,
     totalItems: state.activities.totalItems,
     payload: state.activities.payload,
+    count: state.activities.count,
 });
 
 export default connect(mapStateToProps)(Newsfeed);
