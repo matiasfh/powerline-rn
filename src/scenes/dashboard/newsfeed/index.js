@@ -156,6 +156,14 @@ class Newsfeed extends Component {
         }
     }
 
+    _renderTitle(item) {
+        if (item.title) {
+            return (<Text style={styles.title}>{item.title}</Text>);
+        } else {
+            return null;
+        }
+    }
+
     _renderHeader(item) {
         var thumbnail: string = '';
         var title: string = '';
@@ -234,6 +242,7 @@ class Newsfeed extends Component {
                         <Label style={styles.commentCount}>{item.responses_count}</Label>
                     </View>
                     <Body style={styles.descBodyContainer}>
+                        {this._renderTitle(item)}
                         <Text style={styles.description} numberOfLines={5}>{item.description}</Text>
                     </Body>
                 </Left>
