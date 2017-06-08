@@ -234,7 +234,7 @@ class Newsfeed extends Component {
                         <Label style={styles.commentCount}>{item.responses_count}</Label>
                     </View>
                     <Body style={styles.descBodyContainer}>
-                        <Text style={styles.description}>{item.description}</Text>
+                        <Text style={styles.description} numberOfLines={5}>{item.description}</Text>
                     </Body>
                 </Left>
             </CardItem>
