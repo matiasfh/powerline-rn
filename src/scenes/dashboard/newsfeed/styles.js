@@ -103,4 +103,8 @@ export default {
         alignSelf: 'stretch',
         backgroundColor: 'black',
     },
+    borderContainer: {
+        height: 1,
+        backgroundColor: PLColors.cellBorder,
+    }
 }

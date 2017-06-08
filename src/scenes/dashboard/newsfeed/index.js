@@ -172,7 +172,7 @@ class Newsfeed extends Component {
             });
 
             return (
-                <CardItem cardBody bordered>
+                <CardItem cardBody>
                     <Carousel
                         sliderWidth={sliderWidth}
                         itemWidth={itemWidth}
@@ -263,19 +263,8 @@ class Newsfeed extends Component {
     }
 
     _renderDescription(item) {
-        var isBordered = true;
-        switch (item.entity.type) {
-            case 'post':
-            case 'user-petition':
-                isBordered = (item.metadata && item.metadata.image) ? false : true;
-                break;
-            default:
-                isBordered = (item.poll && item.poll.educational_context.length) ? false : true;
-                break;
-        }
-
         return (
-            <CardItem bordered={isBordered}>
+            <CardItem>
                 <Left>
                     <View style={styles.descLeftContainer}>
                         {this._renderZoneIcon(item)}
@@ -293,7 +282,7 @@ class Newsfeed extends Component {
     _renderMetadata(item) {
         if (item.metadata && item.metadata.image) {
             return (
-                <CardItem bordered>
+                <CardItem>
                     <Left>
                         <View style={styles.descLeftContainer} />
                         <Body>
@@ -328,6 +317,7 @@ class Newsfeed extends Component {
                 {this._renderHeader(item)}
                 {this._renderDescription(item)}
                 {this._renderMetadata(item)}
+                <View style={styles.borderContainer} />
                 {this._renderFooter(item)}
             </Card>
         );
@@ -339,6 +329,7 @@ class Newsfeed extends Component {
                 {this._renderHeader(item)}
                 {this._renderDescription(item)}
                 {this._renderCarousel(item)}
+                <View style={styles.borderContainer} />
                 {this._renderFooter(item)}
             </Card>
         );
