@@ -9,6 +9,7 @@ import { loadActivities, resetActivities } from 'PLActions';
 import styles, { sliderWidth, itemWidth } from './styles';
 import TimeAgo from 'react-native-timeago';
 import ImageLoad from 'react-native-image-placeholder';
+import YouTube from 'react-native-youtube';
 
 const PLColors = require('PLColors');
 const { WINDOW_HEIGHT } = require('PLConstants');
@@ -121,6 +122,38 @@ class Newsfeed extends Component {
         }
     }
 
+    _renderContext(entry) {
+        if (entry.type === "image") {
+            return (
+                <ImageLoad
+                    placeholderSource={require('img/empty_image.png')}
+                    source={{ uri: entry.imageSrc }}
+                    style={styles.image}
+                />
+            );
+        }
+        else if (entry.type === "video") {
+            var url = entry.text.toString();
+            var videoid = this.youtubeGetID(url);
+            return (
+                <YouTube
+                    ref={(component) => {
+                        this._youTubeRef = component;
+                    }}
+
+                    // You must have an apiKey for the player to load in Android
+                    apiKey=""
+                    videoId={videoid}
+                    controls={1}
+                    style={styles.player}
+                />
+            );
+        }
+        else {
+            return null;
+        }
+    }
+
     _renderCarousel(item) {
         if (item.poll) {
             const slides = item.poll.educational_context.map((entry, index) => {
@@ -129,14 +162,9 @@ class Newsfeed extends Component {
                         key={`entry-${index}`}
                         activeOpacity={0.7}
                         style={styles.slideInnerContainer}
-                        onPress={() => { alert(`You've clicked '${title}'`); }}
                     >
                         <View style={[styles.imageContainer, (index + 1) % 2 === 0 ? styles.imageContainerEven : {}]}>
-                            <ImageLoad
-                                placeholderSource={require('img/empty_image.png')}
-                                source={{ uri: entry.imageSrc }}
-                                style={styles.image}
-                            />
+                            {this._renderContext(entry)}
                             <View style={[styles.radiusMask, (index + 1) % 2 === 0 ? styles.radiusMaskEven : {}]} />
                         </View>
                     </TouchableOpacity>
@@ -151,7 +179,7 @@ class Newsfeed extends Component {
                         inactiveSlideScale={1}
                         inactiveSlideOpacity={1}
                         enableMomentum={true}
-                        autoplay={true}
+                        autoplay={false}
                         autoplayDelay={500}
                         autoplayInterval={2500}
                         containerCustomStyle={styles.slider}
@@ -237,13 +265,12 @@ class Newsfeed extends Component {
     _renderDescription(item) {
         var isBordered = true;
         switch (item.entity.type) {
-            case 'post' || 'user-petition':
+            case 'post':
+            case 'user-petition':
                 isBordered = (item.metadata && item.metadata.image) ? false : true;
                 break;
-            case 'petition':
-                isBordered = (item.poll && item.poll.educational_context.length) ? false : true;
-                break;
             default:
+                isBordered = (item.poll && item.poll.educational_context.length) ? false : true;
                 break;
         }
 
@@ -295,7 +322,7 @@ class Newsfeed extends Component {
         }
     }
 
-    postCard(item) {
+    postOrUserPetitionCard(item) {
         return (
             <Card>
                 {this._renderHeader(item)}
@@ -306,7 +333,7 @@ class Newsfeed extends Component {
         );
     }
 
-    groupPetitionCard(item) {
+    groupCard(item) {
         return (
             <Card>
                 {this._renderHeader(item)}
@@ -315,10 +342,6 @@ class Newsfeed extends Component {
                 {this._renderFooter(item)}
             </Card>
         );
-    }
-
-    groupDiscussionCard(item) {
-        return null;
     }
 
     render() {
@@ -342,16 +365,11 @@ class Newsfeed extends Component {
                 <List dataArray={payload} renderRow={item => {
                     switch (item.entity.type) {
                         case 'post':
-                            return this.postCard(item);
-                            break;
-                        case 'petition':
-                            return this.groupPetitionCard(item);
-                            break;
-                        case 'leader-news':
-                            return this.groupDiscussionCard(item);
+                        case 'user-petition':
+                            return this.postOrUserPetitionCard(item);
                             break;
                         default:
-                            return null;
+                            return this.groupCard(item);
                             break;
                     }
                 }}
