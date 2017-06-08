@@ -98,4 +98,9 @@ export default {
         borderWidth: 1,
         borderColor: PLColors.cellBorder,
     },
+    player: {
+        ...StyleSheet.absoluteFillObject,
+        alignSelf: 'stretch',
+        backgroundColor: 'black',
+    },
 }
