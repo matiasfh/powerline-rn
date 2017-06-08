@@ -225,15 +225,18 @@ class Newsfeed extends Component {
             default:
                 break;
         }
+
         return (
             <CardItem bordered={isBordered}>
-                <Left style={{ flex: 0.15, flexDirection: 'column', marginTop: -10, alignSelf: 'flex-start' }}>
-                    {this._renderZoneIcon(item)}
-                    <Label style={styles.commentCount}>{item.responses_count}</Label>
+                <Left>
+                    <View style={styles.descLeftContainer}>
+                        {this._renderZoneIcon(item)}
+                        <Label style={styles.commentCount}>{item.responses_count}</Label>
+                    </View>
+                    <Body style={styles.descBodyContainer}>
+                        <Text style={styles.description}>{item.description}</Text>
+                    </Body>
                 </Left>
-                <Body style={{ marginTop: -15, marginLeft: 10 }}>
-                    <Text style={styles.description}>{item.description}</Text>
-                </Body>
             </CardItem>
         );
     }
@@ -241,23 +244,28 @@ class Newsfeed extends Component {
     _renderMetadata(item) {
         if (item.metadata && item.metadata.image) {
             return (
-                <CardItem bordered body>
-                    <TouchableOpacity
-                        activeOpacity={0.7}
-                        style={styles.slideInnerContainer}
-                        onPress={() => { alert(`You've clicked '${title}'`); }}>
-                        <View style={styles.imageContainer}>
-                            <ImageLoad
-                                placeholderSource={require('img/empty_image.png')}
-                                source={{ uri: item.metadata.image }}
-                                style={styles.image}
-                            />
-                        </View>
-                        <View style={styles.textContainer}>
-                            <Text style={styles.title} numberOfLines={2}>{item.metadata.title}</Text>
-                            <Text style={styles.description} numberOfLines={2}>{item.metadata.description}</Text>
-                        </View>
-                    </TouchableOpacity>
+                <CardItem bordered>
+                    <Left>
+                        <View style={styles.descLeftContainer} />
+                        <Body>
+                            <TouchableOpacity
+                                activeOpacity={0.7}
+                                style={styles.metaContainer}
+                                onPress={() => { alert(`You've clicked metadata`); }}>
+                                <View style={styles.imageContainer}>
+                                    <ImageLoad
+                                        placeholderSource={require('img/empty_image.png')}
+                                        source={{ uri: item.metadata.image }}
+                                        style={styles.image}
+                                    />
+                                </View>
+                                <View style={styles.textContainer}>
+                                    <Text style={styles.title} numberOfLines={2}>{item.metadata.title}</Text>
+                                    <Text style={styles.description} numberOfLines={2}>{item.metadata.description}</Text>
+                                </View>
+                            </TouchableOpacity>
+                        </Body>
+                    </Left>
                 </CardItem>
             );
         } else {

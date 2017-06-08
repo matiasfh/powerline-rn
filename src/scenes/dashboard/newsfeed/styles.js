@@ -12,6 +12,7 @@ function wp(percentage) {
 const slideHeight = viewportHeight * 0.3;
 const slideWidth = wp(75);
 const itemHorizontalMargin = wp(2);
+const metaHeight = viewportHeight * 0.35;
 
 export const sliderWidth = viewportWidth;
 export const itemWidth = slideWidth + itemHorizontalMargin * 2;
@@ -33,6 +34,7 @@ export default {
     dropDownIcon: {
         color: PLColors.lightText,
         fontSize: 14,
+        fontWeight: '100',
     },
     dropDownIconContainer: {
         width: 30,
@@ -78,9 +80,22 @@ export default {
     },
     textContainer: {
         justifyContent: 'center',
-        paddingTop: 20,
-        paddingBottom: 20,
-        paddingHorizontal: 16,
+        paddingTop: 10,
+        paddingBottom: 10,
+        paddingHorizontal: 10,
         backgroundColor: 'white',
+    },
+    descLeftContainer: {
+        width: 36,
+        alignItems: 'center',
+        alignSelf: 'flex-start'
+    },
+    descBodyContainer: {
+        alignSelf: 'flex-start',
+    },
+    metaContainer: {
+        height: metaHeight,
+        borderWidth: 1,
+        borderColor: PLColors.cellBorder,
     },
 }
