@@ -231,7 +231,7 @@ class Newsfeed extends Component {
         return (
             <CardItem>
                 <Left>
-                    <Thumbnail small source={{ uri: thumbnail }} defaultSource={require("img/blank_person.png")} />
+                    <Thumbnail small source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                     <Body>
                         <Text style={styles.title}>{title}</Text>
                         <Text note style={styles.subtitle}>{item.group.official_name} • <TimeAgo time={item.sent_at} hideAgo={true} /></Text>
@@ -261,7 +261,7 @@ class Newsfeed extends Component {
                                 <Label style={styles.footerText}>Downvote {item.rate_up ? item.rate_down : 0}</Label>
                             </Button>
                             <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon active name="undo" style={styles.footerIcon} />
+                                <Icon active name="ios-undo" style={styles.footerIcon} />
                                 <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
                             </Button>
                         </Left>
