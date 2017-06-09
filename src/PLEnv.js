@@ -11,4 +11,5 @@ module.exports = {
   version: 101,
   fontFamily: undefined,
   PER_PAGE: 20,
+  youTubeAPIKey: 'AIzaSyC2911BA6uHZWYcB0154TC1KcYKc6d337s',
 };
