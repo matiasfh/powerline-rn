@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import { Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, Spinner, ListItem, Thumbnail, List, Card, CardItem, Label } from 'native-base';
-import { View, RefreshControl, TouchableOpacity, Image } from 'react-native';
+import { View, RefreshControl, TouchableOpacity, Image, WebView, Platform } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
 import { loadActivities, resetActivities } from 'PLActions';
 import styles, { sliderWidth, itemWidth } from './styles';
@@ -13,6 +13,7 @@ import YouTube from 'react-native-youtube';
 
 const PLColors = require('PLColors');
 const { WINDOW_HEIGHT } = require('PLConstants');
+const { youTubeAPIKey } = require('PLEnv');
 
 class Newsfeed extends Component {
 
@@ -135,19 +136,27 @@ class Newsfeed extends Component {
         else if (entry.type === "video") {
             var url = entry.text.toString();
             var videoid = this.youtubeGetID(url);
-            return (
-                <YouTube
-                    ref={(component) => {
-                        this._youTubeRef = component;
-                    }}
-
-                    // You must have an apiKey for the player to load in Android
-                    apiKey=""
-                    videoId={videoid}
-                    controls={1}
-                    style={styles.player}
-                />
-            );
+            if (Platform.OS === 'ios') {
+                return (
+                    <YouTube
+                        ref={(component) => {
+                            this._youTubeRef = component;
+                        }}
+                        apiKey={youTubeAPIKey}
+                        videoId={videoid}
+                        controls={1}
+                        style={styles.player}
+                    />
+                );
+            } else {
+                return (
+                    <WebView
+                        style={styles.player}
+                        javaScriptEnabled={true}
+                        source={{ uri: `https://www.youtube.com/embed/${videoid}?rel=0&autoplay=0&showinfo=0&controls=0` }}
+                    />
+                );
+            }
         }
         else {
             return null;

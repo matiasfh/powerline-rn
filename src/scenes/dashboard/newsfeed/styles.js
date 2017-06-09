@@ -1,7 +1,6 @@
 var PLColors = require('PLColors');
-var { StyleSheet, Platform } = require('react-native');
+var { StyleSheet } = require('react-native');
 
-const platform = Platform.OS;
 const { WINDOW_WIDTH: viewportWidth, WINDOW_HEIGHT: viewportHeight } = require('PLConstants');
 
 function wp(percentage) {
