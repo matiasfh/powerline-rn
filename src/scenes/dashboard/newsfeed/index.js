@@ -229,7 +229,7 @@ class Newsfeed extends Component {
                     </Body>
                     <Right style={{ flex: 0.2 }}>
                         <TouchableOpacity style={styles.dropDownIconContainer}>
-                            <Icon name="arrow-down" style={styles.dropDownIcon} />
+                            <Icon name="ios-arrow-down" style={styles.dropDownIcon} />
                         </TouchableOpacity>
                     </Right>
                 </Left>
