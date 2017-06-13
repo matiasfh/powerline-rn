@@ -248,16 +248,117 @@ class Newsfeed extends Component {
 
     _renderFooter(item) {
         switch (item.entity.type) {
-            default:
+            case 'post':
+                return (
+                    <CardItem footer style={{ height: 35 }}>
+                        <Left style={{ justifyContent: 'flex-end' }}>
+                            <Button iconLeft transparent style={styles.footerButton}>
+                                <Icon name="md-arrow-dropup" style={styles.footerIcon} />
+                                <Label style={styles.footerText}>Upvote {item.rate_up ? item.rate_up : 0}</Label>
+                            </Button>
+                            <Button iconLeft transparent style={styles.footerButton}>
+                                <Icon active name="md-arrow-dropdown" style={styles.footerIcon} />
+                                <Label style={styles.footerText}>Downvote {item.rate_up ? item.rate_down : 0}</Label>
+                            </Button>
+                            <Button iconLeft transparent style={styles.footerButton}>
+                                <Icon active name="ios-undo" style={styles.footerIcon} />
+                                <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
+                            </Button>
+                        </Left>
+                    </CardItem>
+                );
+                break;
+            case 'petition':
+            case 'user-petition':
                 return (
                     <CardItem footer style={{ height: 35 }}>
                         <Left style={{ justifyContent: 'flex-end' }}>
                             <Button iconLeft transparent style={styles.footerButton}>
                                 <Icon name="md-arrow-dropdown" style={styles.footerIcon} />
+                                <Label style={styles.footerText}>Sign</Label>
+                            </Button>
+                            <Button iconLeft transparent style={styles.footerButton}>
+                                <Icon active name="ios-undo" style={styles.footerIcon} />
+                                <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
+                            </Button>
+                        </Left>
+                    </CardItem>
+                );
+                break;
+            case 'question':
+                return (
+                    <CardItem footer style={{ height: 35 }}>
+                        <Left style={{ justifyContent: 'flex-end' }}>
+                            <Button iconLeft transparent style={styles.footerButton}>
+                                <Icon name="md-arrow-dropdown" style={styles.footerIcon} />
+                                <Label style={styles.footerText}>Answer</Label>
+                            </Button>
+                            <Button iconLeft transparent style={styles.footerButton}>
+                                <Icon active name="ios-undo" style={styles.footerIcon} />
+                                <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
+                            </Button>
+                        </Left>
+                    </CardItem>
+                );
+                break;
+            case 'payment-request':
+                return (
+                    <CardItem footer style={{ height: 35 }}>
+                        <Left style={{ justifyContent: 'flex-end' }}>
+                            <Button iconLeft transparent style={styles.footerButton}>
+                                <Icon name="md-arrow-dropdown" style={styles.footerIcon} />
+                                <Label style={styles.footerText}>Pay</Label>
+                            </Button>
+                            <Button iconLeft transparent style={styles.footerButton}>
+                                <Icon active name="ios-undo" style={styles.footerIcon} />
+                                <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
+                            </Button>
+                        </Left>
+                    </CardItem>
+                );
+                break;
+            case 'leader-event':
+                return (
+                    <CardItem footer style={{ height: 35 }}>
+                        <Left style={{ justifyContent: 'flex-end' }}>
+                            <Button iconLeft transparent style={styles.footerButton}>
+                                <Icon name="md-arrow-dropdown" style={styles.footerIcon} />
+                                <Label style={styles.footerText}>RSVP</Label>
+                            </Button>
+                            <Button iconLeft transparent style={styles.footerButton}>
+                                <Icon active name="ios-undo" style={styles.footerIcon} />
+                                <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
+                            </Button>
+                        </Left>
+                    </CardItem>
+                );
+                break;
+            case 'leader-news':
+                return (
+                    <CardItem footer style={{ height: 35 }}>
+                        <Left style={{ justifyContent: 'flex-end' }}>
+                            <Button iconLeft transparent style={styles.footerButton}>
+                                <Icon name="md-arrow-dropdown" style={styles.footerIcon} />
+                                <Label style={styles.footerText}>Discuss</Label>
+                            </Button>
+                            <Button iconLeft transparent style={styles.footerButton}>
+                                <Icon active name="ios-undo" style={styles.footerIcon} />
+                                <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
+                            </Button>
+                        </Left>
+                    </CardItem>
+                );
+                break;
+            default:
+                return (
+                    <CardItem footer style={{ height: 35 }}>
+                        <Left style={{ justifyContent: 'flex-end' }}>
+                            <Button iconLeft transparent style={styles.footerButton}>
+                                <Icon name="md-arrow-dropup" style={styles.footerIcon} />
                                 <Label style={styles.footerText}>Upvote {item.rate_up ? item.rate_up : 0}</Label>
                             </Button>
                             <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon active name="md-arrow-dropup" style={styles.footerIcon} />
+                                <Icon active name="md-arrow-dropdown" style={styles.footerIcon} />
                                 <Label style={styles.footerText}>Downvote {item.rate_up ? item.rate_down : 0}</Label>
                             </Button>
                             <Button iconLeft transparent style={styles.footerButton}>
