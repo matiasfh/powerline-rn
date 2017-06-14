@@ -7,7 +7,7 @@
 
 module.exports = {
   testMenuEnabled: true,
-  API_URL: 'https://api-dev.powerli.ne/api',
+  API_URL: 'https://api-staging.powerli.ne/api',
   version: 101,
   fontFamily: undefined,
   PER_PAGE: 20,
