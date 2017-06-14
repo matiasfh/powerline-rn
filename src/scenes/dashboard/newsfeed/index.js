@@ -5,7 +5,7 @@ import { Actions } from 'react-native-router-flux';
 import { Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, Spinner, ListItem, Thumbnail, List, Card, CardItem, Label } from 'native-base';
 import { View, RefreshControl, TouchableOpacity, Image, WebView, Platform } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
-import { loadActivities, resetActivities } from 'PLActions';
+import { loadActivities, resetActivities, votePost } from 'PLActions';
 import styles, { sliderWidth, itemWidth } from './styles';
 import TimeAgo from 'react-native-timeago';
 import ImageLoad from 'react-native-image-placeholder';
@@ -77,6 +77,26 @@ class Newsfeed extends Component {
             return;
         } finally {
             this.setState({ isLoadingTail: false });
+        }
+    }
+
+    async vote(item, option) {
+        let response = await votePost(this.props.token, item.entity.id, option);
+        if (response.code) {
+            let code = response.code;
+            switch (code) {
+                case 400:
+                    alert('User already answered to this post.');
+                    break;
+                case 200:
+                    break;
+                default:
+                    alert('Something went wrong');
+                    break;
+            }
+        }
+        else {
+            alert('Something went wrong');
         }
     }
 
@@ -252,11 +272,11 @@ class Newsfeed extends Component {
                 return (
                     <CardItem footer style={{ height: 35 }}>
                         <Left style={{ justifyContent: 'flex-end' }}>
-                            <Button iconLeft transparent style={styles.footerButton}>
+                            <Button iconLeft transparent style={styles.footerButton} onPress={() => this.vote(item, 'upvote')}>
                                 <Icon name="md-arrow-dropup" style={styles.footerIcon} />
                                 <Label style={styles.footerText}>Upvote {item.rate_up ? item.rate_up : 0}</Label>
                             </Button>
-                            <Button iconLeft transparent style={styles.footerButton}>
+                            <Button iconLeft transparent style={styles.footerButton} onPress={() => this.vote(item, 'downvote')}>
                                 <Icon active name="md-arrow-dropdown" style={styles.footerIcon} />
                                 <Label style={styles.footerText}>Downvote {item.rate_up ? item.rate_down : 0}</Label>
                             </Button>
