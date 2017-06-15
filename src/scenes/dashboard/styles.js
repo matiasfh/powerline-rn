@@ -52,6 +52,12 @@ export default {
     color: PLColors.main,
     fontSize: (platform === 'ios') ? 18 : 15,
   },
+  iconP: {
+    tintColor: PLColors.main,
+    width: 13,
+    height: 20,
+    resizeMode: 'cover',
+  },
   iconText: {
     paddingVertical: 5,
     fontSize: 11,
