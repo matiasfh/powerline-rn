@@ -30,7 +30,7 @@ export default {
   groupSelector: {
     paddingVertical: 5,
     backgroundColor: PLColors.main,
-    flex: 0.2,
+    height: 80,
   },
   iconActiveButton: {
     width: 44,
