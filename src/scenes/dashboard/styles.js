@@ -1,6 +1,3 @@
-
-var React = require('react-native');
-var { StyleSheet } = React;
 var PLColors = require('PLColors');
 var { Platform } = require('react-native');
 
@@ -8,7 +5,8 @@ const platform = Platform.OS;
 
 export default {
   container: {
-    backgroundColor: '#FFF',
+    backgroundColor: '#e2e7ea',
+    flex: 1,
   },
   header: {
     backgroundColor: PLColors.main,
@@ -32,6 +30,7 @@ export default {
   groupSelector: {
     paddingVertical: 5,
     backgroundColor: PLColors.main,
+    flex: 0.2,
   },
   iconActiveButton: {
     width: 44,
@@ -68,5 +67,10 @@ export default {
   },
   menuText: {
     color: '#293f53',
-  }
+  },
+  footer: {
+    borderTopWidth: 2,
+    borderTopColor: '#d8dddf',
+    backgroundColor: 'white',
+  },
 };

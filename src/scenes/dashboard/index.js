@@ -15,8 +15,11 @@ import Menu, {
 } from 'react-native-popup-menu';
 
 import { openDrawer } from '../../actions/drawer';
-import { loadGroups, clearGroupsInCache } from 'PLActions';
+import { loadUserGroups, clearGroupsInCache, loadBookmarks, resetBookmarks } from 'PLActions';
 import styles from './styles';
+
+// Tab Scenes
+import Newsfeed from './newsfeed/'
 
 const { SlideInMenu } = renderers;
 
@@ -37,6 +40,7 @@ class Home extends Component {
     };
   }
 
+  // Newsfeed Tab
   toggleTab1() {
     this.setState({
       tab1: true,
@@ -46,6 +50,7 @@ class Home extends Component {
     });
   }
 
+  // Friends Tab
   toggleTab2() {
     this.setState({
       tab1: false,
@@ -55,6 +60,7 @@ class Home extends Component {
     });
   }
 
+  // Messages Tab
   toggleTab3() {
     this.setState({
       tab1: false,
@@ -64,6 +70,7 @@ class Home extends Component {
     });
   }
 
+  // Notifications Tab
   toggleTab4() {
     this.setState({
       tab1: false,
@@ -86,8 +93,15 @@ class Home extends Component {
   }
 
   goToGroupSelector() {
-    this.props.dispatch(clearGroupsInCache());
     Actions.groupSelector();
+  }
+
+  renderSelectedTab() {
+    if (this.state.tab1 === true) {
+      return (<Newsfeed />);
+    } else {
+      return null;
+    }
   }
 
   render() {
@@ -105,45 +119,45 @@ class Home extends Component {
               <Icon active name="search" />
             </Item>
           </Header>
-
-          <Content>
+          <View style={styles.container}>
             <Grid style={styles.groupSelector}>
               <Row>
                 <Col style={styles.col}>
                   <Button style={this.state.group == 'all' ? styles.iconActiveButton : styles.iconButton} onPress={() => this.selectGroup('all')}>
                     <Icon active name="walk" style={styles.icon} />
                   </Button>
-                  <Text style={styles.iconText}>All</Text>
+                  <Text style={styles.iconText} onPress={() => this.selectGroup('all')}>All</Text>
                 </Col>
                 <Col style={styles.col}>
                   <Button style={this.state.group == 'town' ? styles.iconActiveButton : styles.iconButton} onPress={() => this.selectGroup('town')}>
                     <Icon active name="pin" style={styles.icon} />
                   </Button>
-                  <Text style={styles.iconText}>Town</Text>
+                  <Text style={styles.iconText} onPress={() => this.selectGroup('town')}>Town</Text>
                 </Col>
                 <Col style={styles.col}>
                   <Button style={this.state.group == 'state' ? styles.iconActiveButton : styles.iconButton} onPress={() => this.selectGroup('state')}>
                     <Icon active name="pin" style={styles.icon} />
                   </Button>
-                  <Text style={styles.iconText}>State</Text>
+                  <Text style={styles.iconText} onPress={() => this.selectGroup('state')}>State</Text>
                 </Col>
                 <Col style={styles.col}>
                   <Button style={this.state.group == 'country' ? styles.iconActiveButton : styles.iconButton} onPress={() => this.selectGroup('country')}>
                     <Icon active name="pin" style={styles.icon} />
                   </Button>
-                  <Text style={styles.iconText}>Country</Text>
+                  <Text style={styles.iconText} onPress={() => this.selectGroup('country')}>Country</Text>
                 </Col>
                 <Col style={styles.col}>
                   <Button style={styles.iconButton} onPress={() => this.goToGroupSelector()}>
                     <Icon active name="more" style={styles.icon} />
                   </Button>
-                  <Text style={styles.iconText}>More</Text>
+                  <Text style={styles.iconText} onPress={() => this.goToGroupSelector()}>More</Text>
                 </Col>
               </Row>
             </Grid>
-          </Content>
+            {this.renderSelectedTab()}
+          </View>
 
-          <Footer>
+          <Footer style={styles.footer}>
             <FooterTab>
               <Button active={this.state.tab1} onPress={() => this.toggleTab1()} >
                 <Icon active={this.state.tab1} name="ios-flash" />
@@ -244,7 +258,15 @@ function bindAction(dispatch) {
   };
 }
 
+async function timeout(ms: number): Promise {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => reject(new Error('Timed out')), ms);
+  });
+}
+
 const mapStateToProps = state => ({
+  token: state.user.token,
+  bookmarksPage: state.bookmarks.page,
 });
 
 export default connect(mapStateToProps, bindAction)(Home);

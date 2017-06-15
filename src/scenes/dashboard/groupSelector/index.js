@@ -4,10 +4,11 @@ import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import { Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, Spinner, ListItem, Thumbnail, List } from 'native-base';
 import { View, RefreshControl } from 'react-native';
-import { loadGroups, clearGroupsInCache } from 'PLActions';
+import { loadUserGroups, clearGroupsInCache } from 'PLActions';
 import styles from './styles';
 
 const PLColors = require('PLColors');
+const { WINDOW_HEIGHT } = require('PLConstants');
 
 class GroupSelector extends Component {
 
@@ -19,28 +20,77 @@ class GroupSelector extends Component {
         super(props);
         this.state = {
             isLoading: false,
+            isLoadingTail: false,
         };
     }
 
-    componentDidMount() {
-        const { props: { token, page, perPage, groups } } = this;
-        this.setState({ isLoading: true });
-        this.props.dispatch(loadGroups(token, 0, perPage));
+    componentWillMount() {
+        const { props: { page } } = this;
+        if (page === 0) {
+            this.loadInitialGroups();
+        }
     }
 
-    componentWillReceiveProps(nextProps) {
-        this.setState({ isLoading: false });
+    async loadInitialGroups() {
+        this.setState({ isLoading: true });
+        const { props: { token, dispatch } } = this;
+        try {
+            await Promise.race([
+                dispatch(loadUserGroups(token)),
+                timeout(15000),
+            ]);
+        } catch (e) {
+            const message = e.message || e;
+            if (message !== 'Timed out') {
+                alert(message);
+            }
+            else {
+                alert('Timed out. Please check internet connection');
+            }
+            return;
+        } finally {
+            this.setState({ isLoading: false });
+        }
+    }
+
+    async loadNextGroups() {
+        this.setState({ isLoadingTail: true });
+        const { props: { token, page, dispatch } } = this;
+        try {
+            await Promise.race([
+                dispatch(loadUserGroups(token, page)),
+                timeout(15000),
+            ]);
+        } catch (e) {
+            const message = e.message || e;
+            if (message !== 'Timed out') {
+                alert(message);
+            }
+            else {
+                alert('Timed out. Please check internet connection');
+            }
+            return;
+        } finally {
+            this.setState({ isLoadingTail: false });
+        }
     }
 
     _onRefresh() {
-        const { props: { token, page, perPage } } = this;
-        this.props.dispatch(loadGroups(token, page, perPage));
+        this.props.dispatch(clearGroupsInCache());
+        this.loadInitialGroups();
     }
 
-    _renderLoading() {
-        if (this.state.isLoading == true) {
+    _onEndReached() {
+        const { props: { page, count } } = this;
+        if (this.state.isLoadingTail === false && count > 0) {
+            this.loadNextGroups();
+        }
+    }
+
+    _renderTailLoading() {
+        if (this.state.isLoadingTail === true) {
             return (
-                <Spinner color={PLColors.main} />
+                <Spinner color='gray' />
             );
         } else {
             return null;
@@ -48,7 +98,7 @@ class GroupSelector extends Component {
     }
 
     render() {
-        const { props: { groups } } = this;
+        const { props: { payload } } = this;
         return (
             <Container style={styles.container}>
                 <Header searchBar rounded style={styles.header}>
@@ -69,7 +119,14 @@ class GroupSelector extends Component {
                             refreshing={this.state.isLoading}
                             onRefresh={this._onRefresh.bind(this)}
                         />
-                    }>
+                    }
+                    onScroll={(e) => {
+                        var height = e.nativeEvent.contentSize.height;
+                        var offset = e.nativeEvent.contentOffset.y;
+                        if ((WINDOW_HEIGHT + offset) >= height && offset > 0) {
+                            this._onEndReached();
+                        }
+                    }}>
                     <ListItem itemHeader first style={{ borderBottomWidth: 0 }}>
                         <Left>
                             <Text style={styles.titleText}>Choose Group</Text>
@@ -112,7 +169,7 @@ class GroupSelector extends Component {
                         </Body>
                     </ListItem>
                     <List
-                        dataArray={groups} renderRow={(group) =>
+                        dataArray={payload} renderRow={(group) =>
                             <ListItem avatar style={{ paddingVertical: 5 }}>
                                 <Left>
                                     <Thumbnail small source={{ uri: group.avatar_file_path ? group.avatar_file_path : 'https://www.gstatic.com/webp/gallery3/2_webp_a.png' }} style={styles.thumbnail} />
@@ -123,17 +180,24 @@ class GroupSelector extends Component {
                             </ListItem>
                         }>
                     </List>
+                    {this._renderTailLoading()}
                 </Content>
-            </Container>
+            </Container >
         );
     }
+}
+
+async function timeout(ms: number): Promise {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => reject(new Error('Timed out')), ms);
+    });
 }
 
 const mapStateToProps = state => ({
     token: state.user.token,
     page: state.groups.page,
-    perPage: state.groups.items,
-    groups: state.groups.payload,
+    count: state.groups.items,
+    payload: state.groups.payload,
 });
 
 

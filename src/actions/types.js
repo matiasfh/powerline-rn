@@ -17,6 +17,10 @@ export type Action =
   | { type: 'CLOSE_DRAWER' }
   | { type: 'LOADED_GROUPS', data: { page: number; items: number; payload: Array<Object> } }
   | { type: 'CLEAR_CACHED_GROUPS' }
+  | { type: 'LOADED_BOOKMARKS', data: { page: number; totalPages: number; totalItems: number; items: Array<Object> } }
+  | { type: 'RESET_BOOKMARKS' }
+  | { type: 'LOADED_ACTIVITIES', data: { page: number; items: number; totalItems: number; payload: Array<Object> } }
+  | { type: 'RESET_ACTIVITIES' }
 
 export type Dispatch = (action: Action | ThunkAction | PromiseAction | Array<Action>) => any;
 export type GetState = () => Object;
