@@ -16,19 +16,56 @@ class GroupSelector extends Component {
         token: React.PropTypes.string,
     }
 
+    otherGroups: Array<Object>;
+    townGroup: Object;
+    stateGroup: Object;
+    countryGroup: Object;
+
     constructor(props) {
         super(props);
         this.state = {
             isLoading: false,
             isLoadingTail: false,
         };
+        this.otherGroups = [];
+        this.townGroup = null;
+        this.stateGroup = null;
+        this.countryGroup = null;
     }
 
     componentWillMount() {
-        const { props: { page } } = this;
+        const { props: { page, payload } } = this;
         if (page === 0) {
             this.loadInitialGroups();
         }
+        else if (payload.length != 0) {
+            this.filterGroups(payload);
+        }
+    }
+
+    componentWillUpdate() {
+        const { props: { payload } } = this;
+        if (payload.length != 0) {
+            this.filterGroups(payload);
+        }
+    }
+
+    filterGroups(payload) {
+        var others = [];
+        payload.forEach(function (group) {
+            if (group.group_type_label === "local") {
+                this.townGroup = group;
+            }
+            else if (group.group_type_label === "state") {
+                this.stateGroup = group;
+            } else if (group.group_type_label === "country") {
+                this.countryGroup = group;
+            }
+            else {
+                others.push(group);
+            }
+        }, this);
+        this.otherGroups = others;
     }
 
     async loadInitialGroups() {
