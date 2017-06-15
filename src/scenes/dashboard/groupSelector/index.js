@@ -16,19 +16,56 @@ class GroupSelector extends Component {
         token: React.PropTypes.string,
     }
 
+    otherGroups: Array<Object>;
+    townGroup: Object;
+    stateGroup: Object;
+    countryGroup: Object;
+
     constructor(props) {
         super(props);
         this.state = {
             isLoading: false,
             isLoadingTail: false,
         };
+        this.otherGroups = [];
+        this.townGroup = null;
+        this.stateGroup = null;
+        this.countryGroup = null;
     }
 
     componentWillMount() {
-        const { props: { page } } = this;
+        const { props: { page, payload } } = this;
         if (page === 0) {
             this.loadInitialGroups();
         }
+        else if (payload.length != 0) {
+            this.filterGroups(payload);
+        }
+    }
+
+    componentWillUpdate() {
+        const { props: { payload } } = this;
+        if (payload.length != 0) {
+            this.filterGroups(payload);
+        }
+    }
+
+    filterGroups(payload) {
+        var others = [];
+        payload.forEach(function (group) {
+            if (group.group_type_label === "local") {
+                this.townGroup = group;
+            }
+            else if (group.group_type_label === "state") {
+                this.stateGroup = group;
+            } else if (group.group_type_label === "country") {
+                this.countryGroup = group;
+            }
+            else {
+                others.push(group);
+            }
+        }, this);
+        this.otherGroups = others;
     }
 
     async loadInitialGroups() {
@@ -97,8 +134,65 @@ class GroupSelector extends Component {
         }
     }
 
+    _renderTownGroup() {
+        if (this.townGroup) {
+            return (
+                <ListItem icon style={{ paddingVertical: 5 }}>
+                    <Left>
+                        <Button style={styles.iconButton}>
+                            <Icon active name="pin" style={styles.icon} />
+                        </Button>
+                    </Left>
+                    <Body>
+                        <Text style={styles.cellText}>{this.townGroup.official_name}</Text>
+                    </Body>
+                </ListItem>
+            );
+        } else {
+            return null;
+        }
+    }
+
+    _renderStateGroup() {
+        if (this.stateGroup) {
+            return (
+                <ListItem icon style={{ paddingVertical: 5 }}>
+                    <Left>
+                        <Button style={styles.iconButton}>
+                            <Icon active name="pin" style={styles.icon} />
+                        </Button>
+                    </Left>
+                    <Body>
+                        <Text style={styles.cellText}>{this.stateGroup.official_name}</Text>
+                    </Body>
+                </ListItem>
+            );
+        } else {
+            return null;
+        }
+    }
+
+    _renderCountryGroup() {
+        if (this.countryGroup) {
+            return (
+                <ListItem icon style={{ paddingVertical: 5 }}>
+                    <Left>
+                        <Button style={styles.iconButton}>
+                            <Icon active name="pin" style={styles.icon} />
+                        </Button>
+                    </Left>
+                    <Body>
+                        <Text style={styles.cellText}>{this.countryGroup.official_name}</Text>
+                    </Body>
+                </ListItem>
+            );
+        } else {
+            return null;
+        }
+    }
+
     render() {
-        const { props: { payload } } = this;
+
         return (
             <Container style={styles.container}>
                 <Header searchBar rounded style={styles.header}>
@@ -138,41 +232,14 @@ class GroupSelector extends Component {
                             </Button>
                         </Right>
                     </ListItem>
-                    <ListItem icon style={{ paddingVertical: 5 }}>
-                        <Left>
-                            <Button style={styles.iconButton}>
-                                <Icon active name="pin" style={styles.icon} />
-                            </Button>
-                        </Left>
-                        <Body>
-                            <Text style={styles.cellText}>Town</Text>
-                        </Body>
-                    </ListItem>
-                    <ListItem icon style={{ paddingVertical: 5 }}>
-                        <Left>
-                            <Button style={styles.iconButton}>
-                                <Icon active name="pin" style={styles.icon} />
-                            </Button>
-                        </Left>
-                        <Body>
-                            <Text style={styles.cellText}>State</Text>
-                        </Body>
-                    </ListItem>
-                    <ListItem icon style={{ paddingVertical: 5 }}>
-                        <Left>
-                            <Button style={styles.iconButton}>
-                                <Icon active name="pin" style={styles.icon} />
-                            </Button>
-                        </Left>
-                        <Body>
-                            <Text style={styles.cellText}>Country</Text>
-                        </Body>
-                    </ListItem>
+                    {this._renderTownGroup()}
+                    {this._renderStateGroup()}
+                    {this._renderCountryGroup()}
                     <List
-                        dataArray={payload} renderRow={(group) =>
+                        dataArray={this.otherGroups} renderRow={(group) =>
                             <ListItem avatar style={{ paddingVertical: 5 }}>
                                 <Left>
-                                    <Thumbnail small source={{ uri: group.avatar_file_path ? group.avatar_file_path : 'https://www.gstatic.com/webp/gallery3/2_webp_a.png' }} style={styles.thumbnail} />
+                                    <Thumbnail small source={group.avatar_file_path ? { uri: group.avatar_file_path } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} style={styles.thumbnail} />
                                 </Left>
                                 <Body>
                                     <Text style={styles.cellText}>{group.official_name}</Text>
