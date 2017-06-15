@@ -176,49 +176,49 @@ class Home extends Component {
                     <MenuOption value={'group_announcement'}>
                       <Button iconLeft transparent dark onPress={() => this.selectNewItem('group_announcement')}>
                         <Icon name="volume-up" style={styles.menuIcon} />
-                        <Text style={styles.menuText}>Create New Group Announcement</Text>
+                        <Text style={styles.menuText}>New Group Announcement</Text>
                       </Button>
                     </MenuOption>
                     <MenuOption value={'group_fundraiser'}>
                       <Button iconLeft transparent dark onPress={() => this.selectNewItem('group_fundraiser')}>
-                        <Icon name="cash" style={styles.menuIcon} />
-                        <Text style={styles.menuText}>Create New Group Fundraiser</Text>
+                        <Icon name="ios-cash" style={styles.menuIcon} />
+                        <Text style={styles.menuText}>New Group Fundraiser</Text>
                       </Button>
                     </MenuOption>
                     <MenuOption value={'group_event'}>
                       <Button iconLeft transparent dark onPress={() => this.selectNewItem('group_event')}>
-                        <Icon name="calendar" style={styles.menuIcon} />
-                        <Text style={styles.menuText}>Create New Group Event</Text>
+                        <Icon name="ios-calendar" style={styles.menuIcon} />
+                        <Text style={styles.menuText}>New Group Event</Text>
                       </Button>
                     </MenuOption>
                     <MenuOption value={'group_petition'}>
                       <Button iconLeft transparent dark onPress={() => this.selectNewItem('group_petition')}>
-                        <Icon name="create" style={styles.menuIcon} />
-                        <Text style={styles.menuText}>Create New Group Petition</Text>
+                        <Icon name="ios-clipboard" style={styles.menuIcon} />
+                        <Text style={styles.menuText}>New Group Petition</Text>
                       </Button>
                     </MenuOption>
                     <MenuOption value={'group_discussion'}>
                       <Button iconLeft transparent dark onPress={() => this.selectNewItem('group_discussion')}>
-                        <Icon name="chatbubbles" style={styles.menuIcon} />
-                        <Text style={styles.menuText}>Create New Group Discussion</Text>
+                        <Icon name="ios-chatbubbles" style={styles.menuIcon} />
+                        <Text style={styles.menuText}>New Group Discussion</Text>
                       </Button>
                     </MenuOption>
                     <MenuOption value={'group_poll'}>
                       <Button iconLeft transparent dark onPress={() => this.selectNewItem('group_poll')}>
-                        <Icon name="stats" style={styles.menuIcon} />
-                        <Text style={styles.menuText}>Create New Group Poll</Text>
+                        <Icon name="ios-stats" style={styles.menuIcon} />
+                        <Text style={styles.menuText}>New Group Poll</Text>
                       </Button>
                     </MenuOption>
                     <MenuOption value={'petition'}>
                       <Button iconLeft transparent dark onPress={() => this.selectNewItem('petition')}>
-                        <Icon name="create" style={styles.menuIcon} />
-                        <Text style={styles.menuText}>Create New Petition</Text>
+                        <Icon name="ios-clipboard" style={styles.menuIcon} />
+                        <Text style={styles.menuText}>New Petition</Text>
                       </Button>
                     </MenuOption>
                     <MenuOption value={'post'}>
                       <Button iconLeft transparent dark onPress={() => this.selectNewItem('post')}>
-                        <Icon name="flag" style={styles.menuIcon} />
-                        <Text style={styles.menuText}>Create New Post</Text>
+                        <Icon name="ios-flag" style={styles.menuIcon} />
+                        <Text style={styles.menuText}>New Post</Text>
                       </Button>
                     </MenuOption>
                   </MenuOptions>
