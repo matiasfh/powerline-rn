@@ -34,6 +34,7 @@ export default {
         color: PLColors.lightText,
         fontSize: 14,
         fontWeight: '100',
+        paddingHorizontal: 5,
     },
     dropDownIconContainer: {
         width: 30,
@@ -105,5 +106,12 @@ export default {
     borderContainer: {
         height: 1,
         backgroundColor: PLColors.cellBorder,
-    }
+    },
+    menuIcon: {
+        color: '#223549',
+        width: 25,
+    },
+    menuText: {
+        color: '#293f53',
+    },
 }
