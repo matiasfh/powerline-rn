@@ -11,8 +11,17 @@ import TimeAgo from 'react-native-timeago';
 import ImageLoad from 'react-native-image-placeholder';
 import YouTube from 'react-native-youtube';
 
+import Menu, {
+    MenuContext,
+    MenuTrigger,
+    MenuOptions,
+    MenuOption,
+    renderers
+} from 'react-native-popup-menu';
+
+
 const PLColors = require('PLColors');
-const { WINDOW_HEIGHT } = require('PLConstants');
+const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
 const { youTubeAPIKey } = require('PLEnv');
 
 class Newsfeed extends Component {
@@ -257,9 +266,31 @@ class Newsfeed extends Component {
                         <Text note style={styles.subtitle}>{item.group.official_name} • <TimeAgo time={item.sent_at} hideAgo={true} /></Text>
                     </Body>
                     <Right style={{ flex: 0.2 }}>
-                        <TouchableOpacity style={styles.dropDownIconContainer}>
-                            <Icon name="ios-arrow-down" style={styles.dropDownIcon} />
-                        </TouchableOpacity>
+                        <Menu>
+                            <MenuTrigger>
+                                <Icon name="ios-arrow-down" style={styles.dropDownIcon} />
+                            </MenuTrigger>
+                            <MenuOptions customStyles={optionsStyles}>
+                                <MenuOption>
+                                    <Button iconLeft transparent dark>
+                                        <Icon name="logo-rss" style={styles.menuIcon} />
+                                        <Text style={styles.menuText}>Subscribe to this Post</Text>
+                                    </Button>
+                                </MenuOption>
+                                <MenuOption>
+                                    <Button iconLeft transparent dark>
+                                        <Icon name="ios-heart" style={styles.menuIcon} />
+                                        <Text style={styles.menuText}>Add to Favorites</Text>
+                                    </Button>
+                                </MenuOption>
+                                <MenuOption>
+                                    <Button iconLeft transparent dark>
+                                        <Icon name="md-person-add" style={styles.menuIcon} />
+                                        <Text style={styles.menuText}>Add to Contact</Text>
+                                    </Button>
+                                </MenuOption>
+                            </MenuOptions>
+                        </Menu>
                     </Right>
                 </Left>
             </CardItem>
@@ -500,6 +531,14 @@ class Newsfeed extends Component {
         );
     }
 }
+
+const optionsStyles = {
+    optionsContainer: {
+        backgroundColor: '#fafafa',
+        paddingLeft: 5,
+        width: WINDOW_WIDTH,
+    },
+};
 
 async function timeout(ms: number): Promise {
     return new Promise((resolve, reject) => {
