@@ -119,8 +119,9 @@ class Home extends Component {
               <Icon active name="search" />
             </Item>
           </Header>
-          <View style={styles.container}>
-            <Grid style={styles.groupSelector}>
+
+          <View style={styles.groupSelector}>
+            <Grid>
               <Row>
                 <Col style={styles.col}>
                   <Button style={this.state.group == 'all' ? styles.iconActiveButton : styles.iconButton} onPress={() => this.selectGroup('all')}>
@@ -154,8 +155,9 @@ class Home extends Component {
                 </Col>
               </Row>
             </Grid>
-            {this.renderSelectedTab()}
           </View>
+
+          {this.renderSelectedTab()}
 
           <Footer style={styles.footer}>
             <FooterTab>
