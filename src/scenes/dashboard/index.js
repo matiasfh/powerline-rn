@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import { Container, Header, Title, Content, Button, Footer, FooterTab, Text, Body, Left, Right, Icon, Item, Input, Grid, Row, Col } from 'native-base';
 
-import { View } from 'react-native';
+import { View, Image } from 'react-native';
 
 import Menu, {
   MenuContext,
@@ -125,7 +125,10 @@ class Home extends Component {
               <Row>
                 <Col style={styles.col}>
                   <Button style={this.state.group == 'all' ? styles.iconActiveButton : styles.iconButton} onPress={() => this.selectGroup('all')}>
-                    <Icon active name="walk" style={styles.icon} />
+                    <Image
+                      style={styles.iconP}
+                      source={require("img/p_logo.png")}
+                    />
                   </Button>
                   <Text style={styles.iconText} onPress={() => this.selectGroup('all')}>All</Text>
                 </Col>
