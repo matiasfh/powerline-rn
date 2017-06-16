@@ -258,7 +258,7 @@ class Newsfeed extends Component {
                 break;
         }
         return (
-            <CardItem>
+            <CardItem style={{ paddingBottom: 0 }}>
                 <Left>
                     <Thumbnail small source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                     <Body>
@@ -443,7 +443,7 @@ class Newsfeed extends Component {
     _renderMetadata(item) {
         if (item.metadata && item.metadata.image) {
             return (
-                <CardItem>
+                <CardItem style={{ paddingTop: 0 }}>
                     <Left>
                         <View style={styles.descLeftContainer} />
                         <Body>
