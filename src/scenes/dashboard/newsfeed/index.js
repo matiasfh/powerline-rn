@@ -302,7 +302,7 @@ class Newsfeed extends Component {
             case 'post':
                 return (
                     <CardItem footer style={{ height: 35 }}>
-                        <Left style={{ justifyContent: 'flex-end' }}>
+                        <Left style={{ justifyContent: 'space-between' }}>
                             <Button iconLeft transparent style={styles.footerButton} onPress={() => this.vote(item, 'upvote')}>
                                 <Icon name="md-arrow-dropup" style={styles.footerIcon} />
                                 <Label style={styles.footerText}>Upvote {item.rate_up ? item.rate_up : 0}</Label>
