@@ -100,7 +100,9 @@ class Home extends Component {
     if (this.state.tab1 === true) {
       return (<Newsfeed />);
     } else {
-      return null;
+      return (
+        <View style={{ flex: 1 }} />
+      );
     }
   }
 
@@ -175,7 +177,7 @@ class Home extends Component {
               <Button>
                 <Menu name="create_item" renderer={SlideInMenu} onSelect={value => this.selectNewItem(value)} ref={this.onRef}>
                   <MenuTrigger>
-                    <Icon name="ios-add-circle" style={{ fontSize: 36, color: '#030366' }} />
+                    <Icon name="ios-add-circle" style={{ fontSize: 42, color: '#030366' }} />
                   </MenuTrigger>
                   <MenuOptions customStyles={optionsStyles}>
                     <MenuOption value={'group_announcement'}>
