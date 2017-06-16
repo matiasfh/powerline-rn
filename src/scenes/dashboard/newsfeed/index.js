@@ -443,7 +443,7 @@ class Newsfeed extends Component {
     _renderMetadata(item) {
         if (item.metadata && item.metadata.image) {
             return (
-                <CardItem>
+                <CardItem style={{ paddingTop: 0 }}>
                     <Left>
                         <View style={styles.descLeftContainer} />
                         <Body>
