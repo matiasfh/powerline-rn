@@ -287,7 +287,7 @@ var styles = StyleSheet.create({
     marginTop: 10,
     color: PLColors.actionText,
     fontSize: 12,
-    alignSelf: "flex-end",
+    alignSelf: "center",
     textDecorationLine: 'underline',
     backgroundColor: 'transparent'
   },
