@@ -202,6 +202,7 @@ class Login extends React.Component {
         <Image source={require("img/logo.png")} style={styles.imgLogo} />
         {this.renderLoginForm()}
         {this.renderFBLoginForm()}
+        <View style={{ flex: 1 }} />
         {this.renderSignUp()}
       </LinearGradient>
     );
@@ -308,8 +309,8 @@ var styles = StyleSheet.create({
   },
   signUpContainer: {
     width: 270,
-    marginTop: 30,
-    alignSelf: "center"
+    alignSelf: "center",
+    marginBottom: 10,
   }
 });
 
