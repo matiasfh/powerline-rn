@@ -143,7 +143,7 @@ export default {
 
   // FooterTab
   tabBarTextColor: '#8694ab',
-  tabBarTextSize: (platform === 'ios') ? 8 : 6,
+  tabBarTextSize: (platform === 'ios') ? 9 : 8,
   activeTab: (platform === 'ios') ? '#007aff' : '#fff',
   sTabBarActiveTextColor: '#007aff',
   tabBarActiveTextColor: PLColors.main,
