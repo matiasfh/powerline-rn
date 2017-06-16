@@ -258,7 +258,7 @@ class Newsfeed extends Component {
                 break;
         }
         return (
-            <CardItem>
+            <CardItem style={{ paddingBottom: 0 }}>
                 <Left>
                     <Thumbnail small source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                     <Body>
