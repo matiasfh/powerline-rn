@@ -5,6 +5,7 @@ var PLConstants = require('PLConstants');
 var PLButton = require('PLButton');
 var { logInManually, logInWithFacebook } = require('PLActions');
 var { connect } = require('react-redux');
+var { WINDOW_WIDTH } = require('PLConstants');
 
 import LinearGradient from "react-native-linear-gradient";
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -218,8 +219,10 @@ var styles = StyleSheet.create({
     flex: 1,
   },
   imgLogo: {
-    marginTop: 50,
-    resizeMode: "center",
+    marginTop: 30,
+    width: WINDOW_WIDTH * 0.7,
+    height: WINDOW_WIDTH * 0.7 * 0.32,
+    resizeMode: "cover",
     alignSelf: "center"
   },
   loginFormContainer: {
