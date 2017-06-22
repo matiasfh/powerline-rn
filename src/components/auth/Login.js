@@ -17,6 +17,7 @@ class Login extends React.Component {
     openTerms: ?() => void;
     openPolicy: ?() => void;
     forgotPassword: ?() => void;
+    register: ?() => void;
   };
 
   state: {
@@ -58,7 +59,8 @@ class Login extends React.Component {
   };
 
   onSignUp = () => {
-    alert("This feature will be ready soon.");
+    var { register } = this.props;
+    register && register();
   };
 
   onTermsOfService = () => {
@@ -309,8 +311,8 @@ var styles = StyleSheet.create({
   },
   signUpContainer: {
     width: 270,
-    alignSelf: "center",
     marginBottom: 10,
+    alignSelf: "center"
   }
 });
 
