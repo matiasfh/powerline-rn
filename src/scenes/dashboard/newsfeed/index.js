@@ -258,7 +258,7 @@ class Newsfeed extends Component {
                 break;
         }
         return (
-            <CardItem style={{ paddingBottom: 0 }}>
+            <CardItem>
                 <Left>
                     <Thumbnail small source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                     <Body>
@@ -302,7 +302,7 @@ class Newsfeed extends Component {
             case 'post':
                 return (
                     <CardItem footer style={{ height: 35 }}>
-                        <Left style={{ justifyContent: 'space-between' }}>
+                        <Left style={{ justifyContent: 'flex-end' }}>
                             <Button iconLeft transparent style={styles.footerButton} onPress={() => this.vote(item, 'upvote')}>
                                 <Icon name="md-arrow-dropup" style={styles.footerIcon} />
                                 <Label style={styles.footerText}>Upvote {item.rate_up ? item.rate_up : 0}</Label>
@@ -443,7 +443,7 @@ class Newsfeed extends Component {
     _renderMetadata(item) {
         if (item.metadata && item.metadata.image) {
             return (
-                <CardItem style={{ paddingTop: 0 }}>
+                <CardItem>
                     <Left>
                         <View style={styles.descLeftContainer} />
                         <Body>
