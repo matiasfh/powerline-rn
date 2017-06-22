@@ -504,7 +504,6 @@ class Newsfeed extends Component {
 
     render() {
         const { props: { payload } } = this;
-        console.log("payload = ", payload);
         return (
             <Content
                 refreshControl={

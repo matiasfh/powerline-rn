@@ -162,4 +162,9 @@ export default {
         height: 1,
         backgroundColor: PLColors.cellBorder,
     },
+    addCommentTitle: {
+        color: '#8694ab',
+        fontSize: 12,
+        fontWeight: '100',
+    },
 }

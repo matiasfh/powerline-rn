@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem, Label } from 'native-base';
-import { Image, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { Image, View, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import HeaderImageScrollView, { TriggeringView } from 'react-native-image-header-scroll-view';
 import * as Animatable from 'react-native-animatable';
@@ -8,6 +9,7 @@ import styles, { MAX_HEIGHT, MIN_HEIGHT, optionsStyles, sliderWidth, itemWidth }
 import TimeAgo from 'react-native-timeago';
 import ImageLoad from 'react-native-image-placeholder';
 import Carousel from 'react-native-snap-carousel';
+import YouTube from 'react-native-youtube';
 import Menu, {
     MenuContext,
     MenuTrigger,
@@ -16,10 +18,29 @@ import Menu, {
     renderers
 } from 'react-native-popup-menu';
 
+const { youTubeAPIKey } = require('PLEnv');
+
 class ItemDetail extends Component {
 
     componentWillMount() {
         const { props: { item } } = this;
+    }
+
+    vote(item, option) {
+        // To Do:
+    }
+
+    youtubeGetID(url) {
+        var ID = '';
+        url = url.replace(/(>|<)/gi, '').split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
+        if (url[2] !== undefined) {
+            ID = url[2].split(/[^0-9a-z_\-]/i);
+            ID = ID[0];
+        }
+        else {
+            ID = url;
+        }
+        return ID;
     }
 
     _renderZoneIcon(item) {
@@ -362,6 +383,24 @@ class ItemDetail extends Component {
         }
     }
 
+    _renderAddComment() {
+        const { props: { profile } } = this;
+        var thumbnail: string = '';
+        thumbnail = profile.avatar_file_name ? profile.avatar_file_name : '';
+
+        return (
+            <CardItem>
+                <Left>
+                    <Thumbnail small source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                    <Body>
+                        <Text style={styles.addCommentTitle}>Add Comment...</Text>
+                    </Body>
+                    <Right />
+                </Left>
+            </CardItem>
+        );
+    }
+
     render() {
         const { props: { item } } = this;
         return (
@@ -415,6 +454,8 @@ class ItemDetail extends Component {
                         <View style={styles.borderContainer} />
                         {this._renderFooter(item)}
                         <View style={styles.borderContainer} />
+                        {this._renderAddComment()}
+                        <View style={styles.borderContainer} />
                         <View style={{ height: 700 }} />
                     </HeaderImageScrollView>
                 </Container>
@@ -428,4 +469,9 @@ const menuContextStyles = {
     backdrop: styles.backdrop,
 };
 
-export default ItemDetail;
+const mapStateToProps = state => ({
+    token: state.user.token,
+    profile: state.user.profile,
+});
+
+export default connect(mapStateToProps)(ItemDetail);
