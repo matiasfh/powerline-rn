@@ -14,5 +14,4 @@ module.exports = {
   cellText: '#002845',
   darkBackground: '#183E63',
   textInputBorder: '#a5bbd9',
-  textInputBackground: '#edf1f7',
 };

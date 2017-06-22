@@ -19,7 +19,6 @@ var SplashScreen = require('react-native-splash-screen');
 var { connect } = require('react-redux');
 var { version } = require('./PLEnv.js');
 var { StackNavigator } = require('react-navigation');
-var RegisterScene  = require('./scenes/auth/RegisterScene');
 
 var PLApp = React.createClass({
   displayName: 'PLApp',
@@ -59,7 +58,6 @@ var LoginStack = StackNavigator({
   Login: { screen: LoginScene },
   TermsAndPolicy: { screen: TermsPolicyScene },
   ForgotPassword: { screen: ForgotPasswordScene },
-  Register: { screen: RegisterScene },
 });
 
 TermsPolicyScene.navigationOptions = props => {

@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import { Container, Header, Title, Content, Button, Footer, FooterTab, Text, Body, Left, Right, Icon, Item, Input, Grid, Row, Col } from 'native-base';
 
-import { View } from 'react-native';
+import { View, Image } from 'react-native';
 
 import Menu, {
   MenuContext,
@@ -100,7 +100,9 @@ class Home extends Component {
     if (this.state.tab1 === true) {
       return (<Newsfeed />);
     } else {
-      return null;
+      return (
+        <View style={{ flex: 1 }} />
+      );
     }
   }
 
@@ -125,7 +127,10 @@ class Home extends Component {
               <Row>
                 <Col style={styles.col}>
                   <Button style={this.state.group == 'all' ? styles.iconActiveButton : styles.iconButton} onPress={() => this.selectGroup('all')}>
-                    <Icon active name="walk" style={styles.icon} />
+                    <Image
+                      style={styles.iconP}
+                      source={require("img/p_logo.png")}
+                    />
                   </Button>
                   <Text style={styles.iconText} onPress={() => this.selectGroup('all')}>All</Text>
                 </Col>
@@ -172,7 +177,7 @@ class Home extends Component {
               <Button>
                 <Menu name="create_item" renderer={SlideInMenu} onSelect={value => this.selectNewItem(value)} ref={this.onRef}>
                   <MenuTrigger>
-                    <Icon name="ios-add-circle" style={{ fontSize: 36, color: '#030366' }} />
+                    <Icon name="ios-add-circle" style={{ fontSize: 42, color: '#030366' }} />
                   </MenuTrigger>
                   <MenuOptions customStyles={optionsStyles}>
                     <MenuOption value={'group_announcement'}>
