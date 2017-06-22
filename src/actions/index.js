@@ -12,6 +12,7 @@ const bookmarkActions = require('./bookmarks');
 const activityActions = require('./activities');
 const postActions = require('./posts');
 const userActions = require('./users');
+const registerActions = require('./register');
 
 module.exports = {
   ...loginActions,
@@ -21,4 +22,5 @@ module.exports = {
   ...activityActions,
   ...postActions,
   ...userActions,
+  ...registerActions,
 };
