@@ -14,6 +14,19 @@ export const optionsStyles = {
     },
 };
 
+function wp(percentage) {
+    const value = (percentage * WINDOW_WIDTH) / 100;
+    return Math.round(value);
+}
+
+const slideHeight = WINDOW_HEIGHT * 0.3;
+const slideWidth = wp(75);
+const itemHorizontalMargin = wp(2);
+const metaHeight = WINDOW_HEIGHT * 0.35;
+
+export const sliderWidth = WINDOW_WIDTH;
+export const itemWidth = slideWidth + itemHorizontalMargin * 2;
+
 export default {
     container: {
         backgroundColor: 'white',
@@ -39,38 +52,9 @@ export default {
         color: '#8694ab',
         fontSize: 10,
     },
-    name: {
-        fontWeight: 'bold',
-    },
-    section: {
-        padding: 20,
-        borderBottomWidth: 1,
-        borderBottomColor: '#cccccc',
-        backgroundColor: 'white',
-    },
-    sectionTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-    },
-    sectionContent: {
-        fontSize: 16,
-        textAlign: 'justify',
-    },
-    keywords: {
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        alignItems: 'flex-start',
-        flexWrap: 'wrap',
-    },
-    keywordContainer: {
-        backgroundColor: '#999999',
-        borderRadius: 10,
-        margin: 10,
-        padding: 10,
-    },
-    keyword: {
-        fontSize: 16,
-        color: 'white',
+    description: {
+        color: '#21354a',
+        fontSize: 12,
     },
     titleContainer: {
         flex: 1,
@@ -94,9 +78,6 @@ export default {
         fontSize: 16,
         backgroundColor: 'transparent',
     },
-    sectionLarge: {
-        height: 600,
-    },
     thumbnail: {
         borderWidth: 1,
         borderColor: PLColors.cellBorder,
@@ -113,5 +94,72 @@ export default {
     },
     menuText: {
         color: '#293f53',
+    },
+    descLeftContainer: {
+        width: 36,
+        alignItems: 'center',
+        alignSelf: 'flex-start'
+    },
+    descBodyContainer: {
+        alignSelf: 'flex-start',
+    },
+    zoneIcon: {
+        fontSize: 15,
+        color: '#5fc7fa',
+    },
+    commentCount: {
+        fontSize: 12,
+        color: '#8694ab',
+    },
+    footerIcon: {
+        fontSize: 15,
+        color: '#8694ab',
+        marginRight: 5,
+    },
+    footerText: {
+        fontSize: 11,
+        color: '#8694ab',
+        fontWeight: '500',
+    },
+    footerButton: {
+        marginHorizontal: 5,
+    },
+    slideInnerContainer: {
+        width: itemWidth,
+        height: slideHeight,
+        paddingHorizontal: itemHorizontalMargin,
+        paddingBottom: 18 // needed for shadow
+    },
+    imageContainer: {
+        flex: 1,
+        backgroundColor: 'white',
+    },
+    imageContainerEven: {
+        backgroundColor: 'black'
+    },
+    image: {
+        ...StyleSheet.absoluteFillObject,
+        resizeMode: 'cover',
+    },
+    textContainer: {
+        justifyContent: 'center',
+        paddingTop: 10,
+        paddingBottom: 10,
+        paddingHorizontal: 10,
+        backgroundColor: 'white',
+    },
+    metaContainer: {
+        height: metaHeight,
+        borderWidth: 1,
+        borderColor: PLColors.cellBorder,
+    },
+    player: {
+        ...StyleSheet.absoluteFillObject,
+        alignSelf: 'stretch',
+        backgroundColor: 'black',
+    },
+    borderContainer: {
+        height: 1,
+        backgroundColor: PLColors.cellBorder,
     },
 }

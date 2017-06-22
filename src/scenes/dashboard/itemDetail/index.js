@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem } from 'native-base';
+import { Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem, Label } from 'native-base';
 import { Image, View, StyleSheet } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import HeaderImageScrollView, { TriggeringView } from 'react-native-image-header-scroll-view';
@@ -18,6 +18,22 @@ class ItemDetail extends Component {
 
     componentWillMount() {
         const { props: { item } } = this;
+    }
+
+    _renderZoneIcon(item) {
+        if (item.zone === 'prioritized') {
+            return (<Icon active name="ios-flash" style={styles.zoneIcon} />);
+        } else {
+            return null;
+        }
+    }
+
+    _renderTitle(item) {
+        if (item.title) {
+            return (<Text style={styles.title}>{item.title}</Text>);
+        } else {
+            return null;
+        }
     }
 
     _renderHeader(item) {
@@ -74,6 +90,23 @@ class ItemDetail extends Component {
         );
     }
 
+    _renderDescription(item) {
+        return (
+            <CardItem>
+                <Left>
+                    <View style={styles.descLeftContainer}>
+                        {this._renderZoneIcon(item)}
+                        <Label style={styles.commentCount}>{item.responses_count}</Label>
+                    </View>
+                    <Body style={styles.descBodyContainer}>
+                        {this._renderTitle(item)}
+                        <Text style={styles.description} numberOfLines={5}>{item.description}</Text>
+                    </Body>
+                </Left>
+            </CardItem>
+        );
+    }
+
     render() {
         const { props: { item } } = this;
         return (
@@ -122,15 +155,7 @@ class ItemDetail extends Component {
                             onDisplay={() => this.navTitleView.fadeOut(100)}>
                             {this._renderHeader(item)}
                         </TriggeringView>
-                        <View style={styles.section}>
-                            <Text style={styles.sectionTitle}>Add Comment...</Text>
-                            <Text style={styles.sectionContent}>Test</Text>
-                        </View>
-                        <View style={[styles.section, styles.sectionLarge]}>
-                            <Text style={styles.sectionTitle}>Comments</Text>
-                            <View style={styles.keywords}>
-                            </View>
-                        </View>
+                        {this._renderDescription(item)}
                     </HeaderImageScrollView>
                 </Container>
             </MenuContext>
