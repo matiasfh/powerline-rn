@@ -6,7 +6,23 @@ const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
 export const MAX_HEIGHT = 170;
 export const MIN_HEIGHT = 80;
 
+export const optionsStyles = {
+    optionsContainer: {
+        backgroundColor: '#fafafa',
+        paddingLeft: 5,
+        width: WINDOW_WIDTH,
+    },
+};
+
 export default {
+    container: {
+        backgroundColor: 'white',
+        flex: 1,
+    },
+    backdrop: {
+        backgroundColor: 'black',
+        opacity: 0.5,
+    },
     headerImage: {
         height: MAX_HEIGHT,
         width: WINDOW_WIDTH,
@@ -15,7 +31,13 @@ export default {
         backgroundColor: 'gray',
     },
     title: {
-        fontSize: 20,
+        color: '#21354a',
+        fontSize: 12,
+        fontWeight: 'bold',
+    },
+    subtitle: {
+        color: '#8694ab',
+        fontSize: 10,
     },
     name: {
         fontWeight: 'bold',
@@ -78,5 +100,18 @@ export default {
     thumbnail: {
         borderWidth: 1,
         borderColor: PLColors.cellBorder,
+    },
+    dropDownIcon: {
+        color: PLColors.lightText,
+        fontSize: 14,
+        fontWeight: '100',
+        paddingHorizontal: 5,
+    },
+    menuIcon: {
+        color: '#223549',
+        width: 25,
+    },
+    menuText: {
+        color: '#293f53',
     },
 }
