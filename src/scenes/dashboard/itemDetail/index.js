@@ -47,7 +47,7 @@ class ItemDetail extends Component {
                                 <Icon active name="md-arrow-back" style={{ color: 'white' }} />
                             </Button>
                             <Body style={{ marginTop: -12 }}>
-                                <Thumbnail size={50} source={require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                                <Thumbnail size={50} source={item.group.avatar_file_path ? { uri: item.group.avatar_file_path } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                                 <Text style={styles.imageTitle}>{item.group.official_name}</Text>
                             </Body>
                         </Left>
