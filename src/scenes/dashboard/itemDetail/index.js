@@ -443,6 +443,15 @@ class ItemDetail extends Component {
         );
     }
 
+    _renderCommentsLoading() {
+        if (this.state.isLoading === true) {
+            return (
+                <Spinner color='gray' />
+            );
+        } else {
+            return null;
+        }
+    }
     render() {
         const { props: { item } } = this;
         return (
@@ -499,6 +508,8 @@ class ItemDetail extends Component {
                         {this._renderAddComment()}
                         <View style={styles.borderContainer} />
                         <View style={{ height: 700 }} />
+                        {this._renderCommentsLoading()}
+                        <View style={{ height: 50 }} />
                     </HeaderImageScrollView>
                 </Container>
             </MenuContext>
