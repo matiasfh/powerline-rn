@@ -167,4 +167,9 @@ export default {
         fontSize: 12,
         fontWeight: '100',
     },
+    commentMoreIcon: {
+        color: PLColors.lightText,
+        fontSize: 24,
+        paddingHorizontal: 5,
+    },
 }

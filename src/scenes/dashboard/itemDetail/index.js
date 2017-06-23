@@ -452,6 +452,40 @@ class ItemDetail extends Component {
             return null;
         }
     }
+
+    _renderRootComment(item) {
+        var thumbnail: string = '';
+        var title: string = '';
+
+        switch (item.entity.type) {
+            case 'post' || 'user-petition':
+                thumbnail = item.owner.avatar_file_path ? item.owner.avatar_file_path : '';
+                title = item.owner.first_name + ' ' + item.owner.last_name;
+                break;
+            default:
+                thumbnail = item.group.avatar_file_path ? item.group.avatar_file_path : '';
+                title = item.user.full_name;
+                break;
+        }
+        return (
+            <View>
+                <CardItem>
+                    <Left>
+                        <Thumbnail small style={{ alignSelf: 'flex-start' }} source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                        <Body style={{ alignSelf: 'flex-start' }}>
+                            <Text style={styles.title}>{title}</Text>
+                            <Text style={styles.description} numberOfLines={5}>{item.description}</Text>
+                            <Text note style={styles.subtitle}><TimeAgo time={item.sent_at} hideAgo={true} /></Text>
+                        </Body>
+                        <Right style={{ flex: 0.1, alignSelf: 'flex-start' }}>
+                            <Icon name="md-more" style={styles.commentMoreIcon} />
+                        </Right>
+                    </Left>
+                </CardItem>
+            </View>
+        );
+    }
+
     render() {
         const { props: { item } } = this;
         return (
@@ -507,7 +541,19 @@ class ItemDetail extends Component {
                         <View style={styles.borderContainer} />
                         {this._renderAddComment()}
                         <View style={styles.borderContainer} />
-                        <View style={{ height: 700 }} />
+                        {this._renderRootComment(item)}
+                        <List
+                            dataArray={this.comments} renderRow={(comment) =>
+                                <ListItem avatar style={{ paddingVertical: 5 }}>
+                                    <Left>
+                                        <Thumbnail small source={comment.author_picture ? { uri: comment.author_picture } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} style={styles.thumbnail} />
+                                    </Left>
+                                    <Body>
+                                        <Text>{comment.comment_body}</Text>
+                                    </Body>
+                                </ListItem>
+                            }>
+                        </List>
                         {this._renderCommentsLoading()}
                         <View style={{ height: 50 }} />
                     </HeaderImageScrollView>
@@ -515,6 +561,12 @@ class ItemDetail extends Component {
             </MenuContext>
         );
     }
+}
+
+async function timeout(ms: number): Promise {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => reject(new Error('Timed out')), ms);
+    });
 }
 
 const menuContextStyles = {
