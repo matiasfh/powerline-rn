@@ -1,4 +1,4 @@
-var { API_URL } = require('../PLEnv');
+var { API_URL, PER_PAGE } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
 
 async function votePost(token: string, postId: string, option: string) {
@@ -20,4 +20,30 @@ async function votePost(token: string, postId: string, option: string) {
     }
 }
 
-module.exports = { votePost };
+async function loadPostComments(token: string, entityId: number, page: ?number = 0, perPage: ?number = PER_PAGE, sort: ?string = 'default', sortDir: ?string = 'DESC'): Promise<Action> {
+    try {
+        var response = await fetch(`${API_URL}/v2/posts/${entityId}/comments?_format=json&page=${page + 1}&per_page=${perPage}&sort=${sort}&sort_dir=${sortDir}`, {
+            method: 'GET',
+            headers: {
+                'token': token,
+                'Content-Type': 'application/json',
+            }
+        });
+        var json = await response.json();
+        if ((json.totalItems > 0) && (json.payload.length)) {
+            return Promise.resolve(json.payload);
+        }
+        else {
+            return Promise.reject(json);
+        }
+    } catch (error) {
+        // TEST PURPOSE:
+        console.error(error);
+        return Promise.reject(error);
+    }
+}
+
+module.exports = {
+    votePost,
+    loadPostComments,
+};
