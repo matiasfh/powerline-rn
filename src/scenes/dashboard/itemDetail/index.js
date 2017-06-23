@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem, Label } from 'native-base';
+import { Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem, Label, Spinner, List, ListItem } from 'native-base';
 import { Image, View, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import HeaderImageScrollView, { TriggeringView } from 'react-native-image-header-scroll-view';
@@ -17,13 +17,55 @@ import Menu, {
     MenuOption,
     renderers
 } from 'react-native-popup-menu';
+import { loadPostComments, votePost } from 'PLActions';
 
 const { youTubeAPIKey } = require('PLEnv');
 
 class ItemDetail extends Component {
 
+    page: number;
+    comments: Array<Object>;
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            isLoading: false,
+        };
+        this.page = 0;
+        this.comments = [];
+    }
+
     componentWillMount() {
-        const { props: { item } } = this;
+        this.page = 0;
+    }
+
+    componentDidMount() {
+        this.loadComments();
+    }
+
+    async loadComments() {
+        const { props: { item, token, dispatch } } = this;
+        if (item.entity.type === 'post') {
+            this.setState({ isLoading: true });
+            try {
+                let response = await Promise.race([
+                    loadPostComments(token, item.entity.id, this.page),
+                    timeout(15000),
+                ]);
+                this.comments = this.comments.concat(response);
+            } catch (e) {
+                const message = e.message || e;
+                if (message !== 'Timed out') {
+                    alert(message);
+                }
+                else {
+                    alert('Timed out. Please check internet connection');
+                }
+                return;
+            } finally {
+                this.setState({ isLoading: false });
+            }
+        }
     }
 
     vote(item, option) {
