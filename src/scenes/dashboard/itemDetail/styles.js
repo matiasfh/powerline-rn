@@ -172,4 +172,13 @@ export default {
         fontSize: 24,
         paddingHorizontal: 5,
     },
+    commentFooterContainer: {
+        alignSelf: 'flex-start',
+        width: 120,
+        height: 25,
+        justifyContent: 'space-between',
+        flexDirection: 'row',
+        marginLeft: -13,
+        marginTop: -5,
+    }
 }

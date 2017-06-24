@@ -412,7 +412,7 @@ class ItemDetail extends Component {
                             </Button>
                             <Button iconLeft transparent style={styles.footerButton}>
                                 <Icon active name="md-arrow-dropdown" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Downvote {item.rate_up ? item.rate_down : 0}</Label>
+                                <Label style={styles.footerText}>Downvote {item.rate_down ? item.rate_down : 0}</Label>
                             </Button>
                             <Button iconLeft transparent style={styles.footerButton}>
                                 <Icon active name="ios-undo" style={styles.footerIcon} />
@@ -467,22 +467,37 @@ class ItemDetail extends Component {
                 title = item.user.full_name;
                 break;
         }
+
+
+
         return (
-            <View>
-                <CardItem>
-                    <Left>
-                        <Thumbnail small style={{ alignSelf: 'flex-start' }} source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
-                        <Body style={{ alignSelf: 'flex-start' }}>
-                            <Text style={styles.title}>{title}</Text>
-                            <Text style={styles.description} numberOfLines={5}>{item.description}</Text>
-                            <Text note style={styles.subtitle}><TimeAgo time={item.sent_at} hideAgo={true} /></Text>
-                        </Body>
-                        <Right style={{ flex: 0.1, alignSelf: 'flex-start' }}>
-                            <Icon name="md-more" style={styles.commentMoreIcon} />
-                        </Right>
-                    </Left>
-                </CardItem>
-            </View>
+            <CardItem style={{ paddingBottom: 0 }}>
+                <Left>
+                    <Thumbnail small style={{ alignSelf: 'flex-start' }} source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                    <Body style={{ alignSelf: 'flex-start' }}>
+                        <Text style={styles.title}>{title}</Text>
+                        <Text style={styles.description} numberOfLines={5}>{item.description}</Text>
+                        <Text note style={styles.subtitle}><TimeAgo time={item.sent_at} /></Text>
+                        <View style={styles.commentFooterContainer}>
+                            <Button iconLeft small transparent>
+                                <Icon name="md-arrow-dropup" style={styles.footerIcon} />
+                                <Label style={styles.footerText}>{item.rate_up ? item.rate_up : 0}</Label>
+                            </Button>
+                            <Button iconLeft small transparent>
+                                <Icon active name="md-arrow-dropdown" style={styles.footerIcon} />
+                                <Label style={styles.footerText}>{item.rate_down ? item.rate_down : 0}</Label>
+                            </Button>
+                            <Button iconLeft small transparent>
+                                <Icon active name="ios-undo" style={styles.footerIcon} />
+                                <Label style={styles.footerText}>{item.comments_count ? item.comments_count : 0}</Label>
+                            </Button>
+                        </View>
+                    </Body>
+                    <Right style={{ flex: 0.1, alignSelf: 'flex-start' }}>
+                        <Icon name="md-more" style={styles.commentMoreIcon} />
+                    </Right>
+                </Left>
+            </CardItem>
         );
     }
 
