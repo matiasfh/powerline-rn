@@ -21,6 +21,7 @@ import SideBar from './components/sideBar';
 import getTheme from '../native-base-theme/components';
 import material from '../native-base-theme/variables/material';
 import { StyleProvider, variables } from 'native-base';
+import TourScene from './scenes/auth/TourScene';
 
 var RouterWithRedux = connect()(Router);
 
@@ -55,6 +56,8 @@ class PLNavigator extends React.Component {
     switch (props.scene.route.key) {
       case 'home':
         return <Home />;
+      case 'takeTour':
+        return <TourScene />;
       default:
         return <Home />;
     }
@@ -94,6 +97,7 @@ class PLNavigator extends React.Component {
             <Scene key="root">
               <Scene key="home" component={Home} hideNavBar initial />
               <Scene key="groupSelector" component={GroupSelector} />
+              <Scene key="takeTour" component={TourScene} />
             </Scene>
           </RouterWithRedux>
         </Drawer>

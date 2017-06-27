@@ -26,10 +26,17 @@ class RegisterScene extends Component{
     };
 
     render(){
-        var {navigate, dispatch} = this.props.navigation;
+        var {navigate, dispatch, state} = this.props.navigation;
+        var { params } = state;
+
         return (
             <View style={styles.container}>
-                <Register back={() => dispatch(NavigationActions.back())}/>
+                <Register 
+                    back={() => dispatch(NavigationActions.back())} 
+                    isFb={params.isFb} 
+                    fbData={params.fbData} 
+                    tour={(callback) =>  navigate('Tour', {callback: callback})}
+                    />
             </View>
         );
     }

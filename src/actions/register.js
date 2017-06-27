@@ -3,7 +3,7 @@ var { Action, ThunkAction } = require('./types');
 
 function findByUsername(username: string){
     return new Promise((resolve, reject) => {
-        fetch(API_URL + `-public/users/?username=` + username, {
+        fetch(API_URL +`-public/users/?username=` + username, {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -50,7 +50,38 @@ function register(data){
     });
 }
 
+function registerFromFB(data){
+    return new Promise((resolve, reject) => {
+        fetch(API_URL + '/secure/registration-facebook', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        })
+        .then((res) => res.json())
+        .then(user => {
+            if (user.token) {               
+                var data = {
+                    id: user.id,
+                    username: user.username,
+                    token: user.token,
+                    is_registration_complete: user.is_registration_complete
+                };
+                resolve(data);
+            }else{
+                reject(user);
+            }
+        })
+        .catch(err => {
+            reject(err);
+        });
+    });
+}
+
 module.exports = {
     findByUsername,
-    register
+    register,
+    registerFromFB
 };
