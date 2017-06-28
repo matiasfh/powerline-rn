@@ -14,6 +14,7 @@ export type State = {
   id: ?string;
   username: ?string;
   token: ?string;
+  profile: ?object;
 };
 
 var initialState = {
@@ -22,6 +23,7 @@ var initialState = {
   id: null,
   username: null,
   token: null,
+  profile: null,
 };
 
 function user(state: State = initialState, action: Action): State {
@@ -32,6 +34,13 @@ function user(state: State = initialState, action: Action): State {
       token,
       id,
       username,
+    };
+  }
+  if (action.type === 'LOADED_USER_PROFILE') {
+    return {
+      ...state,
+      is_registration_complete: action.data.is_registration_complete,
+      profile: action.data,
     };
   }
   if (action.type === 'LOGGED_OUT') {

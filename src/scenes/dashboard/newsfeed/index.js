@@ -134,6 +134,10 @@ class Newsfeed extends Component {
         }
     }
 
+    goItemDetail(item) {
+        Actions.itemDetail({ item: item });
+    }
+
     _renderTailLoading() {
         if (this.state.isLoadingTail === true) {
             return (
@@ -432,8 +436,10 @@ class Newsfeed extends Component {
                         <Label style={styles.commentCount}>{item.responses_count}</Label>
                     </View>
                     <Body style={styles.descBodyContainer}>
-                        {this._renderTitle(item)}
-                        <Text style={styles.description} numberOfLines={5}>{item.description}</Text>
+                        <TouchableOpacity onPress={() => this.goItemDetail(item)}>
+                            {this._renderTitle(item)}
+                            <Text style={styles.description} numberOfLines={5}>{item.description}</Text>
+                        </TouchableOpacity>
                     </Body>
                 </Left>
             </CardItem>
@@ -498,7 +504,6 @@ class Newsfeed extends Component {
 
     render() {
         const { props: { payload } } = this;
-        console.log("payload = ", payload);
         return (
             <Content
                 refreshControl={

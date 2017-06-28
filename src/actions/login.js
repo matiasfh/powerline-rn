@@ -10,6 +10,7 @@ var Alert = require('Alert');
 var { API_URL } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
 var FacebookSDK = require('FacebookSDK');
+var { loadUserProfile } = require('./users');
 
 async function logIn(username: string, password: string): Promise<Action> {
   try {
@@ -51,6 +52,7 @@ function logInManually(username: string, password: string): ThunkAction {
     login.then(
       (result) => {
         dispatch(result);
+        dispatch(loadUserProfile(result.data.token));
       }
     );
     return login;
