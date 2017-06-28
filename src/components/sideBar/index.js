@@ -111,7 +111,9 @@ class SideBar extends Component {
   onSelectItem(route: string) {
     if (route == 'logout') {
       this.props.logOut();
-    } else {
+    } else if(route == 'takeTour'){
+      Actions['takeTour']();
+    }else{
       Actions['home']();
     }
     this.props.closeDrawer();

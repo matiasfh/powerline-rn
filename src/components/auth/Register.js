@@ -20,26 +20,29 @@ const {width} = Dimensions.get('window');
 import {
     NavigationActions
 } from 'react-navigation';
-var { findByUsername, register }  = require('PLActions');
+var { findByUsername, register, registerFromFB }  = require('PLActions');
 var {GooglePlacesAutocomplete} = require('react-native-google-places-autocomplete');
 
 class Register extends React.Component{
 
     static propTypes = {
         back: React.PropTypes.func.isRequired,
-        onLoggedIn: React.PropTypes.func.isRequired
+        onLoggedIn: React.PropTypes.func.isRequired,
+        isFb: React.PropTypes.bool.isRequired,
+        fbData: React.PropTypes.object.isRequired,
+        tour: React.PropTypes.func.isRequired
     };
 
     state: {
         isLoading: boolean;
         position: boolean;
-        fname: string;
-        lname: string;
+        first_name: string;
+        last_name: string;
         username: string;
         password: string;
         confirm_password: string;
-        address: string;
-        zipcode: string;
+        address1: string;
+        zip: string;
         city: string;
         state: string;
         country: string;
@@ -47,34 +50,36 @@ class Register extends React.Component{
         is_over_13: boolean;
     };
 
-    constructor(){
-        super();
+    constructor(props){
+        super(props);
+        var { isFb, fbData } = this.props;
         this.state = {
             isLoading: false,
-            fname: "",
-            lname: "",
-            username: "",
+            first_name: isFb? fbData.first_name: "",
+            last_name: isFb? fbData.last_name: "",
+            username: isFb? fbData.username: "",
             password: "",
             confirm_password: "",
-            address: "",
-            zipcode: "",
-            city: "",
-            state: "",
-            country: "",
-            email: "",
+            address1: isFb? fbData.address1: "",
+            zip: isFb? fbData.zip: "",
+            city: isFb? fbData.city: "",
+            state: isFb? fbData.state: "",
+            country: isFb? fbData.country: "",
+            email: isFb? fbData.email: "",
             is_over_13: false,
             position: false,
-            autoAddress: null
+            autoAddress: null,
+            isFb: isFb
         };
         this.onNext = this.onNext.bind(this);
     }
 
     onChangeFirstName = fname => {
-        this.setState({ fname: fname });
+        this.setState({ first_name: fname });
     }
 
     onChangeLastName = lname => {
-        this.setState({ lname: lname });
+        this.setState({ last_name: lname });
     }
 
     onChangeUserName = username => {
@@ -90,7 +95,7 @@ class Register extends React.Component{
     }   
 
     onChangeZip = zip => {
-        this.setState({ zipcode: zip });
+        this.setState({ zip: zip });
     }
 
     onChangeCity = city => {
@@ -139,15 +144,15 @@ class Register extends React.Component{
     }
 
     async onNext() {
-        var { email, position, fname, lname, username, password, address, zipcode, city, state, country, is_over_13, confirm_password } = this.state;
-        var { onLoggedIn } = this.props;
+        var { email, position, first_name, last_name, username, password, address1, zip, city, state, country, is_over_13, confirm_password} = this.state;
+        var { onLoggedIn, isFb, fbData, tour } = this.props;
         if(position == false){
             
-            if(fname == "" || fname.trim() == ""){
+            if(first_name == "" || first_name.trim() == ""){
                 alert("First Name is empty.");
                 return;
             }
-            if(lname == "" || lname.trim() == ""){
+            if(last_name == "" || last_name.trim() == ""){
                 alert("Last Name is empty.");
                 return;
             }
@@ -155,56 +160,64 @@ class Register extends React.Component{
                 alert("Username is empty.");
                 return;
             }
-            if(password == ""){
+            if(password == "" && !isFb){
                 alert("Password is empty.");
                 return;
             }
-            if(password.length < 6){
+            if(password.length < 6 && !isFb){
                 alert("Password must be six characters long");
                 return;
             }
-            if(confirm_password == ""){
+            if(confirm_password == "" && !isFb){
                 alert("Confirm password is empty.");
                 return;
             }
-            if(confirm_password != password){
-                alert("Password don't match with confirm password.");
+            if(confirm_password != password && !isFb){
+                alert("Password doesn't match. Try again.");
                 return;
             }
             
             this.setState({
                 isLoading: true
             });
-            findByUsername(username).then(users => {
-                if(users.length > 0){
-                    this.setState({
-                        isLoading: false
-                    });
-                    alert("Username already exists.");
-                    return;
-                }else{
-                    this.setState({
-                        position: true,
-                        isLoading: false
-                    });
-                }                
-            })
-            .catch(err => {
+
+            if(isFb){
                 this.setState({
                     position: true,
                     isLoading: false
                 });
-            });     
+            }else{
+                findByUsername(username).then(users => {
+                    if(users.length > 0){
+                        this.setState({
+                            isLoading: false
+                        });
+                        alert("This username is taken.");
+                        return;
+                    }else{
+                        this.setState({
+                            position: true,
+                            isLoading: false
+                        });
+                    }                
+                })
+                .catch(err => {
+                    this.setState({
+                        position: true,
+                        isLoading: false
+                    });
+                });
+            }                
         }else{
             if(is_over_13 == false){
                 alert("You must be 13 or older to register to Powerline.");
                 return;
             }
-            if(address == "" || address.trim() == ""){
+            if(address1 == "" || address1.trim() == ""){
                 alert("Address is empty.");
                 return;
             }
-            if(zipcode == "" || zipcode.trim() == ""){
+            if(zip == "" || zip.trim() == ""){
                 alert("Zipcode is empty.");
                 return;
             }
@@ -229,54 +242,93 @@ class Register extends React.Component{
                 alert("Email is invalid.");
                 return;
             }
-            var data = {
-                first_name: fname,
-                last_name: lname,
-                username: username,
-                password: password,                
-                address1: address,
-                city: city,
-                state: state,
-                country: country,
-                zip: zipcode,
-                email: email,
-                confirm: confirm_password,
-                email_confirm: email
-            };
-            this.setState({
-                isLoading: true
-            });           
-            register(data)
-            .then(ret => {
+
+            if(isFb){
+                var data = fbData;
+                data.username = username;
+                data.first_name = first_name;
+                data.last_name = last_name;
+                data.email = email;
+                data.email_confirm = email;
+                data.address1 = address1;
+                data.city = city;
+                data.state = state;
+                data.country = country;
+                data.zip = zip;
                 this.setState({
-                    isLoading: false
+                    isLoading: true
                 });
-                
-                onLoggedIn(ret);
-            })
-            .catch(err => {
+                registerFromFB(data)
+                .then(ret => {
+                    this.setState({
+                        isLoading: false
+                    });
+                    
+                    tour(() => {
+                        onLoggedIn(ret);
+                    });
+                })
+                .catch(err => {
+                    this.setState({
+                        isLoading: false
+                    });
+                    alert(JSON.stringify(err));
+                    return;
+                });
+            }else{
+                //email registration
+                var data = {
+                    first_name: first_name,
+                    last_name: last_name,
+                    username: username,
+                    password: password,                
+                    address1: address1,
+                    city: city,
+                    state: state,
+                    country: country,
+                    zip: zip,
+                    email: email,
+                    confirm: confirm_password,
+                    email_confirm: email
+                };
                 this.setState({
-                    isLoading: false
+                    isLoading: true
                 });
-                alert(JSON.stringify(err));
-                return;
-            });            
+
+                register(data)
+                .then(ret => {
+                    this.setState({
+                        isLoading: false
+                    });
+                    
+                    tour(() => {
+                        onLoggedIn(ret);
+                    });                    
+                })
+                .catch(err => {
+                    this.setState({
+                        isLoading: false
+                    });
+                    alert(JSON.stringify(err));
+                    return;
+                });
+            }                        
         }
     }
 
     onAutoComplete = (data, details) => {
         this.setState({
-            address: "",
+            address1: "",
             state: "",
             city: "",
             country: "",
-            zipcode: ""
+            zip: ""
         });
         var address_components = details.address_components;
         console.log(address_components);
         for(var i = 0; i < address_components.length; i++){
             if(address_components[i].types.indexOf("street_number") != -1){
-                this.state.address = address_components[i].long_name;
+                this.state.address1 = address_components[i].long_name;
             }else if(address_components[i].types.indexOf("locality") != -1 || address_components[i].types.indexOf("neighborhood") != -1){
                 this.setState({
                     city: address_components[i].long_name
@@ -291,17 +343,18 @@ class Register extends React.Component{
                 });
             }else if(address_components[i].types.indexOf("postal_code") != -1){
                 this.setState({
-                    zipcode : address_components[i].long_name
+                    zip : address_components[i].long_name
                 });
             }else if(address_components[i].types.indexOf("route") != -1){
-                this.state.address +=" " + address_components[i].long_name;
+                this.state.address1 +=" " + address_components[i].long_name;
             }
         }
-        this.state.autoAddress.setAddressText(this.state.address);
+        this.state.autoAddress.setAddressText(this.state.address1);
     }
 
     renderBasic = () => {
-        var { fname, lname, username, password, confirm_password, position } = this.state;
+        var { first_name, last_name, username, password, confirm_password, position } = this.state;
+        var { isFb } = this.props;
         return (
             <ScrollView style={styles.container}>
                 <Text style={styles.titleText}>Let's set up your account</Text>
@@ -316,7 +369,7 @@ class Register extends React.Component{
                             placeholder="First Name"
                             style={styles.textInput}
                             autoCorrect={false}
-                            value={fname}
+                            value={first_name}
                             onChangeText={this.onChangeFirstName}
                             underlineColorAndroid={'transparent'}
                         />
@@ -326,7 +379,7 @@ class Register extends React.Component{
                             placeholder="Last Name"
                             style={styles.textInput}
                             autoCorrect={false}
-                            value={lname}
+                            value={last_name}
                             onChangeText={this.onChangeLastName}
                             underlineColorAndroid={'transparent'}
                         />
@@ -344,6 +397,7 @@ class Register extends React.Component{
                             <Image source={require('img/user.png')} style={styles.icon}/>
                         </View>
                     </View>
+                    {isFb?null:
                     <View style={styles.fieldContainer}>
                         <TextInput
                             placeholder="Password"
@@ -358,6 +412,8 @@ class Register extends React.Component{
                             <Image source={require('img/lock.png')} style={styles.icon}/>
                         </View>
                     </View>
+                    }
+                    {isFb?null:
                     <View style={styles.fieldContainer}>
                         <TextInput
                             placeholder="Confirm Password"
@@ -372,6 +428,7 @@ class Register extends React.Component{
                             <Image source={require('img/lock.png')} style={styles.icon}/>
                         </View>
                     </View>   
+                    }
                     <View style={styles.markContainer}>
                         <View style={styles.markWrapper}>
                             <View style={[styles.markItem, styles.markActiveItem]}></View>
@@ -384,7 +441,7 @@ class Register extends React.Component{
     }
 
     renderContact(){
-        var { city, state, country, zipcode, email, position, is_over_13 } = this.state;
+        var { city, state, country, zip, email, position, is_over_13 } = this.state;
         return (
             <ScrollView style={styles.container}>
                 <Text style={styles.titleText}>Enter your contact details.</Text>
@@ -427,7 +484,7 @@ class Register extends React.Component{
                             placeholder="Zipcode"
                             style={styles.textInput}
                             autoCorrect={false}
-                            value={zipcode}
+                            value={zip}
                             onChangeText={this.onChangeZip}
                             underlineColorAndroid={'transparent'}
                         />
@@ -523,12 +580,6 @@ class Register extends React.Component{
         );
     }
 
-}
-
-async function timeout(ms: number): Promise {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => reject(new Error('Timed out')), ms);
-  });
 }
 
 var styles = StyleSheet.create({

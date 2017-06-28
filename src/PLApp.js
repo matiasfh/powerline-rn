@@ -20,6 +20,7 @@ var { connect } = require('react-redux');
 var { version } = require('./PLEnv.js');
 var { StackNavigator } = require('react-navigation');
 var RegisterScene  = require('./scenes/auth/RegisterScene');
+var TourScene = require('./scenes/auth/TourScene');
 
 var PLApp = React.createClass({
   displayName: 'PLApp',
@@ -60,6 +61,7 @@ var LoginStack = StackNavigator({
   TermsAndPolicy: { screen: TermsPolicyScene },
   ForgotPassword: { screen: ForgotPasswordScene },
   Register: { screen: RegisterScene },
+  Tour: { screen: TourScene },
 });
 
 TermsPolicyScene.navigationOptions = props => {
