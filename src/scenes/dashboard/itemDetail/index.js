@@ -541,6 +541,21 @@ class ItemDetail extends Component {
         );
     }
 
+    _renderAllReplies() {
+        if (this.state.isLoading === false && this.comments.length > 0) {
+            return (
+                <View style={{ marginTop: 20 }}>
+                    <View style={styles.borderAllRepliesContainer} />
+                    <Button transparent full>
+                        <Text style={styles.allRepliesButtonText}>ALL REPLIES</Text>
+                    </Button>
+                </View>
+            );
+        } else {
+            return null;
+        }
+    }
+
     render() {
         const { props: { item } } = this;
         return (
@@ -602,6 +617,7 @@ class ItemDetail extends Component {
                                 this._renderChildComment(comment)
                             }>
                         </List>
+                        {this._renderAllReplies()}
                         {this._renderCommentsLoading()}
                         <View style={{ height: 50 }} />
                     </HeaderImageScrollView>

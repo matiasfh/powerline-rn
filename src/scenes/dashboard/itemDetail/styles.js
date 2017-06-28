@@ -162,6 +162,11 @@ export default {
         height: 1,
         backgroundColor: PLColors.cellBorder,
     },
+    borderAllRepliesContainer: {
+        height: 1,
+        backgroundColor: PLColors.cellBorder,
+        marginHorizontal: 20,
+    },
     addCommentTitle: {
         color: '#8694ab',
         fontSize: 12,
@@ -180,5 +185,10 @@ export default {
         flexDirection: 'row',
         marginLeft: -13,
         marginTop: -5,
-    }
+    },
+    allRepliesButtonText: {
+        fontSize: 15,
+        color: '#8694ab',
+        fontWeight: '500',
+    },
 }
