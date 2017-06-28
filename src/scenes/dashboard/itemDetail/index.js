@@ -20,6 +20,7 @@ import Menu, {
 import { loadPostComments, votePost } from 'PLActions';
 
 const { youTubeAPIKey } = require('PLEnv');
+const visibleCommentCount = 5;
 
 class ItemDetail extends Component {
 
@@ -49,7 +50,7 @@ class ItemDetail extends Component {
             this.setState({ isLoading: true });
             try {
                 let response = await Promise.race([
-                    loadPostComments(token, item.entity.id, this.page),
+                    loadPostComments(token, item.entity.id, this.page, visibleCommentCount),
                     timeout(15000),
                 ]);
                 this.comments = this.comments.concat(response);
