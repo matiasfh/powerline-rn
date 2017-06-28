@@ -468,8 +468,6 @@ class ItemDetail extends Component {
                 break;
         }
 
-
-
         return (
             <CardItem style={{ paddingBottom: 0 }}>
                 <Left>
@@ -490,6 +488,47 @@ class ItemDetail extends Component {
                             <Button iconLeft small transparent>
                                 <Icon active name="ios-undo" style={styles.footerIcon} />
                                 <Label style={styles.footerText}>{item.comments_count ? item.comments_count : 0}</Label>
+                            </Button>
+                        </View>
+                    </Body>
+                    <Right style={{ flex: 0.1, alignSelf: 'flex-start' }}>
+                        <Icon name="md-more" style={styles.commentMoreIcon} />
+                    </Right>
+                </Left>
+            </CardItem>
+        );
+    }
+
+    _renderChildComment(comment) {
+        if (comment.is_root) {
+            return null;
+        }
+
+        var thumbnail: string = comment.author_picture ? comment.author_picture : '';
+        var title: string = comment.user.first_name + ' ' + comment.user.last_name;;
+        var rateUp: number = (comment.rates_count || 0) / 2 + comment.rate_sum / 2;
+        var rateDown: number = (comment.rates_count || 0) / 2 - comment.rate_sum / 2;
+
+        return (
+            <CardItem style={{ paddingBottom: 0, marginLeft: 40, marginTop: 5 }}>
+                <Left>
+                    <Thumbnail small style={{ alignSelf: 'flex-start' }} source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                    <Body style={{ alignSelf: 'flex-start' }}>
+                        <Text style={styles.title}>{title}</Text>
+                        <Text style={styles.description} numberOfLines={5}>{comment.comment_body}</Text>
+                        <Text note style={styles.subtitle}><TimeAgo time={comment.created_at} /></Text>
+                        <View style={styles.commentFooterContainer}>
+                            <Button iconLeft small transparent>
+                                <Icon name="md-arrow-dropup" style={styles.footerIcon} />
+                                <Label style={styles.footerText}>{rateUp ? rateUp : 0}</Label>
+                            </Button>
+                            <Button iconLeft small transparent>
+                                <Icon active name="md-arrow-dropdown" style={styles.footerIcon} />
+                                <Label style={styles.footerText}>{rateDown ? rateDown : 0}</Label>
+                            </Button>
+                            <Button iconLeft small transparent>
+                                <Icon active name="ios-undo" style={styles.footerIcon} />
+                                <Label style={styles.footerText}>{comment.rates_count ? comment.rates_count : 0}</Label>
                             </Button>
                         </View>
                     </Body>
@@ -559,14 +598,7 @@ class ItemDetail extends Component {
                         {this._renderRootComment(item)}
                         <List
                             dataArray={this.comments} renderRow={(comment) =>
-                                <ListItem avatar style={{ paddingVertical: 5 }}>
-                                    <Left>
-                                        <Thumbnail small source={comment.author_picture ? { uri: comment.author_picture } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} style={styles.thumbnail} />
-                                    </Left>
-                                    <Body>
-                                        <Text>{comment.comment_body}</Text>
-                                    </Body>
-                                </ListItem>
+                                this._renderChildComment(comment)
                             }>
                         </List>
                         {this._renderCommentsLoading()}
