@@ -28,7 +28,9 @@ async function loadBookmarks(token: string, page: ?number = 0, type: ?string = '
             return Promise.reject(json);
         }
     } catch (error) {
+        // TEST PURPOSE:
         console.error(error);
+        return Promise.reject(error);
     }
 }
 

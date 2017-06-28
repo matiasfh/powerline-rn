@@ -15,8 +15,9 @@ import Menu, {
 } from 'react-native-popup-menu';
 
 import { openDrawer } from '../../actions/drawer';
-import { loadUserGroups, clearGroupsInCache, loadBookmarks, resetBookmarks } from 'PLActions';
 import styles from './styles';
+
+import { loadUserProfile } from 'PLActions';
 
 // Tab Scenes
 import Newsfeed from './newsfeed/'
@@ -38,6 +39,33 @@ class Home extends Component {
       tab4: false,
       group: 'all',
     };
+  }
+
+  componentWillMount() {
+    const { props: { profile } } = this;
+    if (!profile) {
+      this.loadCurrentUserProfile();
+    }
+  }
+
+  async loadCurrentUserProfile() {
+    const { props: { token, dispatch } } = this;
+    try {
+      await Promise.race([
+        dispatch(loadUserProfile(token)),
+        timeout(15000),
+      ]);
+    } catch (e) {
+      const message = e.message || e;
+      if (message !== 'Timed out') {
+        alert(message);
+      }
+      else {
+        alert('Timed out. Please check internet connection');
+      }
+      return;
+    } finally {
+    }
   }
 
   // Newsfeed Tab
@@ -273,7 +301,7 @@ async function timeout(ms: number): Promise {
 
 const mapStateToProps = state => ({
   token: state.user.token,
-  bookmarksPage: state.bookmarks.page,
+  profile: state.user.profile,
 });
 
 export default connect(mapStateToProps, bindAction)(Home);

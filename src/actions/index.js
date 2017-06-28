@@ -11,6 +11,7 @@ const groupActions = require('./groups');
 const bookmarkActions = require('./bookmarks');
 const activityActions = require('./activities');
 const postActions = require('./posts');
+const userActions = require('./users');
 const registerActions = require('./register');
 
 module.exports = {
@@ -20,5 +21,6 @@ module.exports = {
   ...bookmarkActions,
   ...activityActions,
   ...postActions,
+  ...userActions,
   ...registerActions,
 };

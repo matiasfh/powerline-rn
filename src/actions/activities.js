@@ -28,7 +28,9 @@ async function loadActivities(token: string, page: ?number = 0, perPage: ?number
             return Promise.reject(json);
         }
     } catch (error) {
+        // TEST PURPOSE:
         console.error(error);
+        return Promise.reject(error);
     }
 }
 
