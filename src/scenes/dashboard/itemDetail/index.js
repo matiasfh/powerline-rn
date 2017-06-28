@@ -455,6 +455,10 @@ class ItemDetail extends Component {
     }
 
     _renderRootComment(item) {
+        if (this.comments.length <= 1) {
+            return null;
+        }
+
         var thumbnail: string = '';
         var title: string = '';
 
@@ -542,7 +546,7 @@ class ItemDetail extends Component {
     }
 
     _renderAllReplies() {
-        if (this.state.isLoading === false && this.comments.length > 0) {
+        if (this.state.isLoading === false && this.comments.length > 1) {
             return (
                 <View style={{ marginTop: 20 }}>
                     <View style={styles.borderAllRepliesContainer} />
