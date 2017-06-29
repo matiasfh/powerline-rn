@@ -5,6 +5,7 @@ var PLConstants = require('PLConstants');
 var PLButton = require('PLButton');
 var { logInManually, logInWithFacebook } = require('PLActions');
 var { connect } = require('react-redux');
+var { WINDOW_WIDTH } = require('PLConstants');
 
 import LinearGradient from "react-native-linear-gradient";
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -106,19 +107,19 @@ class Login extends React.Component {
     var { dispatch, register } = this.props;
     this.setState({ isLoading: true });
     logInWithFacebook()
-    .then((data) => {
-       this.setState({ isLoading: false });
-       if(data.token){
-          dispatch({type: 'LOGGED_IN', data: data});
-       }else{
+      .then((data) => {
+        this.setState({ isLoading: false });
+        if (data.token) {
+          dispatch({ type: 'LOGGED_IN', data: data });
+        } else {
           register && register(true, data);
-       }       
-    })
-    .catch((err) => {
-       console.log(err);
-       this.setState({ isLoading: false });
-       alert("Facebook Login Error");
-    });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({ isLoading: false });
+        alert("Facebook Login Error");
+      });
   }
 
   renderLoginForm = () => {
@@ -200,6 +201,7 @@ class Login extends React.Component {
         <Image source={require("img/logo.png")} style={styles.imgLogo} />
         {this.renderLoginForm()}
         {this.renderFBLoginForm()}
+        <View style={{ flex: 1 }} />
         {this.renderSignUp()}
       </LinearGradient>
     );
@@ -217,9 +219,11 @@ var styles = StyleSheet.create({
     flex: 1,
   },
   imgLogo: {
-    marginTop: 50,
-    resizeMode: "center",
-    alignSelf: "center"
+    marginTop: 30,
+    width: WINDOW_WIDTH * 0.7,
+    height: WINDOW_WIDTH * 0.7 * 0.32,
+    resizeMode: "cover",
+    alignSelf: "center",
   },
   loginFormContainer: {
     marginHorizontal: 40,
@@ -282,7 +286,7 @@ var styles = StyleSheet.create({
     marginTop: 10,
     color: PLColors.actionText,
     fontSize: 12,
-    alignSelf: "flex-end",
+    alignSelf: "center",
     textDecorationLine: 'underline',
     backgroundColor: 'transparent'
   },
@@ -304,7 +308,7 @@ var styles = StyleSheet.create({
   },
   signUpContainer: {
     width: 270,
-    marginTop: 30,
+    marginBottom: 10,
     alignSelf: "center"
   }
 });
