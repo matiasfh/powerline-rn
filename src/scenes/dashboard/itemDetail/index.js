@@ -609,6 +609,8 @@ class ItemDetail extends Component {
 
         var thumbnail: string = '';
         var title: string = '';
+        var rateUp: number = (this.rootComment.rates_count || 0) / 2 + this.rootComment.rate_sum / 2;
+        var rateDown: number = (this.rootComment.rates_count || 0) / 2 - this.rootComment.rate_sum / 2;
 
         switch (item.entity.type) {
             case 'post' || 'user-petition':
@@ -632,15 +634,15 @@ class ItemDetail extends Component {
                         <View style={styles.commentFooterContainer}>
                             <Button iconLeft small transparent>
                                 <Icon name="md-arrow-dropup" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>{item.upvotes_count ? item.upvotes_count : 0}</Label>
+                                <Label style={styles.footerText}>{rateUp}</Label>
                             </Button>
                             <Button iconLeft small transparent>
                                 <Icon active name="md-arrow-dropdown" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>{item.downvotes_count ? item.downvotes_count : 0}</Label>
+                                <Label style={styles.footerText}>{rateDown}</Label>
                             </Button>
                             <Button iconLeft small transparent>
                                 <Icon active name="ios-undo" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>{item.comments_count ? item.comments_count : 0}</Label>
+                                <Label style={styles.footerText}>{this.rootComment.rates_count ? this.rootComment.rates_count : 0}</Label>
                             </Button>
                         </View>
                     </Body>
