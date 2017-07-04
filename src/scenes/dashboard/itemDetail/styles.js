@@ -191,4 +191,21 @@ export default {
         color: '#8694ab',
         fontWeight: '500',
     },
+    commentInput: {
+        fontSize: 12,
+        fontWeight: '100',
+        flex: 1,
+    },
+    commentSendText: {
+        fontSize: 12,
+        alignSelf: 'center',
+        color: PLColors.main,
+        fontWeight: 'bold',
+    },
+    commentSendIcon: {
+        fontSize: 12,
+        alignSelf: 'flex-end',
+        marginLeft: 5,
+        color: PLColors.main,
+    },
 }
