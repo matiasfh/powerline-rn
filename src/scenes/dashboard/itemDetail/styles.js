@@ -75,7 +75,7 @@ export default {
     },
     navTitle: {
         color: 'white',
-        fontSize: 16,
+        fontSize: 14,
         backgroundColor: 'transparent',
     },
     thumbnail: {
