@@ -121,8 +121,53 @@ class ItemDetail extends Component {
         }
     }
 
-    vote(item, option) {
-        // To Do:
+    async vote(item, option) {
+        var response;
+        this.setState({ isLoading: true });
+        switch (item.entity.type) {
+            case 'post':
+                response = await votePost(this.props.token, item.entity.id, option);
+                break;
+            default:
+                return;
+                break;
+        }
+        this.setState({
+            isLoading: false,
+        });
+        if (response.code) {
+            let code = response.code;
+            let message = 'Something went wrong';
+            switch (code) {
+                case 400:
+                    if (response.errors.errors.length) {
+                        message = response.errors.errors[0];
+                    }
+                    // alert('User already answered to this post.');
+                    break;
+                case 200:
+                    if (option === 'upvote') {
+                        item.upvotes_count = item.upvotes_count + 1;
+                    } else if (option === 'downvote') {
+                        item.downvotes_count = item.downvotes_count + 1;
+                    }
+                    var dataArrayClone = this.state.dataArray;
+                    const index = this.getIndex(item);
+                    if (index !== -1) {
+                        dataArrayClone[index] = item;
+                    }
+                    this.setState({
+                        dataArray: dataArrayClone,
+                    });
+                    break;
+                default:
+                    break;
+            }
+            setTimeout(() => alert(message), 1000);
+        }
+        else {
+            alert('Something went wrong');
+        }
     }
 
     async addComment(comment) {

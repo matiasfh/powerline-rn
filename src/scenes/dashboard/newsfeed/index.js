@@ -124,8 +124,16 @@ class Newsfeed extends Component {
     }
 
     async vote(item, option) {
+        var response;
         this.setState({ isLoading: true });
-        let response = await votePost(this.props.token, item.entity.id, option);
+        switch (item.entity.type) {
+            case 'post':
+                response = await votePost(this.props.token, item.entity.id, option);
+                break;
+            default:
+                return;
+                break;
+        }
         this.setState({
             isLoading: false,
         });
