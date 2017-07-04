@@ -8,7 +8,6 @@ var { connect } = require('react-redux');
 var { WINDOW_WIDTH } = require('PLConstants');
 
 import LinearGradient from "react-native-linear-gradient";
-import Spinner from 'react-native-loading-spinner-overlay';
 
 class Login extends React.Component {
   props: {

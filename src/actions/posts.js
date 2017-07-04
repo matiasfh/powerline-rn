@@ -20,6 +20,28 @@ async function votePost(token: string, postId: string, option: string) {
     }
 }
 
+async function addCommentToPost(token: string, postId: string, parentId: string, comment: string, privacy: string) {
+    try {
+        let response = await fetch(`${API_URL}/v2/posts/${postId}/comments`, {
+            method: 'POST',
+            headers: {
+                'token': token,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                comment_body: comment,
+                parent_comment: parentId,
+                privacy: privacy,
+            })
+        });
+        let responseJson = await response.json();
+        return responseJson;
+    } catch (error) {
+        // TEST PURPOSE:
+        console.error(error);
+    }
+}
+
 async function loadPostComments(token: string, entityId: number, page: ?number = 0, perPage: ?number = PER_PAGE, sort: ?string = 'default', sortDir: ?string = 'DESC'): Promise<Action> {
     try {
         var response = await fetch(`${API_URL}/v2/posts/${entityId}/comments?_format=json&page=${page + 1}&per_page=${perPage}&sort=${sort}&sort_dir=${sortDir}`, {
@@ -46,4 +68,5 @@ async function loadPostComments(token: string, entityId: number, page: ?number =
 module.exports = {
     votePost,
     loadPostComments,
+    addCommentToPost,
 };

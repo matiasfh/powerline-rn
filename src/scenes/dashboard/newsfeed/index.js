@@ -3,13 +3,14 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import { Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, Spinner, ListItem, Thumbnail, List, Card, CardItem, Label } from 'native-base';
-import { View, RefreshControl, TouchableOpacity, Image, WebView, Platform } from 'react-native';
+import { ListView, View, RefreshControl, TouchableOpacity, Image, WebView, Platform } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
 import { loadActivities, resetActivities, votePost } from 'PLActions';
 import styles, { sliderWidth, itemWidth } from './styles';
 import TimeAgo from 'react-native-timeago';
 import ImageLoad from 'react-native-image-placeholder';
 import YouTube from 'react-native-youtube';
+import OrientationLoadingOverlay from 'react-native-orientation-loading-overlay';
 
 import Menu, {
     MenuContext,
@@ -32,21 +33,44 @@ class Newsfeed extends Component {
 
     constructor(props) {
         super(props);
+        var ds = new ListView.DataSource({
+            rowHasChanged: (r1, r2) => r1 !== r2,
+        });
         this.state = {
-            isLoading: false,
+            isRefreshing: false,
             isLoadingTail: false,
+            isLoading: false,
+            dataArray: [],
+            dataSource: ds,
         };
     }
 
     componentWillMount() {
-        const { props: { page } } = this;
+        const { props: { page, payload } } = this;
         if (page === 0) {
             this.loadInitialActivities();
         }
+        else {
+            this.setState({
+                dataArray: payload,
+            });
+        }
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.setState({
+            dataArray: nextProps.payload,
+        });
+    }
+
+    componentDidMount() {
+        this.setState({
+            dataSource: this.state.dataSource.cloneWithRows(this.state.dataArray),
+        });
     }
 
     async loadInitialActivities() {
-        this.setState({ isLoading: true });
+        this.setState({ isRefreshing: true });
         const { props: { token, dispatch } } = this;
         try {
             await Promise.race([
@@ -63,7 +87,7 @@ class Newsfeed extends Component {
             }
             return;
         } finally {
-            this.setState({ isLoading: false });
+            this.setState({ isRefreshing: false });
         }
     }
 
@@ -89,20 +113,51 @@ class Newsfeed extends Component {
         }
     }
 
+    getIndex(item) {
+        for (var index = 0; index < this.state.dataArray.length; index++) {
+            var element = this.state.dataArray[index];
+            if (element.id === item.id) {
+                return index;
+            }
+        }
+        return -1;
+    }
+
     async vote(item, option) {
+        this.setState({ isLoading: true });
         let response = await votePost(this.props.token, item.entity.id, option);
+        this.setState({
+            isLoading: false,
+        });
         if (response.code) {
             let code = response.code;
+            let message = 'Something went wrong';
             switch (code) {
                 case 400:
-                    alert('User already answered to this post.');
+                    if (response.errors.errors.length) {
+                        message = response.errors.errors[0];
+                    }
+                    // alert('User already answered to this post.');
                     break;
                 case 200:
+                    if (option === 'upvote') {
+                        item.upvotes_count = item.upvotes_count + 1;
+                    } else if (option === 'downvote') {
+                        item.downvotes_count = item.downvotes_count + 1;
+                    }
+                    var dataArrayClone = this.state.dataArray;
+                    const index = this.getIndex(item);
+                    if (index !== -1) {
+                        dataArrayClone[index] = item;
+                    }
+                    this.setState({
+                        dataArray: dataArrayClone,
+                    });
                     break;
                 default:
-                    alert('Something went wrong');
                     break;
             }
+            setTimeout(() => alert(message), 500);
         }
         else {
             alert('Something went wrong');
@@ -309,11 +364,11 @@ class Newsfeed extends Component {
                         <Left style={{ justifyContent: 'space-between' }}>
                             <Button iconLeft transparent style={styles.footerButton} onPress={() => this.vote(item, 'upvote')}>
                                 <Icon name="md-arrow-dropup" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Upvote {item.rate_up ? item.rate_up : 0}</Label>
+                                <Label style={styles.footerText}>Upvote {item.upvotes_count ? item.upvotes_count : 0}</Label>
                             </Button>
                             <Button iconLeft transparent style={styles.footerButton} onPress={() => this.vote(item, 'downvote')}>
                                 <Icon active name="md-arrow-dropdown" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Downvote {item.rate_up ? item.rate_down : 0}</Label>
+                                <Label style={styles.footerText}>Downvote {item.downvotes_count ? item.downvotes_count : 0}</Label>
                             </Button>
                             <Button iconLeft transparent style={styles.footerButton}>
                                 <Icon active name="ios-undo" style={styles.footerIcon} />
@@ -503,12 +558,11 @@ class Newsfeed extends Component {
     }
 
     render() {
-        const { props: { payload } } = this;
         return (
             <Content
                 refreshControl={
                     <RefreshControl
-                        refreshing={this.state.isLoading}
+                        refreshing={this.state.isRefreshing}
                         onRefresh={this._onRefresh.bind(this)}
                     />
                 }
@@ -519,7 +573,7 @@ class Newsfeed extends Component {
                         this._onEndReached();
                     }
                 }}>
-                <List dataArray={payload} renderRow={item => {
+                <ListView dataSource={this.state.dataSource} renderRow={item => {
                     switch (item.entity.type) {
                         case 'post':
                         case 'user-petition':
@@ -531,6 +585,7 @@ class Newsfeed extends Component {
                     }
                 }}
                 />
+                <OrientationLoadingOverlay visible={this.state.isLoading} />
                 {this._renderTailLoading()}
             </Content >
         );
