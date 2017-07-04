@@ -157,7 +157,7 @@ class Newsfeed extends Component {
                 default:
                     break;
             }
-            setTimeout(() => alert(message), 500);
+            setTimeout(() => alert(message), 1000);
         }
         else {
             alert('Something went wrong');
