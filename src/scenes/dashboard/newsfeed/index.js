@@ -46,26 +46,13 @@ class Newsfeed extends Component {
     }
 
     componentWillMount() {
-        const { props: { page, payload } } = this;
-        if (page === 0) {
-            this.loadInitialActivities();
-        }
-        else {
-            this.setState({
-                dataArray: payload,
-            });
-        }
+        this.props.dispatch(resetActivities());
+        this.loadInitialActivities();
     }
 
     componentWillReceiveProps(nextProps) {
         this.setState({
             dataArray: nextProps.payload,
-        });
-    }
-
-    componentDidMount() {
-        this.setState({
-            dataSource: this.state.dataSource.cloneWithRows(this.state.dataArray),
         });
     }
 
@@ -77,6 +64,9 @@ class Newsfeed extends Component {
                 dispatch(loadActivities(token)),
                 timeout(15000),
             ]);
+            this.setState({
+                dataSource: this.state.dataSource.cloneWithRows(this.state.dataArray),
+            });
         } catch (e) {
             const message = e.message || e;
             if (message !== 'Timed out') {

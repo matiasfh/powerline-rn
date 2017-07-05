@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem, Label, Spinner, List, ListItem, Item, Input } from 'native-base';
-import { Image, View, StyleSheet, TouchableOpacity, Platform, KeyboardAvoidingView, Keyboard, TextInput } from 'react-native';
+import { Image, View, StyleSheet, TouchableOpacity, Platform, KeyboardAvoidingView, Keyboard, TextInput, ListView } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import HeaderImageScrollView, { TriggeringView } from 'react-native-image-header-scroll-view';
 import * as Animatable from 'react-native-animatable';
@@ -18,7 +18,7 @@ import Menu, {
     renderers
 } from 'react-native-popup-menu';
 import OrientationLoadingOverlay from 'react-native-orientation-loading-overlay';
-import { loadPostComments, votePost, addCommentToPost } from 'PLActions';
+import { loadPostComments, votePost, addCommentToPost, ratePostComment } from 'PLActions';
 
 const { youTubeAPIKey } = require('PLEnv');
 const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
@@ -29,29 +29,36 @@ class ItemDetail extends Component {
 
     page: number;
     comments: Array<Object>;
-    parentComment: Object;
+    rootComment: Object;
 
     constructor(props) {
         super(props);
+        var ds = new ListView.DataSource({
+            rowHasChanged: (r1, r2) => r1 !== r2,
+        });
         this.state = {
             isLoading: false,
             isCommentsLoading: false,
             visibleHeight: 50,
             commentText: '',
+            dataArray: [],
+            dataSource: ds,
         };
         this.page = 0;
         this.comments = [];
-        this.parentComment = null;
+        this.rootComment = null;
     }
 
     componentWillMount() {
         this.page = 0;
         this.keyboardDidShowListener = Keyboard.addListener('keyboardWillShow', this._keyboardWillShow.bind(this));
         this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide.bind(this));
+
+        this.loadComments();
     }
 
     componentDidMount() {
-        this.loadComments();
+
     }
 
     componentWillUnmount() {
@@ -118,8 +125,10 @@ class ItemDetail extends Component {
                     loadPostComments(token, item.entity.id, this.page, visibleCommentCount),
                     timeout(15000),
                 ]);
-                this.comments = this.comments.concat(response);
-                this.fetchRootComment();
+                this.fetchRootComment(response);
+                this.setState({
+                    dataArray: response,
+                });
             } catch (e) {
                 const message = e.message || e;
                 if (message !== 'Timed out') {
@@ -133,6 +142,9 @@ class ItemDetail extends Component {
                 this.setState({ isCommentsLoading: false });
             }
         }
+        this.setState({
+            dataSource: this.state.dataSource.cloneWithRows(this.state.dataArray),
+        });
     }
 
     async vote(item, option) {
@@ -149,7 +161,7 @@ class ItemDetail extends Component {
         this.setState({
             isLoading: false,
         });
-        if (response.code) {
+        if (response && response.code) {
             let code = response.code;
             let message = 'Something went wrong';
             switch (code) {
@@ -193,7 +205,7 @@ class ItemDetail extends Component {
         });
         this.addCommentView.close();
         if (response && response.comment_body) {
-            this.comments = [];
+            this.setState({ dataArray: [] });
             this.loadComments();
         }
         else {
@@ -202,16 +214,35 @@ class ItemDetail extends Component {
     }
 
     async rate(comment, option) {
-        // this.setState({ isLoading: true });
+        this.setState({ isLoading: true });
 
-        const { props: { item } } = this;
+        const { props: { item, token } } = this;
         var response;
 
         switch (item.entity.type) {
             case 'post':
+                response = await ratePostComment(token, comment.id, option);
                 break;
             default:
+                return;
                 break;
+        }
+
+        this.setState({ isLoading: false });
+
+        if (response && response.comment_body) {
+            var dataArrayClone = this.state.dataArray;
+            const index = this.getIndex(response);
+
+            if (index !== -1) {
+                dataArrayClone[index] = response;
+            }
+            this.setState({
+                dataArray: dataArrayClone,
+            });
+        } else {
+            let message = response.message || response;
+            setTimeout(() => alert(message), 1000);
         }
     }
 
@@ -235,10 +266,20 @@ class ItemDetail extends Component {
         }, 100);
     }
 
-    fetchRootComment() {
-        if (this.comments.length && this.comments[0].is_root) {
-            this.rootComment = this.comments[0];
+    fetchRootComment(comments) {
+        if (comments.length && comments[0].is_root) {
+            this.rootComment = comments[0];
         }
+    }
+
+    getIndex(comment) {
+        for (var index = 0; index < this.state.dataArray.length; index++) {
+            var element = this.state.dataArray[index];
+            if (element.id === comment.id) {
+                return index;
+            }
+        }
+        return -1;
     }
 
     // Redering Functions
@@ -639,7 +680,7 @@ class ItemDetail extends Component {
     }
 
     _renderRootComment(item) {
-        if (this.comments.length <= 1) {
+        if (this.rootComment === null || this.state.dataArray.length <= 1) {
             return null;
         }
 
@@ -709,11 +750,11 @@ class ItemDetail extends Component {
                         <Text style={styles.description} numberOfLines={5}>{comment.comment_body}</Text>
                         <Text note style={styles.subtitle}><TimeAgo time={comment.created_at} /></Text>
                         <View style={styles.commentFooterContainer}>
-                            <Button iconLeft small transparent>
+                            <Button iconLeft small transparent onPress={() => this._onRate(comment, 'up')}>
                                 <Icon name="md-arrow-dropup" style={styles.footerIcon} />
                                 <Label style={styles.footerText}>{rateUp ? rateUp : 0}</Label>
                             </Button>
-                            <Button iconLeft small transparent>
+                            <Button iconLeft small transparent onPress={() => this._onRate(comment, 'down')}>
                                 <Icon active name="md-arrow-dropdown" style={styles.footerIcon} />
                                 <Label style={styles.footerText}>{rateDown ? rateDown : 0}</Label>
                             </Button>
@@ -732,7 +773,7 @@ class ItemDetail extends Component {
     }
 
     _renderAllReplies() {
-        if (this.state.isCommentsLoading === false && this.comments.length > 1) {
+        if (this.state.isCommentsLoading === false && this.state.dataArray.length > 1) {
             return (
                 <View style={{ marginTop: 20 }}>
                     <View style={styles.borderAllRepliesContainer} />
@@ -802,11 +843,10 @@ class ItemDetail extends Component {
                         {this._renderAddComment()}
                         <View style={styles.borderContainer} />
                         {this._renderRootComment(item)}
-                        <List
-                            dataArray={this.comments} renderRow={(comment) =>
+                        <ListView
+                            dataSource={this.state.dataSource} renderRow={(comment) =>
                                 this._renderChildComment(comment)
-                            }>
-                        </List>
+                            } />
                         {this._renderAllReplies()}
                         {this._renderCommentsLoading()}
                         <View style={{ height: 50 }} />
