@@ -23,6 +23,11 @@ import getTheme from '../native-base-theme/components';
 import material from '../native-base-theme/variables/material';
 import { StyleProvider, variables } from 'native-base';
 import TourScene from './scenes/auth/TourScene';
+import Influences from './scenes/dashboard/influences/';
+import SearchFollowing from './scenes/dashboard/influences/search/';
+import Representatives from './scenes/dashboard/representatives/';
+import RepresentatyProfile from './scenes/dashboard/representatives/profile/';
+import Profile from './scenes/dashboard/profile/';
 
 var RouterWithRedux = connect()(Router);
 
@@ -59,6 +64,10 @@ class PLNavigator extends React.Component {
         return <Home />;
       case 'takeTour':
         return <TourScene />;
+      case 'myInfluences':
+        return <Influences />;
+      case 'representatives':
+        return <Representatives />;
       default:
         return <Home />;
     }
@@ -100,6 +109,11 @@ class PLNavigator extends React.Component {
               <Scene key="groupSelector" component={GroupSelector} />
               <Scene key="takeTour" component={TourScene} />
               <Scene key="itemDetail" component={ItemDetail} />
+              <Scene key="myInfluences" component={Influences}/>
+              <Scene key="searchFollowing" component={SearchFollowing}/>
+              <Scene key="representatives" component={Representatives}/>
+              <Scene key="representatyprofile" component={RepresentatyProfile}/>
+              <Scene key="profile" component={Profile}/>
             </Scene>
           </RouterWithRedux>
         </Drawer>
