@@ -720,11 +720,11 @@ class ItemDetail extends Component {
                         <View style={styles.commentFooterContainer}>
                             <Button iconLeft small transparent onPress={() => this._onVote(item, 'upvote')}>
                                 <Icon name="md-arrow-dropup" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>{rateUp}</Label>
+                                <Label style={styles.footerText}>{item.upvotes_count ? item.upvotes_count : 0}</Label>
                             </Button>
                             <Button iconLeft small transparent onPress={() => this._onVote(item, 'downvote')}>
                                 <Icon active name="md-arrow-dropdown" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>{rateDown}</Label>
+                                <Label style={styles.footerText}>{item.downvotes_count ? item.downvotes_count : 0}</Label>
                             </Button>
                             <Button iconLeft small transparent>
                                 <Icon active name="ios-undo" style={styles.footerIcon} />
