@@ -98,6 +98,15 @@ class ItemDetail extends Component {
         }
     }
 
+    _onVote(item, option) {
+        const { props: { profile } } = this;
+        if (profile.id === item.owner.id) {
+            alert("Unable to vote because you're the owner of the comment.")
+        } else {
+            this.vote(item, option);
+        }
+    }
+
     _onRate(comment, option) {
         const { props: { profile, item } } = this;
         if (comment.is_root) {
@@ -503,11 +512,11 @@ class ItemDetail extends Component {
                 return (
                     <CardItem footer style={{ height: 35 }}>
                         <Left style={{ justifyContent: 'space-between' }}>
-                            <Button iconLeft transparent style={styles.footerButton} onPress={() => this.vote(item, 'upvote')}>
+                            <Button iconLeft transparent style={styles.footerButton} onPress={() => this._onVote(item, 'upvote')}>
                                 <Icon name="md-arrow-dropup" style={styles.footerIcon} />
                                 <Label style={styles.footerText}>Upvote {item.upvotes_count ? item.upvotes_count : 0}</Label>
                             </Button>
-                            <Button iconLeft transparent style={styles.footerButton} onPress={() => this.vote(item, 'downvote')}>
+                            <Button iconLeft transparent style={styles.footerButton} onPress={() => this._onVote(item, 'downvote')}>
                                 <Icon active name="md-arrow-dropdown" style={styles.footerIcon} />
                                 <Label style={styles.footerText}>Downvote {item.downvotes_count ? item.downvotes_count : 0}</Label>
                             </Button>
@@ -709,11 +718,11 @@ class ItemDetail extends Component {
                         <Text style={styles.description} numberOfLines={5}>{item.description}</Text>
                         <Text note style={styles.subtitle}><TimeAgo time={item.sent_at} /></Text>
                         <View style={styles.commentFooterContainer}>
-                            <Button iconLeft small transparent onPress={() => this._onRate(this.rootComment, 'up')}>
+                            <Button iconLeft small transparent onPress={() => this._onVote(item, 'upvote')}>
                                 <Icon name="md-arrow-dropup" style={styles.footerIcon} />
                                 <Label style={styles.footerText}>{rateUp}</Label>
                             </Button>
-                            <Button iconLeft small transparent onPress={() => this._onRate(this.rootComment, 'down')}>
+                            <Button iconLeft small transparent onPress={() => this._onVote(item, 'downvote')}>
                                 <Icon active name="md-arrow-dropdown" style={styles.footerIcon} />
                                 <Label style={styles.footerText}>{rateDown}</Label>
                             </Button>
