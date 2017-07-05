@@ -59,6 +59,7 @@ class ItemDetail extends Component {
         this.keyboardDidHideListener.remove();
     }
 
+    // Notification Handlers
     _keyboardWillShow(e) {
         var newHeight = e.endCoordinates.height + 100;
         this.setState({ visibleHeight: newHeight });
@@ -67,6 +68,7 @@ class ItemDetail extends Component {
     _keyboardDidHide() {
     }
 
+    // UI Actions    
     onRef = r => {
         this.addCommentView = r;
     }
@@ -79,12 +81,6 @@ class ItemDetail extends Component {
         this.addCommentView.open();
     }
 
-    openedAddCommentView() {
-        setTimeout(() => {
-            this.addCommentInput.focus();
-        }, 100);
-    }
-
     _onSendComment() {
         if (this.state.commentText === '') {
             alert("Please input comment text");
@@ -95,6 +91,24 @@ class ItemDetail extends Component {
         }
     }
 
+    _onRate(comment, option) {
+        const { props: { profile, item } } = this;
+        if (comment.is_root) {
+            if (profile.id === item.owner.id) {
+                alert("Unable to rate because you're the owner of the comment.")
+            } else {
+                this.rate(comment, option);
+            }
+        } else {
+            if (profile.id === comment.user.id) {
+                alert("Unable to rate because you're the owner of the comment.")
+            } else {
+                this.rate(comment, option);
+            }
+        }
+    }
+
+    // API Calls    
     async loadComments() {
         const { props: { item, token, dispatch } } = this;
         if (item.entity.type === 'post') {
@@ -170,10 +184,10 @@ class ItemDetail extends Component {
         }
     }
 
-    async addComment(comment) {
+    async addComment(commentText) {
         const { props: { item, token, dispatch } } = this;
         this.setState({ isLoading: true });
-        let response = await addCommentToPost(token, item.entity.id, this.rootComment.id, comment, this.rootComment.privacy);
+        let response = await addCommentToPost(token, item.entity.id, this.rootComment.id, commentText, this.rootComment.privacy);
         this.setState({
             isLoading: false,
         });
@@ -187,6 +201,21 @@ class ItemDetail extends Component {
         }
     }
 
+    async rate(comment, option) {
+        // this.setState({ isLoading: true });
+
+        const { props: { item } } = this;
+        var response;
+
+        switch (item.entity.type) {
+            case 'post':
+                break;
+            default:
+                break;
+        }
+    }
+
+    // Private Functions    
     youtubeGetID(url) {
         var ID = '';
         url = url.replace(/(>|<)/gi, '').split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
@@ -200,12 +229,19 @@ class ItemDetail extends Component {
         return ID;
     }
 
+    openedAddCommentView() {
+        setTimeout(() => {
+            this.addCommentInput.focus();
+        }, 100);
+    }
+
     fetchRootComment() {
         if (this.comments.length && this.comments[0].is_root) {
             this.rootComment = this.comments[0];
         }
     }
 
+    // Redering Functions
     _renderZoneIcon(item) {
         if (item.zone === 'prioritized') {
             return (<Icon active name="ios-flash" style={styles.zoneIcon} />);
@@ -632,11 +668,11 @@ class ItemDetail extends Component {
                         <Text style={styles.description} numberOfLines={5}>{item.description}</Text>
                         <Text note style={styles.subtitle}><TimeAgo time={item.sent_at} /></Text>
                         <View style={styles.commentFooterContainer}>
-                            <Button iconLeft small transparent>
+                            <Button iconLeft small transparent onPress={() => this._onRate(this.rootComment, 'up')}>
                                 <Icon name="md-arrow-dropup" style={styles.footerIcon} />
                                 <Label style={styles.footerText}>{rateUp}</Label>
                             </Button>
-                            <Button iconLeft small transparent>
+                            <Button iconLeft small transparent onPress={() => this._onRate(this.rootComment, 'down')}>
                                 <Icon active name="md-arrow-dropdown" style={styles.footerIcon} />
                                 <Label style={styles.footerText}>{rateDown}</Label>
                             </Button>
