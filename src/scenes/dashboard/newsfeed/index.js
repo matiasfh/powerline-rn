@@ -300,6 +300,40 @@ class Newsfeed extends Component {
         }
     }
 
+    _renderPostFooter(item) {
+        if (item.zone === 'expired') {
+            return (
+                <CardItem footer style={{ height: 35 }}>
+                    <Left style={{ justifyContent: 'flex-end' }}>
+                        <Button iconLeft transparent style={styles.footerButton}>
+                            <Icon active name="ios-undo" style={styles.footerIcon} />
+                            <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
+                        </Button>
+                    </Left>
+                </CardItem>
+            );
+        } else {
+            return (
+                <CardItem footer style={{ height: 35 }}>
+                    <Left style={{ justifyContent: 'space-between' }}>
+                        <Button iconLeft transparent style={styles.footerButton} onPress={() => this.vote(item, 'upvote')}>
+                            <Icon name="md-arrow-dropup" style={styles.footerIcon} />
+                            <Label style={styles.footerText}>Upvote {item.upvotes_count ? item.upvotes_count : 0}</Label>
+                        </Button>
+                        <Button iconLeft transparent style={styles.footerButton} onPress={() => this.vote(item, 'downvote')}>
+                            <Icon active name="md-arrow-dropdown" style={styles.footerIcon} />
+                            <Label style={styles.footerText}>Downvote {item.downvotes_count ? item.downvotes_count : 0}</Label>
+                        </Button>
+                        <Button iconLeft transparent style={styles.footerButton}>
+                            <Icon active name="ios-undo" style={styles.footerIcon} />
+                            <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
+                        </Button>
+                    </Left>
+                </CardItem>
+            );
+        }
+    }
+
     _renderHeader(item) {
         var thumbnail: string = '';
         var title: string = '';
@@ -357,24 +391,7 @@ class Newsfeed extends Component {
     _renderFooter(item) {
         switch (item.entity.type) {
             case 'post':
-                return (
-                    <CardItem footer style={{ height: 35 }}>
-                        <Left style={{ justifyContent: 'space-between' }}>
-                            <Button iconLeft transparent style={styles.footerButton} onPress={() => this.vote(item, 'upvote')}>
-                                <Icon name="md-arrow-dropup" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Upvote {item.upvotes_count ? item.upvotes_count : 0}</Label>
-                            </Button>
-                            <Button iconLeft transparent style={styles.footerButton} onPress={() => this.vote(item, 'downvote')}>
-                                <Icon active name="md-arrow-dropdown" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Downvote {item.downvotes_count ? item.downvotes_count : 0}</Label>
-                            </Button>
-                            <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon active name="ios-undo" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
-                            </Button>
-                        </Left>
-                    </CardItem>
-                );
+                return this._renderPostFooter(item);
                 break;
             case 'petition':
             case 'user-petition':
