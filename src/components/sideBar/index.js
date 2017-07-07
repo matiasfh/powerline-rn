@@ -113,6 +113,10 @@ class SideBar extends Component {
       this.props.logOut();
     } else if(route == 'takeTour'){
       Actions['takeTour']();
+    }else if(route == 'myInfluences'){
+      Actions['myInfluences']();  
+    }else if(route == 'representatives'){
+      Actions['representatives']();
     }else{
       Actions['home']();
     }

@@ -13,6 +13,9 @@ const activityActions = require('./activities');
 const postActions = require('./posts');
 const userActions = require('./users');
 const registerActions = require('./register');
+const followingActions = require('./following');
+const notificationActions = require('./notification');
+const representativesActions = require('./representatives');
 
 module.exports = {
   ...loginActions,
@@ -23,4 +26,7 @@ module.exports = {
   ...postActions,
   ...userActions,
   ...registerActions,
+  ...followingActions,
+  ...notificationActions,
+  ...representativesActions,
 };
