@@ -29,7 +29,7 @@ class ItemDetail extends Component {
 
     page: number;
     comments: Array<Object>;
-    rootComment: Object;
+    commentToReply: Object;
 
     constructor(props) {
         super(props);
@@ -46,7 +46,7 @@ class ItemDetail extends Component {
         };
         this.page = 0;
         this.comments = [];
-        this.rootComment = null;
+        this.commentToReply = null;
     }
 
     componentWillMount() {
@@ -85,14 +85,13 @@ class ItemDetail extends Component {
     }
 
     _onClickedAddComment() {
+        this.commentToReply = null;
         this.addCommentView.open();
     }
 
     _onSendComment() {
         if (this.state.commentText === '') {
             alert("Please input comment text");
-        } else if (this.rootComment === null) {
-            alert("Something went wrong while loading comments. Please try again later.");
         } else {
             this.addComment(this.state.commentText);
         }
@@ -208,7 +207,7 @@ class ItemDetail extends Component {
     async addComment(commentText) {
         const { props: { item, token, dispatch } } = this;
         this.setState({ isLoading: true });
-        let response = await addCommentToPost(token, item.entity.id, this.rootComment.id, commentText, this.rootComment.privacy);
+        let response = await addCommentToPost(token, item.entity.id, commentText, (this.commentToReply != null) ? this.commentToReply.id : '0');
         this.setState({
             isLoading: false,
         });
