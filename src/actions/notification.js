@@ -1,25 +1,27 @@
 var { API_URL } = require('../PLEnv');
 var { Action, ThunkAction } = require('./types');
 
-function getAcivities(){
+function getActivities(token, page, per_page){
     return new Promise((resolve, reject) => {
-        fetch(API_URL + '/v2/user/social-activities', {
+        fetch(API_URL + '/v2/user/social-activities?_format=json&tab=you&&page='+page +'&per_page=' + per_page, {
             method: 'GET',
             headers: {
-                'Accept': 'application/json',
+                'token': token,
                 'Content-Type': 'application/json'
             }
         })
         .then((res) => res.json())
-        .then(response => {
-            resolve(response);
+        .then(data => {
+            console.log("Followers API call Success:", data);
+            resolve(data);
         })
         .catch(err => {
+            console.log("Following API call Error", err);
             reject(err);
-        })
+        });
     });
 }
 
 module.exports = {
-    getAcivities
+    getActivities
 };

@@ -28,6 +28,11 @@ import SearchFollowing from './scenes/dashboard/influences/search/';
 import Representatives from './scenes/dashboard/representatives/';
 import RepresentatyProfile from './scenes/dashboard/representatives/profile/';
 import Profile from './scenes/dashboard/profile/';
+import CreateGroup from './scenes/dashboard/creategroup/';
+import GroupProfile from './scenes/dashboard/groupprofile/';
+import GroupList from './scenes/dashboard/grouplist/';
+import GroupSearch from './scenes/dashboard/grouplist/search/';
+import GroupMembers from './scenes/dashboard/groupmembers/';
 
 var RouterWithRedux = connect()(Router);
 
@@ -68,6 +73,10 @@ class PLNavigator extends React.Component {
         return <Influences />;
       case 'representatives':
         return <Representatives />;
+      case 'createGroup':
+        return <CreateGroup/>;
+      case 'myGroups':
+        return <GroupList />;
       default:
         return <Home />;
     }
@@ -114,6 +123,11 @@ class PLNavigator extends React.Component {
               <Scene key="representatives" component={Representatives}/>
               <Scene key="representatyprofile" component={RepresentatyProfile}/>
               <Scene key="profile" component={Profile}/>
+	      <Scene key="createGroup" component={CreateGroup}/>
+              <Scene key="groupprofile" component={GroupProfile}/>
+              <Scene key="myGroups" component={GroupList}/>
+              <Scene key="groupsearch" component={GroupSearch}/>
+              <Scene key="groupmembers" component={GroupMembers}/>
             </Scene>
           </RouterWithRedux>
         </Drawer>
