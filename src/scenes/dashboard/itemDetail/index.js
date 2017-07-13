@@ -734,12 +734,9 @@ class ItemDetail extends Component {
     }
 
     _renderChildComment(comment) {
-        if (comment.is_root) {
-            return null;
-        }
 
         var thumbnail: string = comment.author_picture ? comment.author_picture : '';
-        var title: string = comment.user.first_name + ' ' + comment.user.last_name;;
+        var title: string = comment.user.first_name + ' ' + comment.user.last_name;
         var rateUp: number = (comment.rates_count || 0) / 2 + comment.rate_sum / 2;
         var rateDown: number = (comment.rates_count || 0) / 2 - comment.rate_sum / 2;
 
@@ -774,8 +771,8 @@ class ItemDetail extends Component {
         );
     }
 
-    _renderAllReplies() {
-        if (this.state.isCommentsLoading === false && this.state.dataArray.length > 1) {
+    _renderLoadMore(comment) {
+        if (comment.preview_child_comments && comment.preview_child_comments.length > 1) {
             return (
                 <View style={{ marginTop: 20 }}>
                     <View style={styles.borderAllRepliesContainer} />
