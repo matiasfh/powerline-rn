@@ -20,7 +20,7 @@ async function votePost(token: string, postId: string, option: string) {
     }
 }
 
-async function addCommentToPost(token: string, postId: string, parentId: string, comment: string, privacy: string) {
+async function addCommentToPost(token: string, postId: string, comment: string, parentId: ?string = '0', privacy: ?string = 'public') {
     try {
         let response = await fetch(`${API_URL}/v2/posts/${postId}/comments`, {
             method: 'POST',
