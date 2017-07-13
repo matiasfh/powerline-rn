@@ -708,20 +708,20 @@ class ItemDetail extends Component {
                     <Thumbnail small style={{ alignSelf: 'flex-start' }} source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                     <Body style={{ alignSelf: 'flex-start' }}>
                         <Text style={styles.title}>{title}</Text>
-                        <Text style={styles.description} numberOfLines={5}>{item.description}</Text>
-                        <Text note style={styles.subtitle}><TimeAgo time={item.sent_at} /></Text>
+                        <Text style={styles.description} numberOfLines={5}>{comment.comment_body}</Text>
+                        <Text note style={styles.subtitle}><TimeAgo time={comment.created_at} /></Text>
                         <View style={styles.commentFooterContainer}>
-                            <Button iconLeft small transparent onPress={() => this._onVote(item, 'upvote')}>
+                            <Button iconLeft small transparent onPress={() => this._onRate(comment, 'up')}>
                                 <Icon name="md-arrow-dropup" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>{item.upvotes_count ? item.upvotes_count : 0}</Label>
+                                <Label style={styles.footerText}>{rateUp ? rateUp : 0}</Label>
                             </Button>
-                            <Button iconLeft small transparent onPress={() => this._onVote(item, 'downvote')}>
+                            <Button iconLeft small transparent onPress={() => this._onRate(comment, 'down')}>
                                 <Icon active name="md-arrow-dropdown" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>{item.downvotes_count ? item.downvotes_count : 0}</Label>
+                                <Label style={styles.footerText}>{rateDown ? rateDown : 0}</Label>
                             </Button>
                             <Button iconLeft small transparent>
                                 <Icon active name="ios-undo" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>{this.rootComment.rates_count ? this.rootComment.rates_count : 0}</Label>
+                                <Label style={styles.footerText}>{comment.rates_count ? comment.rates_count : 0}</Label>
                             </Button>
                         </View>
                     </Body>
