@@ -688,26 +688,19 @@ class ItemDetail extends Component {
         }
     }
 
-    _renderRootComment(item) {
-        if (this.rootComment === null || this.state.dataArray.length <= 1) {
-            return null;
+    _renderComment(comment) {
+        if (comment.is_root) {
+            return this._renderRootComment(comment);
+        } else {
+            return this._renderChildComment(comment);
         }
+    }
 
-        var thumbnail: string = '';
-        var title: string = '';
-        var rateUp: number = (this.rootComment.rates_count || 0) / 2 + this.rootComment.rate_sum / 2;
-        var rateDown: number = (this.rootComment.rates_count || 0) / 2 - this.rootComment.rate_sum / 2;
-
-        switch (item.entity.type) {
-            case 'post' || 'user-petition':
-                thumbnail = item.owner.avatar_file_path ? item.owner.avatar_file_path : '';
-                title = item.owner.first_name + ' ' + item.owner.last_name;
-                break;
-            default:
-                thumbnail = item.group.avatar_file_path ? item.group.avatar_file_path : '';
-                title = item.user.full_name;
-                break;
-        }
+    _renderRootComment(comment) {
+        var thumbnail: string = comment.author_picture ? comment.author_picture : '';
+        var title: string = (comment.user.first_name || '') + ' ' + (comment.user.last_name || '');
+        var rateUp: number = (comment.rates_count || 0) / 2 + comment.rate_sum / 2;
+        var rateDown: number = (comment.rates_count || 0) / 2 - comment.rate_sum / 2;
 
         return (
             <CardItem style={{ paddingBottom: 0 }}>
