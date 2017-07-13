@@ -851,12 +851,10 @@ class ItemDetail extends Component {
                         <View style={styles.borderContainer} />
                         {this._renderAddComment()}
                         <View style={styles.borderContainer} />
-                        {this._renderRootComment(item)}
                         <ListView
                             dataSource={this.state.dataSource} renderRow={(comment) =>
-                                this._renderChildComment(comment)
+                                this._renderComment(comment)
                             } />
-                        {this._renderAllReplies()}
                         {this._renderCommentsLoading()}
                         <View style={{ height: 50 }} />
                         <OrientationLoadingOverlay visible={this.state.isLoading} />
