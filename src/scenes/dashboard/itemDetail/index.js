@@ -22,14 +22,13 @@ import { loadPostComments, votePost, addCommentToPost, ratePostComment } from 'P
 
 const { youTubeAPIKey } = require('PLEnv');
 const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
-const visibleCommentCount = 5;
 const { SlideInMenu } = renderers;
 
 class ItemDetail extends Component {
 
     page: number;
-    comments: Array<Object>;
     commentToReply: Object;
+    isLoadedAll: boolean;
 
     constructor(props) {
         super(props);
@@ -45,8 +44,8 @@ class ItemDetail extends Component {
             dataSource: ds,
         };
         this.page = 0;
-        this.comments = [];
         this.commentToReply = null;
+        this.isLoadedAll = false;
     }
 
     componentWillMount() {
@@ -84,7 +83,7 @@ class ItemDetail extends Component {
         this.addCommentInput = r;
     }
 
-    _onClickedAddComment() {
+    _onAddComment() {
         this.commentToReply = null;
         this.addCommentView.open();
     }
@@ -123,6 +122,13 @@ class ItemDetail extends Component {
         }
     }
 
+    _onLoadMore() {
+        if (this.state.isCommentsLoading === false && this.isLoadedAll === false) {
+            this.page = this.page + 1;
+            this.loadNextCmments();
+        }
+    }
+
     // API Calls    
     async loadComments() {
         const { props: { item, token, dispatch } } = this;
@@ -130,12 +136,46 @@ class ItemDetail extends Component {
             this.setState({ isCommentsLoading: true });
             try {
                 let response = await Promise.race([
-                    loadPostComments(token, item.entity.id, this.page, visibleCommentCount),
+                    loadPostComments(token, item.entity.id, this.page, 5),
                     timeout(15000),
                 ]);
-                this.fetchRootComment(response);
                 this.setState({
-                    dataArray: response,
+                    dataArray: response.payload,
+                });
+            } catch (e) {
+                const message = e.message || e;
+                if (message !== 'Timed out') {
+                    alert(message);
+                }
+                else {
+                    alert('Timed out. Please check internet connection');
+                }
+                return;
+            } finally {
+                this.setState({ isCommentsLoading: false });
+            }
+        }
+        this.setState({
+            dataSource: this.state.dataSource.cloneWithRows(this.state.dataArray),
+        });
+    }
+
+    async loadNextCmments() {
+        const { props: { item, token, dispatch } } = this;
+        if (item.entity.type === 'post') {
+            this.setState({ isCommentsLoading: true });
+            try {
+                let response = await Promise.race([
+                    loadPostComments(token, item.entity.id, this.page, 5),
+                    timeout(15000),
+                ]);
+                let comments = this.state.dataArray;
+                comments = comments.concat(response.payload);
+                if (response.totalItems === comments.length) {
+                    this.isLoadedAll = true;
+                }
+                this.setState({
+                    dataArray: comments,
                 });
             } catch (e) {
                 const message = e.message || e;
@@ -272,12 +312,6 @@ class ItemDetail extends Component {
         setTimeout(() => {
             this.addCommentInput.focus();
         }, 100);
-    }
-
-    fetchRootComment(comments) {
-        if (comments.length && comments[0].is_root) {
-            this.rootComment = comments[0];
-        }
     }
 
     getIndex(comment) {
@@ -637,7 +671,7 @@ class ItemDetail extends Component {
         thumbnail = profile.avatar_file_name ? profile.avatar_file_name : '';
 
         return (
-            <TouchableOpacity onPress={() => this._onClickedAddComment()}>
+            <TouchableOpacity onPress={() => this._onAddComment()}>
                 <CardItem>
                     <Left>
                         <Thumbnail small source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
@@ -770,13 +804,13 @@ class ItemDetail extends Component {
         );
     }
 
-    _renderLoadMore(comment) {
-        if (comment.preview_child_comments && comment.preview_child_comments.length > 1) {
+    _renderLoadMore() {
+        if (this.state.isCommentsLoading === false && this.isLoadedAll === false) {
             return (
                 <View style={{ marginTop: 20 }}>
                     <View style={styles.borderAllRepliesContainer} />
-                    <Button transparent full>
-                        <Text style={styles.allRepliesButtonText}>ALL REPLIES</Text>
+                    <Button transparent full onPress={() => this._onLoadMore()}>
+                        <Text style={styles.allRepliesButtonText}>Load More</Text>
                     </Button>
                 </View>
             );
@@ -844,6 +878,7 @@ class ItemDetail extends Component {
                             dataSource={this.state.dataSource} renderRow={(comment) =>
                                 this._renderComment(comment)
                             } />
+                        {this._renderLoadMore()}
                         {this._renderCommentsLoading()}
                         <View style={{ height: 50 }} />
                         <OrientationLoadingOverlay visible={this.state.isLoading} />
