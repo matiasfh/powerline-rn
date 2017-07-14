@@ -838,7 +838,7 @@ class ItemDetail extends Component {
     }
 
     _renderLoadMore() {
-        if (this.state.isCommentsLoading === false && this.isLoadedAll === false) {
+        if (this.state.isCommentsLoading === false && this.isLoadedAll === false && this.state.dataArray.length > 0) {
             return (
                 <View style={{ marginTop: 20 }}>
                     <View style={styles.borderAllRepliesContainer} />
