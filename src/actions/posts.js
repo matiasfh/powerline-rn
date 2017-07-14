@@ -51,7 +51,7 @@ async function loadPostComments(token: string, entityId: number, page: ?number =
             }
         });
         var json = await response.json();
-        if ((json.totalItems > 0) && (json.payload.length)) {
+        if (json && json.payload) {
             return Promise.resolve(json);
         }
         else {
