@@ -46,26 +46,13 @@ class Newsfeed extends Component {
     }
 
     componentWillMount() {
-        const { props: { page, payload } } = this;
-        if (page === 0) {
-            this.loadInitialActivities();
-        }
-        else {
-            this.setState({
-                dataArray: payload,
-            });
-        }
+        this.props.dispatch(resetActivities());
+        this.loadInitialActivities();
     }
 
     componentWillReceiveProps(nextProps) {
         this.setState({
             dataArray: nextProps.payload,
-        });
-    }
-
-    componentDidMount() {
-        this.setState({
-            dataSource: this.state.dataSource.cloneWithRows(this.state.dataArray),
         });
     }
 
@@ -77,6 +64,9 @@ class Newsfeed extends Component {
                 dispatch(loadActivities(token)),
                 timeout(15000),
             ]);
+            this.setState({
+                dataSource: this.state.dataSource.cloneWithRows(this.state.dataArray),
+            });
         } catch (e) {
             const message = e.message || e;
             if (message !== 'Timed out') {
@@ -124,8 +114,20 @@ class Newsfeed extends Component {
     }
 
     async vote(item, option) {
+        var previousOption = '';
+        if (item.post.votes && item.post.votes[0]) {
+            return;
+        }
+        var response;
         this.setState({ isLoading: true });
-        let response = await votePost(this.props.token, item.entity.id, option);
+        switch (item.entity.type) {
+            case 'post':
+                response = await votePost(this.props.token, item.entity.id, option);
+                break;
+            default:
+                return;
+                break;
+        }
         this.setState({
             isLoading: false,
         });
@@ -157,7 +159,7 @@ class Newsfeed extends Component {
                 default:
                     break;
             }
-            setTimeout(() => alert(message), 500);
+            setTimeout(() => alert(message), 1000);
         }
         else {
             alert('Something went wrong');
@@ -302,6 +304,51 @@ class Newsfeed extends Component {
         }
     }
 
+    _renderPostFooter(item) {
+        if (item.zone === 'expired') {
+            return (
+                <CardItem footer style={{ height: 35 }}>
+                    <Left style={{ justifyContent: 'flex-end' }}>
+                        <Button iconLeft transparent style={styles.footerButton}>
+                            <Icon active name="ios-undo" style={styles.footerIcon} />
+                            <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
+                        </Button>
+                    </Left>
+                </CardItem>
+            );
+        } else {
+            if (item.post.votes && item.post.votes[0]) {
+                let vote = item.post.votes[0];
+                var isVotedUp = false;
+                var isVotedDown = false;
+                if (vote.option === 1) {
+                    isVotedUp = true;
+                }
+                else if (vote.option === 2) {
+                    isVotedDown = true;
+                }
+            }
+            return (
+                <CardItem footer style={{ height: 35 }}>
+                    <Left style={{ justifyContent: 'space-between' }}>
+                        <Button iconLeft transparent style={styles.footerButton} onPress={() => this.vote(item, 'upvote')}>
+                            <Icon name="md-arrow-dropup" style={isVotedUp ? styles.footerIconBlue : styles.footerIcon} />
+                            <Label style={isVotedUp ? styles.footerTextBlue : styles.footerText}>Upvote {item.upvotes_count ? item.upvotes_count : 0}</Label>
+                        </Button>
+                        <Button iconLeft transparent style={styles.footerButton} onPress={() => this.vote(item, 'downvote')}>
+                            <Icon active name="md-arrow-dropdown" style={isVotedDown ? styles.footerIconBlue : styles.footerIcon} />
+                            <Label style={isVotedDown ? styles.footerTextBlue : styles.footerText}>Downvote {item.downvotes_count ? item.downvotes_count : 0}</Label>
+                        </Button>
+                        <Button iconLeft transparent style={styles.footerButton}>
+                            <Icon active name="ios-undo" style={styles.footerIcon} />
+                            <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
+                        </Button>
+                    </Left>
+                </CardItem>
+            );
+        }
+    }
+
     _renderHeader(item) {
         var thumbnail: string = '';
         var title: string = '';
@@ -359,24 +406,7 @@ class Newsfeed extends Component {
     _renderFooter(item) {
         switch (item.entity.type) {
             case 'post':
-                return (
-                    <CardItem footer style={{ height: 35 }}>
-                        <Left style={{ justifyContent: 'space-between' }}>
-                            <Button iconLeft transparent style={styles.footerButton} onPress={() => this.vote(item, 'upvote')}>
-                                <Icon name="md-arrow-dropup" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Upvote {item.upvotes_count ? item.upvotes_count : 0}</Label>
-                            </Button>
-                            <Button iconLeft transparent style={styles.footerButton} onPress={() => this.vote(item, 'downvote')}>
-                                <Icon active name="md-arrow-dropdown" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Downvote {item.downvotes_count ? item.downvotes_count : 0}</Label>
-                            </Button>
-                            <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon active name="ios-undo" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
-                            </Button>
-                        </Left>
-                    </CardItem>
-                );
+                return this._renderPostFooter(item);
                 break;
             case 'petition':
             case 'user-petition':

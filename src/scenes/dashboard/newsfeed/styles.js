@@ -53,9 +53,19 @@ export default {
         color: '#8694ab',
         marginRight: 5,
     },
+    footerIconBlue: {
+        fontSize: 15,
+        color: '#53a8cd',
+        marginRight: 5,
+    },
     footerText: {
         fontSize: 11,
         color: '#8694ab',
+        fontWeight: '500',
+    },
+    footerTextBlue: {
+        fontSize: 11,
+        color: '#53a8cd',
         fontWeight: '500',
     },
     footerButton: {

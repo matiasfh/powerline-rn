@@ -16,11 +16,11 @@ async function votePost(token: string, postId: string, option: string) {
         let responseJson = await response.json();
         return responseJson;
     } catch (error) {
-        console.error(error);
+        handleError(error);
     }
 }
 
-async function addCommentToPost(token: string, postId: string, parentId: string, comment: string, privacy: string) {
+async function addCommentToPost(token: string, postId: string, comment: string, parentId: ?string = '0', privacy: ?string = 'public') {
     try {
         let response = await fetch(`${API_URL}/v2/posts/${postId}/comments`, {
             method: 'POST',
@@ -37,8 +37,7 @@ async function addCommentToPost(token: string, postId: string, parentId: string,
         let responseJson = await response.json();
         return responseJson;
     } catch (error) {
-        // TEST PURPOSE:
-        console.error(error);
+        handleError(error);
     }
 }
 
@@ -52,21 +51,44 @@ async function loadPostComments(token: string, entityId: number, page: ?number =
             }
         });
         var json = await response.json();
-        if ((json.totalItems > 0) && (json.payload.length)) {
-            return Promise.resolve(json.payload);
+        if (json && json.payload) {
+            return Promise.resolve(json);
         }
         else {
             return Promise.reject(json);
         }
     } catch (error) {
-        // TEST PURPOSE:
-        console.error(error);
         return Promise.reject(error);
     }
+}
+
+async function ratePostComment(token: string, commentId, rateValue: string) {
+    try {
+        let response = await fetch(`${API_URL}/v2/post-comments/${commentId}/rate`, {
+            method: 'POST',
+            headers: {
+                'token': token,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                rate_value: rateValue,
+            })
+        });
+        let responseJson = await response.json();
+        return responseJson;
+    } catch (error) {
+        handleError(error);
+    }
+}
+
+function handleError(error) {
+    const message = error.message || error;
+    alert(message);
 }
 
 module.exports = {
     votePost,
     loadPostComments,
     addCommentToPost,
+    ratePostComment,
 };
