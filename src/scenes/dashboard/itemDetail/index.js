@@ -23,6 +23,7 @@ import { loadPostComments, votePost, addCommentToPost, ratePostComment } from 'P
 const { youTubeAPIKey } = require('PLEnv');
 const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
 const { SlideInMenu } = renderers;
+const numberPerPage = 5;
 
 class ItemDetail extends Component {
 
@@ -136,7 +137,7 @@ class ItemDetail extends Component {
             this.setState({ isCommentsLoading: true });
             try {
                 let response = await Promise.race([
-                    loadPostComments(token, item.entity.id, this.page, 5),
+                    loadPostComments(token, item.entity.id, this.page, numberPerPage),
                     timeout(15000),
                 ]);
                 this.setState({
@@ -166,7 +167,7 @@ class ItemDetail extends Component {
             this.setState({ isCommentsLoading: true });
             try {
                 let response = await Promise.race([
-                    loadPostComments(token, item.entity.id, this.page, 5),
+                    loadPostComments(token, item.entity.id, this.page, numberPerPage),
                     timeout(15000),
                 ]);
                 let comments = this.state.dataArray;
