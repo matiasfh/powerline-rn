@@ -197,6 +197,10 @@ class ItemDetail extends Component {
     }
 
     async vote(item, option) {
+        var previousOption = '';
+        if (item.post.votes && item.post.votes[0]) {
+            return;
+        }
         var response;
         this.setState({ isLoading: true });
         switch (item.entity.type) {
@@ -540,27 +544,55 @@ class ItemDetail extends Component {
         }
     }
 
+    _renderPostFooter(item) {
+        if (item.zone === 'expired') {
+            return (
+                <CardItem footer style={{ height: 35 }}>
+                    <Left style={{ justifyContent: 'flex-end' }}>
+                        <Button iconLeft transparent style={styles.footerButton}>
+                            <Icon active name="ios-undo" style={styles.footerIcon} />
+                            <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
+                        </Button>
+                    </Left>
+                </CardItem>
+            );
+        } else {
+            if (item.post.votes && item.post.votes[0]) {
+                let vote = item.post.votes[0];
+                var isVotedUp = false;
+                var isVotedDown = false;
+                if (vote.option === 1) {
+                    isVotedUp = true;
+                }
+                else if (vote.option === 2) {
+                    isVotedDown = true;
+                }
+            }
+            return (
+                <CardItem footer style={{ height: 35 }}>
+                    <Left style={{ justifyContent: 'space-between' }}>
+                        <Button iconLeft transparent style={styles.footerButton} onPress={() => this.vote(item, 'upvote')}>
+                            <Icon name="md-arrow-dropup" style={isVotedUp ? styles.footerIconBlue : styles.footerIcon} />
+                            <Label style={isVotedUp ? styles.footerTextBlue : styles.footerText}>Upvote {item.upvotes_count ? item.upvotes_count : 0}</Label>
+                        </Button>
+                        <Button iconLeft transparent style={styles.footerButton} onPress={() => this.vote(item, 'downvote')}>
+                            <Icon active name="md-arrow-dropdown" style={isVotedDown ? styles.footerIconBlue : styles.footerIcon} />
+                            <Label style={isVotedDown ? styles.footerTextBlue : styles.footerText}>Downvote {item.downvotes_count ? item.downvotes_count : 0}</Label>
+                        </Button>
+                        <Button iconLeft transparent style={styles.footerButton}>
+                            <Icon active name="ios-undo" style={styles.footerIcon} />
+                            <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
+                        </Button>
+                    </Left>
+                </CardItem>
+            );
+        }
+    }
+
     _renderFooter(item) {
         switch (item.entity.type) {
             case 'post':
-                return (
-                    <CardItem footer style={{ height: 35 }}>
-                        <Left style={{ justifyContent: 'space-between' }}>
-                            <Button iconLeft transparent style={styles.footerButton} onPress={() => this._onVote(item, 'upvote')}>
-                                <Icon name="md-arrow-dropup" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Upvote {item.upvotes_count ? item.upvotes_count : 0}</Label>
-                            </Button>
-                            <Button iconLeft transparent style={styles.footerButton} onPress={() => this._onVote(item, 'downvote')}>
-                                <Icon active name="md-arrow-dropdown" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Downvote {item.downvotes_count ? item.downvotes_count : 0}</Label>
-                            </Button>
-                            <Button iconLeft transparent style={styles.footerButton}>
-                                <Icon active name="ios-undo" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
-                            </Button>
-                        </Left>
-                    </CardItem>
-                );
+                return this._renderPostFooter(item);
                 break;
             case 'petition':
             case 'user-petition':
