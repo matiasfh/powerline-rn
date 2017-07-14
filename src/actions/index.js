@@ -16,6 +16,7 @@ const registerActions = require('./register');
 const followingActions = require('./following');
 const notificationActions = require('./notification');
 const representativesActions = require('./representatives');
+const drawerActions = require('./drawer');
 
 module.exports = {
   ...loginActions,
@@ -29,4 +30,5 @@ module.exports = {
   ...followingActions,
   ...notificationActions,
   ...representativesActions,
+  ...drawerActions
 };

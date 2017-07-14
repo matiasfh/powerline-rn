@@ -29,13 +29,12 @@ import {
     RefreshControl
 } from 'react-native';
 
-const PLColors  = require('PLColors');
+const PLColors = require('PLColors');
 import styles from './styles';
-import { openDrawer } from '../../../actions/drawer';
-import { getRepresentatives } from 'PLActions';
+import { getRepresentatives, openDrawer } from 'PLActions';
 
-class Representatives extends Component{
-    constructor(props){
+class Representatives extends Component {
+    constructor(props) {
         super(props);
 
         this.state = {
@@ -48,94 +47,94 @@ class Representatives extends Component{
         }
     }
 
-    componentWillMount(){
+    componentWillMount() {
         this._onRefresh();
     }
 
 
-    loadRepresentatives(){
+    loadRepresentatives() {
         var { token } = this.props;
         console.log(token);
         getRepresentatives(token, 1, 20)
-        .then(data => {
-            this.setState({
-                groups: data,
-                refreshing: false
+            .then(data => {
+                this.setState({
+                    groups: data,
+                    refreshing: false
+                });
+            })
+            .catch(err => {
+                this.setState({
+                    refreshing: false
+                });
             });
-        })
-        .catch(err => {
-            this.setState({
-                refreshing: false
-            });
-        });
     }
 
-    goToProfile(storageId){
+    goToProfile(storageId) {
         Actions.representatyprofile({
             storageId: storageId
         });
     }
 
-    _onRefresh(){
+    _onRefresh() {
         this.setState({
             refreshing: true
         });
         this.loadRepresentatives();
     }
 
-    render(){
-        return(
-        <MenuContext customStyles={menuContextStyles}>
-            <Container>
-                <Header style={styles.header}>
-                    <Left>
-                        <Button transparent onPress={this.props.openDrawer}>
-                            <Icon active name="menu" style={{color: 'white'}}/>
-                        </Button>
-                    </Left>
-                    <Body>
-                        <Title>My Representatives</Title>
-                    </Body>
-                </Header>
-                <Content
-                    refreshControl={
-                        <RefreshControl
-                            refreshing={this.state.refreshing}
-                            onRefresh={this._onRefresh.bind(this)}
-                        />
-                    }>
-                    <List style={{backgroundColor: 'white'}}>                        
-                        {
-                            this.state.groups.map((group, index) => {
-                                return (          
-                                    <View key={index}>                     
-                                        <ListItem itemHeader style={styles.itemHeaderStyle}>
-                                            <Text style={styles.itemHeaderText}>{group.title}</Text>
-                                        </ListItem>  
-                                        {
-                                            group.representatives.map((user, index1) => {
-                                                return (
-                                                    <ListItem onPress={() => this.goToProfile(user.storage_id)} key={index1}>
-                                                        <Thumbnail square size={80} source={{uri: user.avatar_file_path}}/>
-                                                        <Body>
-                                                            <Text style={{color: PLColors.main}}>{user.first_name} {user.last_name}</Text>
-                                                            <Text note style={styles.text1}>{user.official_title}</Text>
-                                                        </Body>
-                                                        <Right>
-                                                            <Icon name="ios-arrow-forward"/>
-                                                        </Right>
-                                                    </ListItem>
-                                                );
-                                            })
-                                        }                                           
-                                    </View>
-                                )
-                            })
-                        }                               
-                    </List>
-                </Content>
-            </Container>
-        </MenuContext>
+    render() {
+        return (
+            <MenuContext customStyles={menuContextStyles}>
+                <Container>
+                    <Header style={styles.header}>
+                        <Left>
+                            <Button transparent onPress={this.props.openDrawer}>
+                                <Icon active name="menu" style={{ color: 'white' }} />
+                            </Button>
+                        </Left>
+                        <Body>
+                            <Title>My Representatives</Title>
+                        </Body>
+                    </Header>
+                    <Content
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={this.state.refreshing}
+                                onRefresh={this._onRefresh.bind(this)}
+                            />
+                        }>
+                        <List style={{ backgroundColor: 'white' }}>
+                            {
+                                this.state.groups.map((group, index) => {
+                                    return (
+                                        <View key={index}>
+                                            <ListItem itemHeader style={styles.itemHeaderStyle}>
+                                                <Text style={styles.itemHeaderText}>{group.title}</Text>
+                                            </ListItem>
+                                            {
+                                                group.representatives.map((user, index1) => {
+                                                    return (
+                                                        <ListItem onPress={() => this.goToProfile(user.storage_id)} key={index1}>
+                                                            <Thumbnail square size={80} source={{ uri: user.avatar_file_path }} />
+                                                            <Body>
+                                                                <Text style={{ color: PLColors.main }}>{user.first_name} {user.last_name}</Text>
+                                                                <Text note style={styles.text1}>{user.official_title}</Text>
+                                                            </Body>
+                                                            <Right>
+                                                                <Icon name="ios-arrow-forward" />
+                                                            </Right>
+                                                        </ListItem>
+                                                    );
+                                                })
+                                            }
+                                        </View>
+                                    )
+                                })
+                            }
+                        </List>
+                    </Content>
+                </Container>
+            </MenuContext>
         );
     }
 }

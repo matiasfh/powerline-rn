@@ -23,11 +23,11 @@ import getTheme from '../native-base-theme/components';
 import material from '../native-base-theme/variables/material';
 import { StyleProvider, variables } from 'native-base';
 import TourScene from './scenes/auth/TourScene';
-import Influences from './scenes/dashboard/influences/';
-import SearchFollowing from './scenes/dashboard/influences/search/';
-import Representatives from './scenes/dashboard/representatives/';
-import RepresentatyProfile from './scenes/dashboard/representatives/profile/';
-import Profile from './scenes/dashboard/profile/';
+import Influences from './scenes/influences/';
+import SearchFollowing from './scenes/influences/search/';
+import Representatives from './scenes/representatives/';
+import RepresentatyProfile from './scenes/representatives/profile/';
+import Profile from './scenes/profile/';
 import CreateGroup from './scenes/dashboard/creategroup/';
 import GroupProfile from './scenes/dashboard/groupprofile/';
 import GroupList from './scenes/dashboard/grouplist/';
@@ -74,7 +74,7 @@ class PLNavigator extends React.Component {
       case 'representatives':
         return <Representatives />;
       case 'createGroup':
-        return <CreateGroup/>;
+        return <CreateGroup />;
       case 'myGroups':
         return <GroupList />;
       default:
@@ -118,16 +118,16 @@ class PLNavigator extends React.Component {
               <Scene key="groupSelector" component={GroupSelector} />
               <Scene key="takeTour" component={TourScene} />
               <Scene key="itemDetail" component={ItemDetail} />
-              <Scene key="myInfluences" component={Influences}/>
-              <Scene key="searchFollowing" component={SearchFollowing}/>
-              <Scene key="representatives" component={Representatives}/>
-              <Scene key="representatyprofile" component={RepresentatyProfile}/>
-              <Scene key="profile" component={Profile}/>
-	      <Scene key="createGroup" component={CreateGroup}/>
-              <Scene key="groupprofile" component={GroupProfile}/>
-              <Scene key="myGroups" component={GroupList}/>
-              <Scene key="groupsearch" component={GroupSearch}/>
-              <Scene key="groupmembers" component={GroupMembers}/>
+              <Scene key="myInfluences" component={Influences} />
+              <Scene key="searchFollowing" component={SearchFollowing} />
+              <Scene key="representatives" component={Representatives} />
+              <Scene key="representatyprofile" component={RepresentatyProfile} />
+              <Scene key="profile" component={Profile} />
+              <Scene key="createGroup" component={CreateGroup} />
+              <Scene key="groupprofile" component={GroupProfile} />
+              <Scene key="myGroups" component={GroupList} />
+              <Scene key="groupsearch" component={GroupSearch} />
+              <Scene key="groupmembers" component={GroupMembers} />
             </Scene>
           </RouterWithRedux>
         </Drawer>

@@ -1,40 +1,40 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
-import { Content, Container, Title, Text, Button,List, Icon, ListItem, Left, Body, Right,Thumbnail, Header, Tabs, Tab} from 'native-base';
+import { Content, Container, Title, Text, Button, List, Icon, ListItem, Left, Body, Right, Thumbnail, Header, Tabs, Tab } from 'native-base';
 
 import Menu, {
-  MenuContext,
-  MenuTrigger,
-  MenuOptions,
-  MenuOption,
-  renderers
+    MenuContext,
+    MenuTrigger,
+    MenuOptions,
+    MenuOption,
+    renderers
 } from 'react-native-popup-menu';
 
 const PLColors = require('PLColors');
 const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
 import styles from './styles';
-import { openDrawer } from '../../../actions/drawer';
+import { openDrawer } from 'PLActions';
 import Followings from './followings';
 import Followers from './followers';
 
-class Influences extends Component{
-    constructor(props){
+class Influences extends Component {
+    constructor(props) {
         super(props);
     }
-    
-    searchFollowings(){
+
+    searchFollowings() {
         Actions.searchFollowing();
     }
 
-    render(){
+    render() {
         return (
             <MenuContext customStyles={menuContextStyles}>
                 <Container>
                     <Header hasTabs style={styles.header}>
                         <Left>
                             <Button transparent onPress={this.props.openDrawer}>
-                                <Icon active name="menu" style={{color: 'white'}}/>
+                                <Icon active name="menu" style={{ color: 'white' }} />
                             </Button>
                         </Left>
                         <Body>
@@ -42,7 +42,7 @@ class Influences extends Component{
                         </Body>
                         <Right>
                             <Button transparent onPress={this.searchFollowings}>
-                                <Icon active name="add-circle" style={{color: 'white'}}/>
+                                <Icon active name="add-circle" style={{ color: 'white' }} />
                             </Button>
                         </Right>
                     </Header>
@@ -61,8 +61,8 @@ class Influences extends Component{
 }
 
 const menuContextStyles = {
-  menuContextWrapper: styles.container,
-  backdrop: styles.backdrop,
+    menuContextWrapper: styles.container,
+    backdrop: styles.backdrop,
 };
 
 const mapStateToProps = state => ({
@@ -74,7 +74,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    openDrawer: ()=> dispatch(openDrawer())
+    openDrawer: () => dispatch(openDrawer())
 });
 
-export default connect(mapStateToProps,mapDispatchToProps)(Influences);
+export default connect(mapStateToProps, mapDispatchToProps)(Influences);
