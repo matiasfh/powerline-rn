@@ -339,7 +339,7 @@ class Register extends React.Component{
                 });
             }else if(address_components[i].types.indexOf("country") != -1){                
                 this.setState({
-                    country: address_components[i].long_name
+                    country: address_components[i].short_name
                 });
             }else if(address_components[i].types.indexOf("postal_code") != -1){
                 this.setState({

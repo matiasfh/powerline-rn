@@ -42,7 +42,29 @@ function resetActivities(): ThunkAction {
     };
 }
 
+function loadActivitiesByUserId(token, page = 0, per_page = 20, group = 'all', user){
+    return new Promise((resolve, reject) => {
+        fetch(API_URL + '/v2/activities?_format=json&user=' + user + '&group=' + group + '&page=' + page + '&per_page=' + per_page, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'token': token
+            }
+        })
+        .then((res) => res.json())
+        .then(data => {
+            console.log("Load Activities by User Id API success", data);
+            resolve(data);
+        })
+        .catch(err => {
+            console.log("Load Activities by User Id API error", err);
+            reject(err);
+        })
+    });
+}
+
 module.exports = {
     loadActivities,
     resetActivities,
+    loadActivitiesByUserId,
 }

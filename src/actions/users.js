@@ -28,6 +28,50 @@ async function loadUserProfile(token: string): Promise<Action> {
     }
 }
 
+function loadUserData(token){
+    return new Promise((resolve, reject) => {
+        fetch(API_URL + '/v2/user?_format=json', {
+            method: 'GET',
+            headers: {
+                'token': token,
+                'Content-Type': 'application/json'
+            }
+        })
+        .then((res) => res.json())
+        .then(data => {
+            console.log("Load User Profile Success", data);
+            resolve(data);
+        })
+        .catch(err => {
+            console.log("Load User Profile Error", err);
+            reject(err);
+        })
+    });
+}
+
+function loadUserProfileById(token, id){
+    return new Promise((resolve, reject) => {
+        fetch(API_URL + '/v2/users/' + id, {
+            method: 'GET',
+            headers: {
+                'token': token,
+                'Content-Type': 'application/json'
+            }
+        })
+        .then((res) => res.json())
+        .then(data => {
+            console.log("Load User Profile Success", data);
+            resolve(data);
+        })
+        .catch(err => {
+            console.log("Load User Profile Error", err);
+            reject(err);
+        })
+    });
+}
+
 module.exports = {
     loadUserProfile,
+    loadUserProfileById,
+    loadUserData
 }

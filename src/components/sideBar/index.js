@@ -117,6 +117,10 @@ class SideBar extends Component {
       Actions['myInfluences']();  
     }else if(route == 'representatives'){
       Actions['representatives']();
+    }else if(route == 'createGroup'){
+      Actions['createGroup']();
+    }else if(route == 'myGroups'){
+      Actions['myGroups']();
     }else{
       Actions['home']();
     }
