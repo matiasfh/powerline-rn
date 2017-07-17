@@ -145,6 +145,26 @@ function putFollowings(token, id){
     });
 }
 
+function getFollowingUser(token, id){
+    return new Promise((resolve, reject) => {
+        fetch(API_URL + '/v2/user/followings/' + id, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'token': token
+            }
+        })
+        .then((res) => res.json())
+        .then(data => {
+            console.log("Following user profile API Success", data);
+            resolve(data);
+        })
+        .catch(err => {
+            console.log("Following user profile API Error", err);
+            reject(err);
+        });
+    });
+}
 module.exports = {
     getFollowings,
     getFollowers,
@@ -152,5 +172,6 @@ module.exports = {
     unFollowers,
     acceptFollowers,
     searchForUsersFollowableByCurrentUser,
-    putFollowings
+    putFollowings,
+    getFollowingUser
 };

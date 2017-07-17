@@ -86,9 +86,83 @@ function handleError(error) {
     alert(message);
 }
 
+function createPostToGroup(token, groupId, content){
+    return new Promise((resolve, reject) => {
+        fetch(API_URL + '/v2/groups/' + groupId + '/posts', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'token': token
+            },
+            body: JSON.stringify({body: content})
+        })
+        .then((res) => res.json())
+        .then(data => {
+            console.log("Create Post To Group API Success", data);
+            resolve(data);
+        })
+        .catch(err => {
+            console.log("Create Post To Group API Error", err);
+            reject(err);
+        })
+    });
+}
+
+function createPetition(token, groupId, title, content){
+    var data = {petition_title: title, 
+        petition_body: content, 
+        subject: '.',
+        type: 'petition'
+    };
+
+    return new Promise((resolve, reject) => {
+        fetch(API_URL + '/v2/groups/' + groupId + '/polls', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'token': token
+            },
+            body:  JSON.stringify(data)
+        })
+        .then((res) => res.json())
+        .then(data => {
+            console.log("Create Petition To Group API Success", data);
+            resolve(data);
+        })
+        .catch(err => {
+            console.log("Create Petition To Group API Error", err);
+            reject(err);
+        })
+    });
+}
+
+function getPetitionConfig(token, groupId){
+    return new Promise((resolve, reject) => {
+        fetch(API_URL + '/v2/groups/' + groupId + '/micro-petitions-config', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application',
+                'token':  token
+            }
+        })
+        .then((res) => res.json())
+        .then(data => {
+            console.log("get Petition API  Success", data);
+            resolve(data);
+        })
+        .catch(err => {
+            console.log("get Petition API Error", err);
+            reject(err);
+        });
+    });
+}
+
 module.exports = {
     votePost,
     loadPostComments,
     addCommentToPost,
     ratePostComment,
+    createPostToGroup,
+    createPetition,
+    getPetitionConfig,
 };
