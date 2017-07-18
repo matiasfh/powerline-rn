@@ -191,8 +191,8 @@ class Newsfeed extends Component {
         }
     }
 
-    goItemDetail(item) {
-        Actions.itemDetail({ item: item });
+    goItemDetail(entityId, entityType) {
+        Actions.itemDetail({ entityId: entityId, entityType: entityType });
     }
 
     _renderTailLoading() {
@@ -521,7 +521,7 @@ class Newsfeed extends Component {
                         <Label style={styles.commentCount}>{item.responses_count}</Label>
                     </View>
                     <Body style={styles.descBodyContainer}>
-                        <TouchableOpacity onPress={() => this.goItemDetail(item)}>
+                        <TouchableOpacity onPress={() => this.goItemDetail(item.entity.id, item.entity.type)}>
                             {this._renderTitle(item)}
                             <Text style={styles.description} numberOfLines={5}>{item.description}</Text>
                         </TouchableOpacity>
