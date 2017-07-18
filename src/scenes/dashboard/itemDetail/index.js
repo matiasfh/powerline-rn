@@ -31,6 +31,7 @@ class ItemDetail extends Component {
     commentToReply: Object;
     isLoadedAll: boolean;
     item: Object;
+    commentsCount: number;
 
     constructor(props) {
         super(props);
@@ -49,6 +50,7 @@ class ItemDetail extends Component {
         this.commentToReply = null;
         this.isLoadedAll = false;
         this.item = null;
+        this.commentsCount = 0;
     }
 
     componentWillMount() {
@@ -165,6 +167,7 @@ class ItemDetail extends Component {
                     loadPostComments(token, entityId, this.page, numberPerPage),
                     timeout(15000),
                 ]);
+                this.commentsCount = response.totalItems;
                 this.setState({
                     dataArray: response.payload,
                 });
@@ -580,7 +583,7 @@ class ItemDetail extends Component {
                     <Left style={{ justifyContent: 'flex-end' }}>
                         <Button iconLeft transparent style={styles.footerButton}>
                             <Icon active name="ios-undo" style={styles.footerIcon} />
-                            <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
+                            <Label style={styles.footerText}>Reply {this.commentsCount ? this.commentsCount : 0}</Label>
                         </Button>
                     </Left>
                 </CardItem>
@@ -610,7 +613,7 @@ class ItemDetail extends Component {
                         </Button>
                         <Button iconLeft transparent style={styles.footerButton}>
                             <Icon active name="ios-undo" style={styles.footerIcon} />
-                            <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
+                            <Label style={styles.footerText}>Reply {this.commentsCount ? this.commentsCount : 0}</Label>
                         </Button>
                     </Left>
                 </CardItem>
@@ -636,7 +639,7 @@ class ItemDetail extends Component {
                             </Button>
                             <Button iconLeft transparent style={styles.footerButton}>
                                 <Icon active name="ios-undo" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
+                                <Label style={styles.footerText}>Reply {this.commentsCount ? this.commentsCount : 0}</Label>
                             </Button>
                         </Left>
                     </CardItem>
@@ -652,7 +655,7 @@ class ItemDetail extends Component {
                             </Button>
                             <Button iconLeft transparent style={styles.footerButton}>
                                 <Icon active name="ios-undo" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
+                                <Label style={styles.footerText}>Reply {this.commentsCount ? this.commentsCount : 0}</Label>
                             </Button>
                         </Left>
                     </CardItem>
@@ -668,7 +671,7 @@ class ItemDetail extends Component {
                             </Button>
                             <Button iconLeft transparent style={styles.footerButton}>
                                 <Icon active name="ios-undo" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
+                                <Label style={styles.footerText}>Reply {ithis.commentsCount ? this.commentsCount : 0}</Label>
                             </Button>
                         </Left>
                     </CardItem>
@@ -684,7 +687,7 @@ class ItemDetail extends Component {
                             </Button>
                             <Button iconLeft transparent style={styles.footerButton}>
                                 <Icon active name="ios-undo" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
+                                <Label style={styles.footerText}>Reply {this.commentsCount ? this.commentsCount : 0}</Label>
                             </Button>
                         </Left>
                     </CardItem>
@@ -700,7 +703,7 @@ class ItemDetail extends Component {
                             </Button>
                             <Button iconLeft transparent style={styles.footerButton}>
                                 <Icon active name="ios-undo" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
+                                <Label style={styles.footerText}>Reply {this.commentsCount ? this.commentsCount : 0}</Label>
                             </Button>
                         </Left>
                     </CardItem>
@@ -720,7 +723,7 @@ class ItemDetail extends Component {
                             </Button>
                             <Button iconLeft transparent style={styles.footerButton}>
                                 <Icon active name="ios-undo" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
+                                <Label style={styles.footerText}>Reply {this.commentsCount ? ithis.commentsCount : 0}</Label>
                             </Button>
                         </Left>
                     </CardItem>
