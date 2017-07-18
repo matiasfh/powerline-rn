@@ -432,12 +432,13 @@ class ItemDetail extends Component {
     }
 
     _renderDescription(item) {
+        let responseCount = ((item && item.votes) ? item.votes.length : 0) + this.commentsCount;
         return (
             <CardItem>
                 <Left>
                     <View style={styles.descLeftContainer}>
                         {this._renderZoneIcon(item)}
-                        <Label style={styles.commentCount}>{item.responses_count}</Label>
+                        <Label style={styles.commentCount}>{responseCount}</Label>
                     </View>
                     <Body style={styles.descBodyContainer}>
                         {this._renderTitle(item)}
