@@ -18,7 +18,7 @@ import Menu, {
     renderers
 } from 'react-native-popup-menu';
 import OrientationLoadingOverlay from 'react-native-orientation-loading-overlay';
-import { loadPostComments, votePost, addCommentToPost, ratePostComment } from 'PLActions';
+import { loadPostComments, votePost, addCommentToPost, ratePostComment, loadPost } from 'PLActions';
 
 const { youTubeAPIKey } = require('PLEnv');
 const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
@@ -30,6 +30,7 @@ class ItemDetail extends Component {
     page: number;
     commentToReply: Object;
     isLoadedAll: boolean;
+    item: Object;
 
     constructor(props) {
         super(props);
@@ -47,6 +48,7 @@ class ItemDetail extends Component {
         this.page = 0;
         this.commentToReply = null;
         this.isLoadedAll = false;
+        this.item = null;
     }
 
     componentWillMount() {
@@ -54,11 +56,7 @@ class ItemDetail extends Component {
         this.keyboardDidShowListener = Keyboard.addListener('keyboardWillShow', this._keyboardWillShow.bind(this));
         this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide.bind(this));
 
-        this.loadComments();
-    }
-
-    componentDidMount() {
-
+        this.loadEntity();
     }
 
     componentWillUnmount() {
@@ -99,7 +97,7 @@ class ItemDetail extends Component {
 
     _onVote(item, option) {
         const { props: { profile } } = this;
-        if (profile.id === item.owner.id) {
+        if (profile.id === item.user.id) {
             alert("Unable to vote because you're the owner of the comment.")
         } else {
             this.vote(item, option);
@@ -109,7 +107,7 @@ class ItemDetail extends Component {
     _onRate(comment, option) {
         const { props: { profile, item } } = this;
         if (comment.is_root) {
-            if (profile.id === item.owner.id) {
+            if (profile.id === item.user.id) {
                 alert("Unable to rate because you're the owner of the comment.")
             } else {
                 this.rate(comment, option);
@@ -130,14 +128,41 @@ class ItemDetail extends Component {
         }
     }
 
-    // API Calls    
+    // API Calls
+    async loadEntity() {
+        const { props: { token, entityId, entityType, dispatch } } = this;
+        if (entityType === 'post') {
+            this.setState({ isLoading: true });
+            try {
+                let response = await Promise.race([
+                    loadPost(token, entityId),
+                    timeout(15000),
+                ]);
+                this.item = response;
+                this.setState({ isLoading: false });
+                this.loadComments();
+            } catch (e) {
+                const message = e.message || e;
+                if (message !== 'Timed out') {
+                    alert(message);
+                }
+                else {
+                    alert('Timed out. Please check internet connection');
+                }
+                return;
+            } finally {
+                this.setState({ isLoading: false });
+            }
+        }
+    }
+
     async loadComments() {
-        const { props: { item, token, dispatch } } = this;
-        if (item.entity.type === 'post') {
+        const { props: { token, entityId, entityType, dispatch } } = this;
+        if (entityType === 'post') {
             this.setState({ isCommentsLoading: true });
             try {
                 let response = await Promise.race([
-                    loadPostComments(token, item.entity.id, this.page, numberPerPage),
+                    loadPostComments(token, entityId, this.page, numberPerPage),
                     timeout(15000),
                 ]);
                 this.setState({
@@ -198,14 +223,16 @@ class ItemDetail extends Component {
 
     async vote(item, option) {
         var previousOption = '';
-        if (item.post.votes && item.post.votes[0]) {
+        const { props: { entityId, entityType } } = this;
+
+        if (item.votes && item.votes[0]) {
             return;
         }
         var response;
         this.setState({ isLoading: true });
-        switch (item.entity.type) {
+        switch (entityType) {
             case 'post':
-                response = await votePost(this.props.token, item.entity.id, option);
+                response = await votePost(this.props.token, entityId, option);
                 break;
             default:
                 return;
@@ -349,11 +376,12 @@ class ItemDetail extends Component {
     _renderHeader(item) {
         var thumbnail: string = '';
         var title: string = '';
+        const { props: { entityType } } = this;
 
-        switch (item.entity.type) {
+        switch (entityType) {
             case 'post' || 'user-petition':
-                thumbnail = item.owner.avatar_file_path ? item.owner.avatar_file_path : '';
-                title = item.owner.first_name + ' ' + item.owner.last_name;
+                thumbnail = item.user.avatar_file_name ? item.user.avatar_file_name : '';
+                title = item.user.first_name + ' ' + item.user.last_name;
                 break;
             default:
                 thumbnail = item.group.avatar_file_path ? item.group.avatar_file_path : '';
@@ -410,7 +438,7 @@ class ItemDetail extends Component {
                     </View>
                     <Body style={styles.descBodyContainer}>
                         {this._renderTitle(item)}
-                        <Text style={styles.description} numberOfLines={5}>{item.description}</Text>
+                        <Text style={styles.description} numberOfLines={5}>{item.body}</Text>
                     </Body>
                 </Left>
             </CardItem>
@@ -533,7 +561,8 @@ class ItemDetail extends Component {
     }
 
     _renderMedia(item) {
-        switch (item.entity.type) {
+        const { props: { entityType } } = this;
+        switch (entityType) {
             case 'post':
             case 'user-petition':
                 return this._renderMetadata(item);
@@ -557,8 +586,8 @@ class ItemDetail extends Component {
                 </CardItem>
             );
         } else {
-            if (item.post.votes && item.post.votes[0]) {
-                let vote = item.post.votes[0];
+            if (item.votes && item.votes[0]) {
+                let vote = item.votes[0];
                 var isVotedUp = false;
                 var isVotedDown = false;
                 if (vote.option === 1) {
@@ -590,7 +619,9 @@ class ItemDetail extends Component {
     }
 
     _renderFooter(item) {
-        switch (item.entity.type) {
+        const { props: { entityType } } = this;
+
+        switch (entityType) {
             case 'post':
                 return this._renderPostFooter(item);
                 break;
@@ -853,7 +884,12 @@ class ItemDetail extends Component {
     }
 
     render() {
-        const { props: { item } } = this;
+        if (this.item === null) {
+            return (
+                <OrientationLoadingOverlay visible={this.state.isLoading} />
+            );
+        }
+        let item = this.item;
         return (
             <MenuContext customStyles={menuContextStyles}>
                 <Container style={{ flex: 1 }}>
