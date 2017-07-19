@@ -114,6 +114,11 @@ class Home extends Component {
 
   selectNewItem(value) {
     this.bottomMenu.close();
+    if(value == 'post'){
+      Actions.newpost();
+    }else if(value == 'petition'){
+      Actions.newpetition();
+    }
   }
 
   onRef = r => {
