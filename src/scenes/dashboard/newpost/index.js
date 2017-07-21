@@ -105,16 +105,8 @@ class NewPost extends Component{
         groupId = this.state.grouplist[this.state.selectedGroupIndex].id;
 
         createPostToGroup(token, groupId, this.state.content)
-        .then(data => {            
-            alert('Post successfully created!');
-            Actions.pop(); 
-            /*         
-            Toast.show({
-                text: 'Post successfully created!', 
-                position: 'bottom', 
-                duration: 5000
-            });         
-            */   
+        .then(data => {
+            Actions.itemDetail({ entityId: data.id, entityType: 'post' });
         })
         .catch(err => {
 
@@ -167,7 +159,7 @@ class NewPost extends Component{
                         </ListItem>
                     </List>
                     <View style={styles.main_content}>
-                        <Textarea placeholderTextColor="rgba(0,0,0,0.1)" style={styles.textarea} placeholder="Write what you mean and mean what you write! But don't be mean!" value={this.state.content} onChangeText={(text) => this.changeContent(text)}/> 
+                        <Textarea placeholderTextColor="rgba(0,0,0,0.1)" style={styles.textarea} placeholder="Words can move the masses. And yours can, too - if you get enough people to support your post. Be nice!" value={this.state.content} onChangeText={(text) => this.changeContent(text)}/> 
                         {this.state.showCommunity?
                         <View style={styles.community_list_container}>
                             <View style={styles.community_list_back}></View>  

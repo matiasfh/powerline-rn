@@ -106,7 +106,8 @@ class NewPetition extends Component{
         var  { token } = this.props;
         createPetition(token, this.state.grouplist[this.state.selectedGroupIndex].id, this.state.title, this.state.content)
         .then(data => {
-            alert('Petition successfully created!');
+            //alert('Petition successfully created!');
+            Actions.itemDetail({ entityId: data.id, entityType: 'user-petition' });
         })
         .catch(err => {
 
@@ -174,7 +175,7 @@ class NewPetition extends Component{
                                 onChangeText={(text) => this.changeTitle(text)}
                                 underlineColorAndroid={'transparent'}
                             />                        
-                            <Textarea placeholderTextColor="rgba(0,0,0,0.1)" style={styles.textarea} placeholder="Type your message here" value={this.state.content} onChangeText={(text) => this.changeContent(text)}/>
+                            <Textarea placeholderTextColor="rgba(0,0,0,0.1)" style={styles.textarea} placeholder="Start by telling a story. Then, close with a call for action or change." value={this.state.content} onChangeText={(text) => this.changeContent(text)}/>
                         </View>
                         {this.state.showCommunity?
                         <View style={styles.community_list_container}>
