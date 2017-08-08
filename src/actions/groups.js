@@ -242,14 +242,27 @@ function unJoinGroup(token, id){
     });
 }
 
-function joinGroup(token, id){
+function joinGroup(token, id, passcode, answeredFields){
+    var payload = {};
+    if(passcode){
+        payload['passcode'] = passcode;
+    }
+    if(answeredFields){
+        payload['answered_fields'] = answeredFields.map(function(f){
+            return {
+                'id': f.field.id,
+                'value': f.field_value
+            }
+        })
+    }
     return new Promise((resolve, reject) => {
         fetch(API_URL + '/v2/user/groups/' + id, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
                 'token': token
-            }
+            },
+            body: JSON.stringify(payload)
         })
         .then((res) => res.json())
         .then(data => {
@@ -261,6 +274,48 @@ function joinGroup(token, id){
             reject(err);
         })
     });
+}
+
+function loadFieldsToFillOnJoin(token, groupId){
+    return new Promise((resolve, reject) => {
+        fetch(API_URL + '/v2/groups/' + groupId + '/fields', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'token': token
+            }
+        })
+        .then((res) => res.json())
+        .then(data => {
+            console.log("loadFieldsToFillOnJoin API Success", data);
+            resolve(data);
+        })
+        .catch(err => {
+            console.log("loadFieldToFillOnJoin API Error", data);
+            reject(err);
+        })
+    });
+}
+
+function getGroupPermissions(token, groupId){
+    return new Promise((resolve, reject) => {
+        fetch(API_URL + '/v2/groups/' + groupId + '/permission-settings', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'token': token
+            }
+        })
+        .then((res) => res.json())
+        .then(data => {
+            console.log("get Group Permission API Success", data);
+            resolve(data);
+        })
+        .catch(err => {
+            console.log("get Group Permission API Error", err);
+            reject(err);
+        });
+    })
 }
 
 module.exports = {
@@ -275,5 +330,7 @@ module.exports = {
     inviteAllFollowers,
     followAllMembers,
     unJoinGroup,
-    joinGroup
+    joinGroup,
+    loadFieldsToFillOnJoin,
+    getGroupPermissions
 }

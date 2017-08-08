@@ -70,8 +70,30 @@ function loadUserProfileById(token, id){
     });
 }
 
+function getInvites(token){
+    return new Promise((resolve, reject) => {
+        fetch(API_URL + '/v2/user/invites', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'token': token
+            }
+        })
+        .then((res) => res.json())
+        .then(data => {
+            console.log("Get Invites API Success", data);
+            resolve(data);
+        })
+        .catch(err => {
+            console.log("Get Invites API Error", err);
+            reject(err);
+        })
+    });
+}
+
 module.exports = {
     loadUserProfile,
     loadUserProfileById,
-    loadUserData
+    loadUserData,
+    getInvites
 }

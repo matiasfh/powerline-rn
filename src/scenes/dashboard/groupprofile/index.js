@@ -26,7 +26,7 @@ import {
 } from 'react-native';
 import styles  from './styles';
 const PLColors = require('PLColors');
-import { getGroupDetails, inviteAllFollowers, getFollowings, unJoinGroup, joinGroup } from 'PLActions';
+import { getGroupDetails, inviteAllFollowers, getFollowings, unJoinGroup, getGroupPermissions } from 'PLActions';
 
 class GroupProfile extends Component{
     static propTypes = {
@@ -51,15 +51,9 @@ class GroupProfile extends Component{
         this.state = {
             permissions: [],
             data: null,
-            refreshing: false
-        };
-        if(this.props.required_permissions){
-            this.props.required_permissions.map((value, index) => {
-                this.state.permissions.push(this.permissionsLabels[value]);
-            });
-        }else{
-            this.state.permissions = [];
-        }
+            refreshing: false,
+            refresh: false
+        };        
 
         this.unjoin = this.unjoin.bind(this);
         this.join = this.join.bind(this);
@@ -70,6 +64,14 @@ class GroupProfile extends Component{
     }
 
     loadGroup(){
+        if(this.props.required_permissions){
+            this.props.required_permissions.map((value, index) => {
+                this.state.permissions.push(this.permissionsLabels[value]);
+            });
+        }else{
+            this.state.permissions = [];
+        }
+
         var { token, id } = this.props;
         getGroupDetails(token, id).then(data => {
             this.setState({
@@ -78,6 +80,19 @@ class GroupProfile extends Component{
             })
         })
         .catch(err => {
+
+        });
+
+        getGroupPermissions(token, id).then(data => {
+            if(data.required_permissions){
+                data.required_permissions.map((value, index) => {
+                    this.state.permissions.push(this.permissionsLabels[value]);
+                });
+                this.setState({
+                    refresh: true
+                });
+            }
+        }).catch(err => {
 
         });
     }
@@ -132,32 +147,40 @@ class GroupProfile extends Component{
     }
 
     unjoin(){        
-        
-        var { token, id } = this.props;
-        unJoinGroup(token, id).then(data => {
-            this.state.data.joined = false;
-            this.state.data.total_member = this.state.data.total_member - 1;
-            this.setState({
-                refreshing: false
-            });
-        })
-        .catch(err => {
+        Alert.alert(
+            'Are you Sure',
+            '',
+            [
+                {
+                    text: 'Cancel',
+                    onPress: () => {
 
-        });
+                    }
+                },
+                {
+                    text: 'OK',
+                    onPress: () => {
+                        var { token, id } = this.props;
+                        unJoinGroup(token, id).then(data => {
+                            this.state.data.joined = false;
+                            this.state.data.total_member = this.state.data.total_member - 1;
+                            this.setState({
+                                refreshing: false
+                            });
+                        })
+                        .catch(err => {
+
+                        });
+                    }
+                }
+            ],
+            {cancelable: false}
+        );        
     }
 
     join(){
-        var { token, id } = this.props;
-        joinGroup(token, id).then(data => {
-            if(data.join_status == 'active'){
-                Actions.myGroups();
-            }else{
-                
-            }
-        })
-        .catch(err => {
-
-        })
+        var { id } = this.props;
+        Actions.groupjoin({id: id});               
     }
 
     render(){
@@ -196,13 +219,14 @@ class GroupProfile extends Component{
                             }
                             <Body>
                                 <Text style={{color: PLColors.main}}>{this.state.data.official_name}</Text>
-                                <Button block style={styles.joinBtn} onPress={() => this.state.data.joined? this.unjoin(): this.join()}>
-                                    {this.state.data.joined?
-                                    <Label style={{color: 'white'}}>Unjoin</Label>:
+                                {this.state.data.joined?
+                                <Button block style={styles.unjoinBtn} onPress={() => this.unjoin()}>
+                                    <Label style={{color: 'white'}}>Unjoin</Label>
+                                </Button>:
+                                <Button block style={styles.joinBtn} onPress={() => this.join()}>
                                     <Label style={{color: 'white'}}>Join</Label>
-                                    }
-                                </Button>
-                                
+                                </Button>                                
+                                }                                
                             </Body>
                         </ListItem>
                         {this.state.data.official_description?
