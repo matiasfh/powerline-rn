@@ -119,8 +119,8 @@ class Followers extends Component{
         ]);
     }
 
-    goToProfile(){
-        Actions.profile();
+    goToProfile(id){
+        Actions.profile({id: id});
     }
 
     render(){
@@ -137,7 +137,7 @@ class Followers extends Component{
                     {
                         this.state.followers.map((follow, index) => {
                             return (
-                                <ListItem avatar key={index} onPress={() => this.goToProfile()}>
+                                <ListItem avatar key={index} onPress={() => this.goToProfile(follow.id)}>
                                     <Left>
                                         <Thumbnail source={{uri: follow.avatar_file_name}} />
                                     </Left>

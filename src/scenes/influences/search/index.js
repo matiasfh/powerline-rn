@@ -60,6 +60,10 @@ class SearchFollowing extends Component {
         });
     }
 
+    goToProfile(id){
+        Actions.profile({id: id});
+    }
+
     render(){
         return (
             <Container style={styles.container}>
@@ -82,7 +86,7 @@ class SearchFollowing extends Component {
                         {
                             this.state.users.map((user, index) => {
                                 return (
-                                    <ListItem avatar>
+                                    <ListItem avatar onPress={() => this.goToProfile(user.id)} key={index}>
                                         <Left>
                                             <Thumbnail source={{uri: user.avatar_file_name}}/>
                                         </Left>

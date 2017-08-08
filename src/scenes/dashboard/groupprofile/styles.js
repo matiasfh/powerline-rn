@@ -17,10 +17,16 @@ export default {
     height: 80
   },
 
-  joinBtn: {
+  unjoinBtn: {
     marginLeft: 12,
     marginTop: 10,
     backgroundColor: '#802000'
+  },
+
+  joinBtn: {
+    marginLeft: 12,
+    marginTop: 10,
+    backgroundColor: PLColors.main
   },
 
   listItem: {
