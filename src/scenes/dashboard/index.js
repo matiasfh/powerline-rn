@@ -23,6 +23,7 @@ import { loadUserProfile } from 'PLActions';
 import Newsfeed from './newsfeed/'
 
 const { SlideInMenu } = renderers;
+import ShareExtension from 'react-native-share-extension'
 
 class Home extends Component {
 
@@ -46,6 +47,12 @@ class Home extends Component {
     if (!profile) {
       this.loadCurrentUserProfile();
     }
+
+    ShareExtension.data().then((data) => {
+        if(data.type != "" && data.value != ""){
+          Actions.newpost({data: data});
+        }        
+    });
   }
 
   async loadCurrentUserProfile() {

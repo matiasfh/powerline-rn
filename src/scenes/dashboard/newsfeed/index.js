@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import { Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, Spinner, ListItem, Thumbnail, List, Card, CardItem, Label } from 'native-base';
-import { ListView, View, RefreshControl, TouchableOpacity, Image, WebView, Platform } from 'react-native';
+import { ListView, View, RefreshControl, TouchableOpacity, Image, WebView, Platform, Share } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
 import { loadActivities, resetActivities, votePost } from 'PLActions';
 import styles, { sliderWidth, itemWidth } from './styles';
@@ -53,6 +53,13 @@ class Newsfeed extends Component {
     componentWillReceiveProps(nextProps) {
         this.setState({
             dataArray: nextProps.payload,
+        });
+    }
+
+    subscribe(item){
+        Share.share({
+            message: item.description,
+            title: ""
         });
     }
 
@@ -378,7 +385,7 @@ class Newsfeed extends Component {
                             </MenuTrigger>
                             <MenuOptions customStyles={optionsStyles}>
                                 <MenuOption>
-                                    <Button iconLeft transparent dark>
+                                    <Button iconLeft transparent dark onPress={() => this.subscribe(item)}>
                                         <Icon name="logo-rss" style={styles.menuIcon} />
                                         <Text style={styles.menuText}>Subscribe to this Post</Text>
                                     </Button>
