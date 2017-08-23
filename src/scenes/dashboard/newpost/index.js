@@ -39,11 +39,12 @@ class NewPost extends Component{
             profile: {},
             grouplist: [],
             selectedGroupIndex: -1,
-            content: "",
+            content: this.props.data?this.props.data.value: "",
             posts_remaining: null
         }
 
-        this.toggleCommunity = this.toggleCommunity.bind(this);        
+        this.toggleCommunity = this.toggleCommunity.bind(this);   
+        this.onSelectionChange = this.onSelectionChange.bind(this);     
     }
 
     componentDidMount(){
@@ -118,7 +119,11 @@ class NewPost extends Component{
             this.setState({
                 content: text
             });
-        }        
+        } 
+    }
+
+    onSelectionChange(event){
+        console.log(event.nativeEvent);
     }
 
     render(){
@@ -159,7 +164,7 @@ class NewPost extends Component{
                         </ListItem>
                     </List>
                     <View style={styles.main_content}>
-                        <Textarea placeholderTextColor="rgba(0,0,0,0.1)" style={styles.textarea} placeholder="Words can move the masses. And yours can, too - if you get enough people to support your post. Be nice!" value={this.state.content} onChangeText={(text) => this.changeContent(text)}/> 
+                        <Textarea maxLength={300}  onSelectionChange={this.onSelectionChange} placeholderTextColor="rgba(0,0,0,0.1)" style={styles.textarea} placeholder="Words can move the masses. And yours can, too - if you get enough people to support your post. Be nice!" value={this.state.content} onChangeText={(text) => this.changeContent(text)}/> 
                         {this.state.showCommunity?
                         <View style={styles.community_list_container}>
                             <View style={styles.community_list_back}></View>  
