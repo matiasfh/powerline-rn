@@ -2,10 +2,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
-import { Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, Spinner, ListItem, Thumbnail, List, Card, CardItem, Label } from 'native-base';
+import { ActionSheet, Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, Spinner, ListItem, Thumbnail, List, Card, CardItem, Label } from 'native-base';
 import { ListView, View, RefreshControl, TouchableOpacity, Image, WebView, Platform, Share } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
-import { loadActivities, resetActivities, votePost } from 'PLActions';
+import { loadActivities, resetActivities, votePost, editFollowers } from 'PLActions';
 import styles, { sliderWidth, itemWidth } from './styles';
 import TimeAgo from 'react-native-timeago';
 import ImageLoad from 'react-native-image-placeholder';
@@ -61,6 +61,35 @@ class Newsfeed extends Component {
             message: item.description,
             title: ""
         });
+    }
+
+    mute(item){
+        //console.log(item);
+        var { token, dispatch } = this.props;
+        ActionSheet.show(
+            {
+                options: ['1 hour', '8 hours', '24 hours'],
+                title: 'MUTE NOTIFICATIONS FOR THIS USER'
+            },
+
+            buttonIndex => {
+                var hours = 1;
+                if(buttonIndex == 1){
+                    hours = 8;
+                } else if(buttonIndex == 2){
+                    hours = 24;
+                }
+
+                var newDate = new Date((new Date()).getTime() + 1000 * 60 * 60 * hours);
+                editFollowers(token, item.owner.id, false, newDate)
+                .then(data => {
+
+                })
+                .catch(err => {
+
+                });
+            }
+        );
     }
 
     async loadInitialActivities() {
@@ -400,6 +429,12 @@ class Newsfeed extends Component {
                                     <Button iconLeft transparent dark>
                                         <Icon name="md-person-add" style={styles.menuIcon} />
                                         <Text style={styles.menuText}>Add to Contact</Text>
+                                    </Button>
+                                </MenuOption>
+                                <MenuOption>
+                                    <Button iconLeft transparent dark onPress={() => this.mute(item)}>
+                                        <Icon name="md-notifications-off" style={styles.menuIcon}/>
+                                        <Text style={styles.menuText}>Mute Notifications for this User</Text>
                                     </Button>
                                 </MenuOption>
                             </MenuOptions>
