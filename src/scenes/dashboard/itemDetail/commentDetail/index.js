@@ -232,8 +232,8 @@ class CommentDetail extends Component {
                                 <Icon active name="md-arrow-dropdown" style={styles.footerIcon} />
                                 <Label style={styles.footerText}>{rateDown ? rateDown : 0}</Label>
                             </Button>
-                            <Button iconLeft small transparent>
-                                <Icon active name="ios-undo" style={styles.footerIcon} onPress={() => this._onAddComment(comment)} />
+                            <Button iconLeft small transparent onPress={() => this._onAddComment(comment)}>
+                                <Icon active name="ios-undo" style={styles.footerIcon} />
                                 <Label style={styles.footerText}>{comment.child_count ? comment.child_count : 0}</Label>
                             </Button>
                         </View>
@@ -272,8 +272,8 @@ class CommentDetail extends Component {
                                 <Icon active name="md-arrow-dropdown" style={styles.footerIcon} />
                                 <Label style={styles.footerText}>{rateDown ? rateDown : 0}</Label>
                             </Button>
-                            <Button iconLeft small transparent>
-                                <Icon active name="ios-undo" style={styles.footerIcon} onPress={() => this._onAddComment(comment)} />
+                            <Button iconLeft small transparent onPress={() => this._onAddComment(comment)}>
+                                <Icon active name="ios-undo" style={styles.footerIcon} />
                                 <Label style={styles.footerText}>{comment.child_count ? comment.child_count : 0}</Label>
                             </Button>
                         </View>
