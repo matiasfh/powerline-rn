@@ -18,6 +18,7 @@ import { closeDrawer } from './actions/drawer';
 import Home from './scenes/dashboard/';
 import GroupSelector from './scenes/dashboard/groupSelector/';
 import ItemDetail from './scenes/dashboard/itemDetail/';
+import CommentDetail from './scenes/dashboard/itemDetail/commentDetail';
 import SideBar from './components/sideBar';
 import getTheme from '../native-base-theme/components';
 import material from '../native-base-theme/variables/material';
@@ -121,6 +122,7 @@ class PLNavigator extends React.Component {
               <Scene key="groupSelector" component={GroupSelector} />
               <Scene key="takeTour" component={TourScene} />
               <Scene key="itemDetail" component={ItemDetail} />
+              <Scene key="commentDetail" component={CommentDetail} />
               <Scene key="myInfluences" component={Influences} />
               <Scene key="searchFollowing" component={SearchFollowing} />
               <Scene key="representatives" component={Representatives} />
