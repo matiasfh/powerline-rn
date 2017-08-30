@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions, ActionConst } from 'react-native-router-flux';
-import { Container, Header, Title, Content, Button, Footer, FooterTab, Text, Body, Left, Right, Icon, Item, Input, Grid, Row, Col } from 'native-base';
+import { Container, Header, Title, Content, Button, Footer, FooterTab, Text, Body, Left, Right, Icon, Item, Input, Grid, Row, Col, Badge } from 'native-base';
 
 import { View, Image } from 'react-native';
 
@@ -23,6 +23,7 @@ import { loadUserProfile } from 'PLActions';
 import Newsfeed from './newsfeed/'
 
 const { SlideInMenu } = renderers;
+import ShareExtension from 'react-native-share-extension'
 
 class Home extends Component {
 
@@ -46,6 +47,12 @@ class Home extends Component {
     if (!profile) {
       this.loadCurrentUserProfile();
     }
+
+    ShareExtension.data().then((data) => {
+        if(data.type != "" && data.value != ""){
+          Actions.newpost({data: data});
+        }        
+    });
   }
 
   async loadCurrentUserProfile() {
@@ -139,6 +146,17 @@ class Home extends Component {
     }
   }
 
+  showBadgeForActivities(){
+      var count = 0;
+      for(var i = 0; i < this.props.activities.length; i++){
+        if(this.props.activities[i].zone == 'non_prioritized'){
+          count++;
+        }
+      }
+
+      return count;
+  }
+
   render() {
     return (
       <MenuContext customStyles={menuContextStyles}>
@@ -199,10 +217,17 @@ class Home extends Component {
 
           <Footer style={styles.footer}>
             <FooterTab>
+              {this.showBadgeForActivities()!=0?
+              <Button badge={true} active={this.state.tab1} onPress={() => this.toggleTab1()} > 
+                <Badge><Text>{this.showBadgeForActivities()}</Text></Badge>
+                <Icon active={this.state.tab1} name="ios-flash" />
+                <Text>Newsfeed</Text>
+              </Button>:
               <Button active={this.state.tab1} onPress={() => this.toggleTab1()} >
                 <Icon active={this.state.tab1} name="ios-flash" />
                 <Text>Newsfeed</Text>
               </Button>
+              }
               <Button active={this.state.tab2} onPress={() => this.toggleTab2()} >
                 <Icon active={this.state.tab2} name="md-people" />
                 <Text>Friends</Text>
@@ -307,6 +332,7 @@ async function timeout(ms: number): Promise {
 const mapStateToProps = state => ({
   token: state.user.token,
   profile: state.user.profile,
+  activities: state.activities.payload
 });
 
 export default connect(mapStateToProps, bindAction)(Home);

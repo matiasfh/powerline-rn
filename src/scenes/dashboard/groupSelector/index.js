@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
-import { Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, Spinner, ListItem, Thumbnail, List } from 'native-base';
+import { Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, Spinner, ListItem, Thumbnail, List, Badge } from 'native-base';
 import { View, RefreshControl } from 'react-native';
 import { loadUserGroups, clearGroupsInCache } from 'PLActions';
 import styles from './styles';
@@ -66,6 +66,7 @@ class GroupSelector extends Component {
             }
         }, this);
         this.otherGroups = others;
+        console.log(others);
     }
 
     async loadInitialGroups() {
@@ -191,6 +192,14 @@ class GroupSelector extends Component {
         }
     }
 
+    goToGroupFeed(){
+        Actions.pop();
+    }
+
+    goToGroupConversation(){
+        Actions.groupConversation();
+    }
+
     render() {
 
         return (
@@ -237,9 +246,14 @@ class GroupSelector extends Component {
                     {this._renderCountryGroup()}
                     <List
                         dataArray={this.otherGroups} renderRow={(group) =>
-                            <ListItem avatar style={{ paddingVertical: 5 }}>
-                                <Left>
+                            <ListItem avatar style={{ paddingVertical: 5 }} onPress={() => this.goToGroupFeed()} badge>                                
+                                <Left style={{position: 'relative'}}>                                
                                     <Thumbnail small source={group.avatar_file_path ? { uri: group.avatar_file_path } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} style={styles.thumbnail} />
+                                    <Badge style={{position: 'absolute', bottom: 0, right: -5, height: 18, paddingLeft: 3, paddingRight: 3, paddingTop: 1.7, paddingBottom: 1.7}}>
+                                        <Text style={{fontSize: 11, lineHeight: 14, textAlign: 'center'}}>
+                                        1
+                                        </Text>
+                                    </Badge>
                                 </Left>
                                 <Body>
                                     <Text style={styles.cellText}>{group.official_name}</Text>
