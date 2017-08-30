@@ -5,7 +5,7 @@ import { Actions } from 'react-native-router-flux';
 import { ActionSheet, Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, Spinner, ListItem, Thumbnail, List, Card, CardItem, Label } from 'native-base';
 import { ListView, View, RefreshControl, TouchableOpacity, Image, WebView, Platform, Share } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
-import { loadActivities, resetActivities, votePost, editFollowers } from 'PLActions';
+import { loadActivities, resetActivities, votePost, editFollowers, loadActivityByEntityId } from 'PLActions';
 import styles, { sliderWidth, itemWidth } from './styles';
 import TimeAgo from 'react-native-timeago';
 import ImageLoad from 'react-native-image-placeholder';
@@ -56,14 +56,14 @@ class Newsfeed extends Component {
         });
     }
 
-    subscribe(item){
+    subscribe(item) {
         Share.share({
             message: item.description,
             title: ""
         });
     }
 
-    mute(item){
+    mute(item) {
         //console.log(item);
         var { token, dispatch } = this.props;
         ActionSheet.show(
@@ -74,20 +74,20 @@ class Newsfeed extends Component {
 
             buttonIndex => {
                 var hours = 1;
-                if(buttonIndex == 1){
+                if (buttonIndex == 1) {
                     hours = 8;
-                } else if(buttonIndex == 2){
+                } else if (buttonIndex == 2) {
                     hours = 24;
                 }
 
                 var newDate = new Date((new Date()).getTime() + 1000 * 60 * 60 * hours);
                 editFollowers(token, item.owner.id, false, newDate)
-                .then(data => {
+                    .then(data => {
 
-                })
-                .catch(err => {
+                    })
+                    .catch(err => {
 
-                });
+                    });
             }
         );
     }
@@ -100,9 +100,6 @@ class Newsfeed extends Component {
                 dispatch(loadActivities(token)),
                 timeout(15000),
             ]);
-            this.setState({
-                dataSource: this.state.dataSource.cloneWithRows(this.state.dataArray),
-            });
         } catch (e) {
             const message = e.message || e;
             if (message !== 'Timed out') {
@@ -115,6 +112,9 @@ class Newsfeed extends Component {
         } finally {
             this.setState({ isRefreshing: false });
         }
+        this.setState({
+            dataSource: this.state.dataSource.cloneWithRows(this.state.dataArray),
+        });
     }
 
     async loadNextActivities() {
@@ -137,6 +137,9 @@ class Newsfeed extends Component {
         } finally {
             this.setState({ isLoadingTail: false });
         }
+        this.setState({
+            dataSource: this.state.dataSource.cloneWithRows(this.state.dataArray),
+        });
     }
 
     getIndex(item) {
@@ -150,12 +153,18 @@ class Newsfeed extends Component {
     }
 
     async vote(item, option) {
-        var previousOption = '';
+        const { props: { profile } } = this;
+        if (profile.id === item.user.id) {
+            return;
+        }
         if (item.post.votes && item.post.votes[0]) {
             return;
         }
+
         var response;
+
         this.setState({ isLoading: true });
+
         switch (item.entity.type) {
             case 'post':
                 response = await votePost(this.props.token, item.entity.id, option);
@@ -164,42 +173,34 @@ class Newsfeed extends Component {
                 return;
                 break;
         }
-        this.setState({
-            isLoading: false,
-        });
-        if (response.code) {
-            let code = response.code;
-            let message = 'Something went wrong';
-            switch (code) {
-                case 400:
-                    if (response.errors.errors.length) {
-                        message = response.errors.errors[0];
-                    }
-                    // alert('User already answered to this post.');
-                    break;
-                case 200:
-                    if (option === 'upvote') {
-                        item.upvotes_count = item.upvotes_count + 1;
-                    } else if (option === 'downvote') {
-                        item.downvotes_count = item.downvotes_count + 1;
-                    }
-                    var dataArrayClone = this.state.dataArray;
-                    const index = this.getIndex(item);
-                    if (index !== -1) {
-                        dataArrayClone[index] = item;
-                    }
+
+        if (response.user) {
+            const index = this.getIndex(item);
+            var dataArrayClone = this.state.dataArray;
+            var activityToReplace = dataArrayClone[index];
+
+            loadActivityByEntityId(this.props.token, activityToReplace.entity.type, activityToReplace.entity.id).then(data => {
+                if (data.payload && data.payload[0]) {
+                    activityToReplace = data.payload[0];
+                    dataArrayClone[index] = activityToReplace;
                     this.setState({
                         dataArray: dataArrayClone,
                     });
-                    break;
-                default:
-                    break;
+                }
+            }).catch(err => {
+            });
+        }
+        else {
+            let message = 'Something went wrong to vote';
+            if (response.errors.errors.length) {
+                message = response.errors.errors[0];
             }
             setTimeout(() => alert(message), 1000);
         }
-        else {
-            alert('Something went wrong');
-        }
+
+        this.setState({
+            isLoading: false,
+        });
     }
 
     youtubeGetID(url) {
@@ -344,7 +345,7 @@ class Newsfeed extends Component {
         if (item.zone === 'expired') {
             return (
                 <CardItem footer style={{ height: 35 }}>
-                    <Left style={{ justifyContent: 'flex-end' }}>
+                    <Left style={{ justifyContent: 'flex-start' }}>
                         <Button iconLeft transparent style={styles.footerButton}>
                             <Icon active name="ios-undo" style={styles.footerIcon} />
                             <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
@@ -433,7 +434,7 @@ class Newsfeed extends Component {
                                 </MenuOption>
                                 <MenuOption>
                                     <Button iconLeft transparent dark onPress={() => this.mute(item)}>
-                                        <Icon name="md-notifications-off" style={styles.menuIcon}/>
+                                        <Icon name="md-notifications-off" style={styles.menuIcon} />
                                         <Text style={styles.menuText}>Mute Notifications for this User</Text>
                                     </Button>
                                 </MenuOption>
@@ -684,6 +685,7 @@ const mapStateToProps = state => ({
     totalItems: state.activities.totalItems,
     payload: state.activities.payload,
     count: state.activities.count,
+    profile: state.user.profile,
 });
 
 export default connect(mapStateToProps)(Newsfeed);

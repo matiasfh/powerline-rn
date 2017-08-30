@@ -18,6 +18,7 @@ import { closeDrawer } from './actions/drawer';
 import Home from './scenes/dashboard/';
 import GroupSelector from './scenes/dashboard/groupSelector/';
 import ItemDetail from './scenes/dashboard/itemDetail/';
+import CommentDetail from './scenes/dashboard/itemDetail/commentDetail';
 import SideBar from './components/sideBar';
 import getTheme from '../native-base-theme/components';
 import material from '../native-base-theme/variables/material';
@@ -35,7 +36,6 @@ import GroupSearch from './scenes/dashboard/grouplist/search/';
 import GroupMembers from './scenes/dashboard/groupmembers/';
 import NewPost from './scenes/dashboard/newpost/';
 import NewPetition from './scenes/dashboard/newpetition';
-import GroupJoin from './scenes/dashboard/groupjoin/';
 
 var RouterWithRedux = connect()(Router);
 
@@ -121,6 +121,7 @@ class PLNavigator extends React.Component {
               <Scene key="groupSelector" component={GroupSelector} />
               <Scene key="takeTour" component={TourScene} />
               <Scene key="itemDetail" component={ItemDetail} />
+              <Scene key="commentDetail" component={CommentDetail} />
               <Scene key="myInfluences" component={Influences} />
               <Scene key="searchFollowing" component={SearchFollowing} />
               <Scene key="representatives" component={Representatives} />
@@ -131,9 +132,8 @@ class PLNavigator extends React.Component {
               <Scene key="myGroups" component={GroupList} />
               <Scene key="groupsearch" component={GroupSearch} />
               <Scene key="groupmembers" component={GroupMembers} />
-              <Scene key="newpost" component={NewPost}/>
-              <Scene key="newpetition" component={NewPetition}/>
-              <Scene key="groupjoin" component={GroupJoin}/> 
+              <Scene key="newpost" component={NewPost} />
+              <Scene key="newpetition" component={NewPetition} />
             </Scene>
           </RouterWithRedux>
         </Drawer>

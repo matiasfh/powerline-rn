@@ -179,8 +179,7 @@ class GroupProfile extends Component{
     }
 
     join(){
-        var { id } = this.props;
-        Actions.groupjoin({id: id});               
+        var { id } = this.props;             
     }
 
     render(){

@@ -17,6 +17,7 @@ const followingActions = require('./following');
 const notificationActions = require('./notification');
 const representativesActions = require('./representatives');
 const drawerActions = require('./drawer');
+const commentActions = require('./comments');
 
 module.exports = {
   ...loginActions,
@@ -30,5 +31,6 @@ module.exports = {
   ...followingActions,
   ...notificationActions,
   ...representativesActions,
-  ...drawerActions
+  ...drawerActions,
+  ...commentActions
 };

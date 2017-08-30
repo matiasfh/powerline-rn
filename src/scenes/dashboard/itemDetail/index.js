@@ -18,7 +18,7 @@ import Menu, {
     renderers
 } from 'react-native-popup-menu';
 import OrientationLoadingOverlay from 'react-native-orientation-loading-overlay';
-import { loadPostComments, votePost, addCommentToPost, ratePostComment, loadPost } from 'PLActions';
+import { getComments, votePost, addComment, rateComment, loadActivityByEntityId } from 'PLActions';
 
 const { youTubeAPIKey } = require('PLEnv');
 const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
@@ -27,11 +27,11 @@ const numberPerPage = 5;
 
 class ItemDetail extends Component {
 
-    page: number;
     commentToReply: Object;
     isLoadedAll: boolean;
     item: Object;
     commentsCount: number;
+    nextCursor: string;
 
     constructor(props) {
         super(props);
@@ -46,15 +46,14 @@ class ItemDetail extends Component {
             dataArray: [],
             dataSource: ds,
         };
-        this.page = 0;
         this.commentToReply = null;
         this.isLoadedAll = false;
         this.item = null;
         this.commentsCount = 0;
+        this.nextCursor = null;
     }
 
     componentWillMount() {
-        this.page = 0;
         this.keyboardDidShowListener = Keyboard.addListener('keyboardWillShow', this._keyboardWillShow.bind(this));
         this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide.bind(this));
 
@@ -84,8 +83,8 @@ class ItemDetail extends Component {
         this.addCommentInput = r;
     }
 
-    _onAddComment() {
-        this.commentToReply = null;
+    _onAddComment(comment) {
+        this.commentToReply = comment ? comment : null;
         this.addCommentView.open();
     }
 
@@ -93,7 +92,7 @@ class ItemDetail extends Component {
         if (this.state.commentText === '') {
             alert("Please input comment text");
         } else {
-            this.addComment(this.state.commentText);
+            this.doComment(this.state.commentText);
         }
     }
 
@@ -107,102 +106,94 @@ class ItemDetail extends Component {
     }
 
     _onRate(comment, option) {
-        const { props: { profile, item } } = this;
-        if (comment.is_root) {
-            if (profile.id === item.user.id) {
-                alert("Unable to rate because you're the owner of the comment.")
-            } else {
-                this.rate(comment, option);
-            }
-        } else {
-            if (profile.id === comment.user.id) {
-                alert("Unable to rate because you're the owner of the comment.")
-            } else {
-                this.rate(comment, option);
-            }
-        }
+        const { props: { profile } } = this;
+        this.rate(comment, option);
     }
 
     _onLoadMore() {
         if (this.state.isCommentsLoading === false && this.isLoadedAll === false) {
             this.page = this.page + 1;
-            this.loadNextCmments();
+            this.loadNextComments();
         }
+    }
+
+    _onCommentBody(comment) {
+        const { props: { entityType, entityId } } = this;
+        Actions.commentDetail({ comment: comment, entityType: entityType, entityId: entityId });
     }
 
     // API Calls
     async loadEntity() {
         const { props: { token, entityId, entityType, dispatch } } = this;
-        if (entityType === 'post') {
-            this.setState({ isLoading: true });
-            try {
-                let response = await Promise.race([
-                    loadPost(token, entityId),
-                    timeout(15000),
-                ]);
-                this.item = response;
+
+        this.setState({ isLoading: true });
+        loadActivityByEntityId(token, entityType, entityId).then(data => {
+            if (data.payload && data.payload[0]) {
+                this.item = data.payload[0];
                 this.setState({ isLoading: false });
                 this.loadComments();
-            } catch (e) {
-                const message = e.message || e;
-                if (message !== 'Timed out') {
-                    alert(message);
-                }
-                else {
-                    alert('Timed out. Please check internet connection');
-                }
-                return;
-            } finally {
-                this.setState({ isLoading: false });
             }
-        }
+        }).catch(e => {
+            this.setState({ isLoading: false });
+            const message = e.message || e;
+            setTimeout(() => alert(message), 1000);
+        });
     }
 
     async loadComments() {
         const { props: { token, entityId, entityType, dispatch } } = this;
-        if (entityType === 'post') {
-            this.setState({ isCommentsLoading: true });
-            try {
-                let response = await Promise.race([
-                    loadPostComments(token, entityId, this.page, numberPerPage),
-                    timeout(15000),
-                ]);
-                this.commentsCount = response.totalItems;
-                this.setState({
-                    dataArray: response.payload,
-                });
-            } catch (e) {
-                const message = e.message || e;
-                if (message !== 'Timed out') {
-                    alert(message);
-                }
-                else {
-                    alert('Timed out. Please check internet connection');
-                }
-                return;
-            } finally {
-                this.setState({ isCommentsLoading: false });
+        this.setState({ isCommentsLoading: true });
+        try {
+            let response = await Promise.race([
+                getComments(token, entityType, entityId),
+                timeout(15000),
+            ]);
+            if (response.nextCursor) {
+                this.nextCursor = response.nextCursor;
+                this.isLoadedAll = false;
+            } else {
+                this.nextCursor = null;
+                this.isLoadedAll = true;
             }
+            this.setState({
+                dataArray: response.comments,
+            });
+        } catch (e) {
+            const message = e.message || e;
+            if (message !== 'Timed out') {
+                alert(message);
+            }
+            else {
+                alert('Timed out. Please check internet connection');
+            }
+            return;
+        } finally {
+            this.setState({ isCommentsLoading: false });
         }
         this.setState({
             dataSource: this.state.dataSource.cloneWithRows(this.state.dataArray),
         });
     }
 
-    async loadNextCmments() {
-        const { props: { item, token, dispatch } } = this;
-        if (item.entity.type === 'post') {
+    async loadNextComments() {
+        const { props: { item, token, entityType, entityId, dispatch } } = this;
+        if (this.nextCursor) {
             this.setState({ isCommentsLoading: true });
             try {
                 let response = await Promise.race([
-                    loadPostComments(token, item.entity.id, this.page, numberPerPage),
+                    getComments(token, entityType, entityId, this.nextCursor),
                     timeout(15000),
                 ]);
-                let comments = this.state.dataArray;
-                comments = comments.concat(response.payload);
-                if (response.totalItems === comments.length) {
+
+                if (response.nextCursor) {
+                    this.nextCursor = response.nextCursor;
+                } else {
+                    this.nextCursor = null;
                     this.isLoadedAll = true;
                 }
+
+                let comments = this.state.dataArray;
+                comments = comments.concat(response.comments);
                 this.setState({
                     dataArray: comments,
                 });
@@ -225,71 +216,72 @@ class ItemDetail extends Component {
     }
 
     async vote(item, option) {
-        var previousOption = '';
-        const { props: { entityId, entityType } } = this;
+        const { props: { profile, token } } = this;
 
-        if (item.votes && item.votes[0]) {
+        if (profile.id === item.user.id) {
             return;
         }
+        if (item.post.votes && item.post.votes[0]) {
+            return;
+        }
+
         var response;
+
         this.setState({ isLoading: true });
-        switch (entityType) {
+
+        switch (item.entity.type) {
             case 'post':
-                response = await votePost(this.props.token, entityId, option);
+                response = await votePost(this.props.token, item.entity.id, option);
                 break;
             default:
                 return;
                 break;
         }
-        this.setState({
-            isLoading: false,
-        });
-        if (response && response.code) {
-            let code = response.code;
-            let message = 'Something went wrong';
-            switch (code) {
-                case 400:
-                    if (response.errors.errors.length) {
-                        message = response.errors.errors[0];
-                    }
-                    // alert('User already answered to this post.');
-                    break;
-                case 200:
-                    if (option === 'upvote') {
-                        item.upvotes_count = item.upvotes_count + 1;
-                    } else if (option === 'downvote') {
-                        item.downvotes_count = item.downvotes_count + 1;
-                    }
-                    var dataArrayClone = this.state.dataArray;
-                    const index = this.getIndex(item);
-                    if (index !== -1) {
-                        dataArrayClone[index] = item;
-                    }
+
+        if (response.user) {
+            loadActivityByEntityId(token, item.entity.type, item.entity.id).then(data => {
+                if (data.payload && data.payload[0]) {
+                    this.item = data.payload[0];
                     this.setState({
-                        dataArray: dataArrayClone,
+                        isLoading: false,
                     });
-                    break;
-                default:
-                    break;
+                }
+            }).catch(err => {
+                this.setState({
+                    isLoading: false,
+                });
+            });
+        }
+        else {
+            this.setState({
+                isLoading: false,
+            });
+            let message = 'Something went wrong to vote';
+            if (response.errors.errors.length) {
+                message = response.errors.errors[0];
             }
             setTimeout(() => alert(message), 1000);
         }
-        else {
-            alert('Something went wrong');
-        }
     }
 
-    async addComment(commentText) {
-        const { props: { item, token, dispatch } } = this;
+    async doComment(commentText) {
+        const { props: { entityId, entityType, token, dispatch } } = this;
         this.setState({ isLoading: true });
-        let response = await addCommentToPost(token, item.entity.id, commentText, (this.commentToReply != null) ? this.commentToReply.id : '0');
+        let response = await addComment(token, entityType, entityId, commentText, (this.commentToReply != null) ? this.commentToReply.id : '0');;
+        this.addCommentView.close();
         this.setState({
             isLoading: false,
         });
-        this.addCommentView.close();
         if (response && response.comment_body) {
             this.setState({ dataArray: [] });
-            this.loadComments();
+            loadActivityByEntityId(token, entityType, entityId).then(data => {
+                if (data.payload && data.payload[0]) {
+                    this.item = data.payload[0];
+                    this.loadComments();
+                }
+            }).catch(err => {
+                this.loadComments();
+            });
         }
         else {
             alert('Something went wrong');
@@ -299,30 +291,14 @@ class ItemDetail extends Component {
     async rate(comment, option) {
         this.setState({ isLoading: true });
 
-        const { props: { item, token } } = this;
+        const { props: { entityType, token } } = this;
         var response;
-
-        switch (item.entity.type) {
-            case 'post':
-                response = await ratePostComment(token, comment.id, option);
-                break;
-            default:
-                return;
-                break;
-        }
-
+        response = await rateComment(token, entityType, comment.id, option);
+        // console.error(response);
         this.setState({ isLoading: false });
 
         if (response && response.comment_body) {
-            var dataArrayClone = this.state.dataArray;
-            const index = this.getIndex(response);
-
-            if (index !== -1) {
-                dataArrayClone[index] = response;
-            }
-            this.setState({
-                dataArray: dataArrayClone,
-            });
+            this.loadComments();
         } else {
             let message = response.message || response;
             setTimeout(() => alert(message), 1000);
@@ -363,119 +339,6 @@ class ItemDetail extends Component {
     _renderZoneIcon(item) {
         if (item.zone === 'prioritized') {
             return (<Icon active name="ios-flash" style={styles.zoneIcon} />);
-        } else {
-            return null;
-        }
-    }
-
-    _renderTitle(item) {
-        if (item.title) {
-            return (<Text style={styles.title}>{item.title}</Text>);
-        } else {
-            return null;
-        }
-    }
-
-    _renderHeader(item) {
-        var thumbnail: string = '';
-        var title: string = '';
-        const { props: { entityType } } = this;
-
-        switch (entityType) {
-            case 'post' || 'user-petition':
-                thumbnail = item.user.avatar_file_name ? item.user.avatar_file_name : '';
-                title = item.user.first_name + ' ' + item.user.last_name;
-                break;
-            default:
-                thumbnail = item.group.avatar_file_path ? item.group.avatar_file_path : '';
-                title = item.user.full_name;
-                break;
-        }
-        return (
-            <CardItem style={{ paddingBottom: 0 }}>
-                <Left>
-                    <Thumbnail small source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
-                    <Body>
-                        <Text style={styles.title}>{title}</Text>
-                        <Text note style={styles.subtitle}>{item.group.official_name} • <TimeAgo time={item.sent_at} hideAgo={true} /></Text>
-                    </Body>
-                    <Right style={{ flex: 0.2 }}>
-                        <Menu>
-                            <MenuTrigger>
-                                <Icon name="ios-arrow-down" style={styles.dropDownIcon} />
-                            </MenuTrigger>
-                            <MenuOptions customStyles={optionsStyles}>
-                                <MenuOption>
-                                    <Button iconLeft transparent dark>
-                                        <Icon name="logo-rss" style={styles.menuIcon} />
-                                        <Text style={styles.menuText}>Subscribe to this Post</Text>
-                                    </Button>
-                                </MenuOption>
-                                <MenuOption>
-                                    <Button iconLeft transparent dark>
-                                        <Icon name="ios-heart" style={styles.menuIcon} />
-                                        <Text style={styles.menuText}>Add to Favorites</Text>
-                                    </Button>
-                                </MenuOption>
-                                <MenuOption>
-                                    <Button iconLeft transparent dark>
-                                        <Icon name="md-person-add" style={styles.menuIcon} />
-                                        <Text style={styles.menuText}>Add to Contact</Text>
-                                    </Button>
-                                </MenuOption>
-                            </MenuOptions>
-                        </Menu>
-                    </Right>
-                </Left>
-            </CardItem>
-        );
-    }
-
-    _renderDescription(item) {
-        let responseCount = ((item && item.votes) ? item.votes.length : 0) + this.commentsCount;
-        return (
-            <CardItem>
-                <Left>
-                    <View style={styles.descLeftContainer}>
-                        {this._renderZoneIcon(item)}
-                        <Label style={styles.commentCount}>{responseCount}</Label>
-                    </View>
-                    <Body style={styles.descBodyContainer}>
-                        {this._renderTitle(item)}
-                        <Text style={styles.description} numberOfLines={5}>{item.body}</Text>
-                    </Body>
-                </Left>
-            </CardItem>
-        );
-    }
-
-    _renderMetadata(item) {
-        if (item.metadata && item.metadata.image) {
-            return (
-                <CardItem style={{ paddingTop: 0 }}>
-                    <Left>
-                        <View style={styles.descLeftContainer} />
-                        <Body>
-                            <TouchableOpacity
-                                activeOpacity={0.7}
-                                style={styles.metaContainer}
-                                onPress={() => { alert(`You've clicked metadata`); }}>
-                                <View style={styles.imageContainer}>
-                                    <ImageLoad
-                                        placeholderSource={require('img/empty_image.png')}
-                                        source={{ uri: item.metadata.image }}
-                                        style={styles.image}
-                                    />
-                                </View>
-                                <View style={styles.textContainer}>
-                                    <Text style={styles.title} numberOfLines={2}>{item.metadata.title}</Text>
-                                    <Text style={styles.description} numberOfLines={2}>{item.metadata.description}</Text>
-                                </View>
-                            </TouchableOpacity>
-                        </Body>
-                    </Left>
-                </CardItem>
-            );
         } else {
             return null;
         }
@@ -564,16 +427,11 @@ class ItemDetail extends Component {
         }
     }
 
-    _renderMedia(item) {
-        const { props: { entityType } } = this;
-        switch (entityType) {
-            case 'post':
-            case 'user-petition':
-                return this._renderMetadata(item);
-                break;
-            default:
-                return this._renderCarousel(item);
-                break;
+    _renderTitle(item) {
+        if (item.title) {
+            return (<Text style={styles.title}>{item.title}</Text>);
+        } else {
+            return null;
         }
     }
 
@@ -581,17 +439,17 @@ class ItemDetail extends Component {
         if (item.zone === 'expired') {
             return (
                 <CardItem footer style={{ height: 35 }}>
-                    <Left style={{ justifyContent: 'flex-end' }}>
+                    <Left style={{ justifyContent: 'flex-start' }}>
                         <Button iconLeft transparent style={styles.footerButton}>
                             <Icon active name="ios-undo" style={styles.footerIcon} />
-                            <Label style={styles.footerText}>Reply {this.commentsCount ? this.commentsCount : 0}</Label>
+                            <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
                         </Button>
                     </Left>
                 </CardItem>
             );
         } else {
-            if (item.votes && item.votes[0]) {
-                let vote = item.votes[0];
+            if (item.post.votes && item.post.votes[0]) {
+                let vote = item.post.votes[0];
                 var isVotedUp = false;
                 var isVotedDown = false;
                 if (vote.option === 1) {
@@ -614,7 +472,7 @@ class ItemDetail extends Component {
                         </Button>
                         <Button iconLeft transparent style={styles.footerButton}>
                             <Icon active name="ios-undo" style={styles.footerIcon} />
-                            <Label style={styles.footerText}>Reply {this.commentsCount ? this.commentsCount : 0}</Label>
+                            <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
                         </Button>
                     </Left>
                 </CardItem>
@@ -622,10 +480,62 @@ class ItemDetail extends Component {
         }
     }
 
-    _renderFooter(item) {
-        const { props: { entityType } } = this;
+    _renderHeader(item) {
+        var thumbnail: string = '';
+        var title: string = '';
 
-        switch (entityType) {
+        switch (item.entity.type) {
+            case 'post' || 'user-petition':
+                thumbnail = item.owner.avatar_file_path ? item.owner.avatar_file_path : '';
+                title = item.owner.first_name + ' ' + item.owner.last_name;
+                break;
+            default:
+                thumbnail = item.group.avatar_file_path ? item.group.avatar_file_path : '';
+                title = item.user.full_name;
+                break;
+        }
+        return (
+            <CardItem style={{ paddingBottom: 0 }}>
+                <Left>
+                    <Thumbnail small source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
+                    <Body>
+                        <Text style={styles.title}>{title}</Text>
+                        <Text note style={styles.subtitle}>{item.group.official_name} • <TimeAgo time={item.sent_at} hideAgo={true} /></Text>
+                    </Body>
+                    <Right style={{ flex: 0.2 }}>
+                        <Menu>
+                            <MenuTrigger>
+                                <Icon name="ios-arrow-down" style={styles.dropDownIcon} />
+                            </MenuTrigger>
+                            <MenuOptions customStyles={optionsStyles}>
+                                <MenuOption>
+                                    <Button iconLeft transparent dark>
+                                        <Icon name="logo-rss" style={styles.menuIcon} />
+                                        <Text style={styles.menuText}>Subscribe to this Post</Text>
+                                    </Button>
+                                </MenuOption>
+                                <MenuOption>
+                                    <Button iconLeft transparent dark>
+                                        <Icon name="ios-heart" style={styles.menuIcon} />
+                                        <Text style={styles.menuText}>Add to Favorites</Text>
+                                    </Button>
+                                </MenuOption>
+                                <MenuOption>
+                                    <Button iconLeft transparent dark>
+                                        <Icon name="md-person-add" style={styles.menuIcon} />
+                                        <Text style={styles.menuText}>Add to Contact</Text>
+                                    </Button>
+                                </MenuOption>
+                            </MenuOptions>
+                        </Menu>
+                    </Right>
+                </Left>
+            </CardItem>
+        );
+    }
+
+    _renderFooter(item) {
+        switch (item.entity.type) {
             case 'post':
                 return this._renderPostFooter(item);
                 break;
@@ -640,7 +550,7 @@ class ItemDetail extends Component {
                             </Button>
                             <Button iconLeft transparent style={styles.footerButton}>
                                 <Icon active name="ios-undo" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Reply {this.commentsCount ? this.commentsCount : 0}</Label>
+                                <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
                             </Button>
                         </Left>
                     </CardItem>
@@ -656,7 +566,7 @@ class ItemDetail extends Component {
                             </Button>
                             <Button iconLeft transparent style={styles.footerButton}>
                                 <Icon active name="ios-undo" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Reply {this.commentsCount ? this.commentsCount : 0}</Label>
+                                <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
                             </Button>
                         </Left>
                     </CardItem>
@@ -672,7 +582,7 @@ class ItemDetail extends Component {
                             </Button>
                             <Button iconLeft transparent style={styles.footerButton}>
                                 <Icon active name="ios-undo" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Reply {ithis.commentsCount ? this.commentsCount : 0}</Label>
+                                <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
                             </Button>
                         </Left>
                     </CardItem>
@@ -688,7 +598,7 @@ class ItemDetail extends Component {
                             </Button>
                             <Button iconLeft transparent style={styles.footerButton}>
                                 <Icon active name="ios-undo" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Reply {this.commentsCount ? this.commentsCount : 0}</Label>
+                                <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
                             </Button>
                         </Left>
                     </CardItem>
@@ -704,7 +614,7 @@ class ItemDetail extends Component {
                             </Button>
                             <Button iconLeft transparent style={styles.footerButton}>
                                 <Icon active name="ios-undo" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Reply {this.commentsCount ? this.commentsCount : 0}</Label>
+                                <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
                             </Button>
                         </Left>
                     </CardItem>
@@ -720,16 +630,67 @@ class ItemDetail extends Component {
                             </Button>
                             <Button iconLeft transparent style={styles.footerButton}>
                                 <Icon active name="md-arrow-dropdown" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Downvote {item.rate_down ? item.rate_down : 0}</Label>
+                                <Label style={styles.footerText}>Downvote {item.rate_up ? item.rate_down : 0}</Label>
                             </Button>
                             <Button iconLeft transparent style={styles.footerButton}>
                                 <Icon active name="ios-undo" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>Reply {this.commentsCount ? ithis.commentsCount : 0}</Label>
+                                <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
                             </Button>
                         </Left>
                     </CardItem>
                 );
                 break;
+        }
+    }
+
+    _renderDescription(item) {
+        return (
+            <CardItem>
+                <Left>
+                    <View style={styles.descLeftContainer}>
+                        {this._renderZoneIcon(item)}
+                        <Label style={styles.commentCount}>{item.responses_count}</Label>
+                    </View>
+                    <Body style={styles.descBodyContainer}>
+                        <TouchableOpacity>
+                            {this._renderTitle(item)}
+                            <Text style={styles.description} numberOfLines={5}>{item.description}</Text>
+                        </TouchableOpacity>
+                    </Body>
+                </Left>
+            </CardItem>
+        );
+    }
+
+    _renderMetadata(item) {
+        if (item.metadata && item.metadata.image) {
+            return (
+                <CardItem style={{ paddingTop: 0 }}>
+                    <Left>
+                        <View style={styles.descLeftContainer} />
+                        <Body>
+                            <TouchableOpacity
+                                activeOpacity={0.7}
+                                style={styles.metaContainer}
+                                onPress={() => { alert(`You've clicked metadata`); }}>
+                                <View style={styles.imageContainer}>
+                                    <ImageLoad
+                                        placeholderSource={require('img/empty_image.png')}
+                                        source={{ uri: item.metadata.image }}
+                                        style={styles.image}
+                                    />
+                                </View>
+                                <View style={styles.textContainer}>
+                                    <Text style={styles.title} numberOfLines={2}>{item.metadata.title}</Text>
+                                    <Text style={styles.description} numberOfLines={2}>{item.metadata.description}</Text>
+                                </View>
+                            </TouchableOpacity>
+                        </Body>
+                    </Left>
+                </CardItem>
+            );
+        } else {
+            return null;
         }
     }
 
@@ -744,10 +705,9 @@ class ItemDetail extends Component {
                     <Left>
                         <Thumbnail small source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                         <Body>
+                            <Text style={styles.addCommentTitle}>Add Comment...</Text>
                             <Menu renderer={SlideInMenu} ref={this.onRef} onOpen={() => { this.openedAddCommentView() }}>
-                                <MenuTrigger>
-                                    <Text style={styles.addCommentTitle}>Add Comment...</Text>
-                                </MenuTrigger>
+                                <MenuTrigger />
                                 <MenuOptions optionsContainerStyle={{
                                     backgroundColor: 'white',
                                     width: WINDOW_WIDTH,
@@ -790,27 +750,47 @@ class ItemDetail extends Component {
     }
 
     _renderComment(comment) {
-        if (comment.is_root) {
+        if (comment.children) {
+            if (comment.children.length === 0) {
+                return this._renderRootComment(comment);
+            } else if (comment.children.length === 1) {
+                return (
+                    <View>
+                        {this._renderRootComment(comment)}
+                        {this._renderChildComment(comment.children[0])}
+                    </View>
+                );
+            } else if (comment.children.length === 2) {
+                return (
+                    <View>
+                        {this._renderRootComment(comment)}
+                        {this._renderChildComment(comment.children[0])}
+                        {this._renderChildComment(comment.children[1])}
+                    </View>
+                );
+            }
+        }
+        else {
             return this._renderRootComment(comment);
-        } else {
-            return this._renderChildComment(comment);
         }
     }
 
     _renderRootComment(comment) {
         var thumbnail: string = comment.author_picture ? comment.author_picture : '';
         var title: string = (comment.user.first_name || '') + ' ' + (comment.user.last_name || '');
-        var rateUp: number = (comment.rates_count || 0) / 2 + comment.rate_sum / 2;
-        var rateDown: number = (comment.rates_count || 0) / 2 - comment.rate_sum / 2;
+        var rateUp: number = (comment.rate_count || 0) / 2 + comment.rate_sum / 2;
+        var rateDown: number = (comment.rate_count || 0) / 2 - comment.rate_sum / 2;
 
         return (
             <CardItem style={{ paddingBottom: 0 }}>
                 <Left>
                     <Thumbnail small style={{ alignSelf: 'flex-start' }} source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                     <Body style={{ alignSelf: 'flex-start' }}>
-                        <Text style={styles.title}>{title}</Text>
-                        <Text style={styles.description} numberOfLines={5}>{comment.comment_body}</Text>
-                        <Text note style={styles.subtitle}><TimeAgo time={comment.created_at} /></Text>
+                        <TouchableOpacity onPress={() => this._onCommentBody(comment)}>
+                            <Text style={styles.title}>{title}</Text>
+                            <Text style={styles.description} numberOfLines={5}>{comment.comment_body}</Text>
+                            <Text note style={styles.subtitle}><TimeAgo time={comment.created_at} /></Text>
+                        </TouchableOpacity>
                         <View style={styles.commentFooterContainer}>
                             <Button iconLeft small transparent onPress={() => this._onRate(comment, 'up')}>
                                 <Icon name="md-arrow-dropup" style={styles.footerIcon} />
@@ -820,9 +800,9 @@ class ItemDetail extends Component {
                                 <Icon active name="md-arrow-dropdown" style={styles.footerIcon} />
                                 <Label style={styles.footerText}>{rateDown ? rateDown : 0}</Label>
                             </Button>
-                            <Button iconLeft small transparent>
+                            <Button iconLeft small transparent onPress={() => this._onAddComment(comment)}>
                                 <Icon active name="ios-undo" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>{comment.rates_count ? comment.rates_count : 0}</Label>
+                                <Label style={styles.footerText}>{comment.child_count ? comment.child_count : 0}</Label>
                             </Button>
                         </View>
                     </Body>
@@ -838,17 +818,19 @@ class ItemDetail extends Component {
 
         var thumbnail: string = comment.author_picture ? comment.author_picture : '';
         var title: string = comment.user.first_name + ' ' + comment.user.last_name;
-        var rateUp: number = (comment.rates_count || 0) / 2 + comment.rate_sum / 2;
-        var rateDown: number = (comment.rates_count || 0) / 2 - comment.rate_sum / 2;
+        var rateUp: number = (comment.rate_count || 0) / 2 + comment.rate_sum / 2;
+        var rateDown: number = (comment.rate_count || 0) / 2 - comment.rate_sum / 2;
 
         return (
             <CardItem style={{ paddingBottom: 0, marginLeft: 40, marginTop: 5 }}>
                 <Left>
                     <Thumbnail small style={{ alignSelf: 'flex-start' }} source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                     <Body style={{ alignSelf: 'flex-start' }}>
-                        <Text style={styles.title}>{title}</Text>
-                        <Text style={styles.description} numberOfLines={5}>{comment.comment_body}</Text>
-                        <Text note style={styles.subtitle}><TimeAgo time={comment.created_at} /></Text>
+                        <TouchableOpacity onPress={() => this._onCommentBody(comment)}>
+                            <Text style={styles.title}>{title}</Text>
+                            <Text style={styles.description} numberOfLines={5}>{comment.comment_body}</Text>
+                            <Text note style={styles.subtitle}><TimeAgo time={comment.created_at} /></Text>
+                        </TouchableOpacity>
                         <View style={styles.commentFooterContainer}>
                             <Button iconLeft small transparent onPress={() => this._onRate(comment, 'up')}>
                                 <Icon name="md-arrow-dropup" style={styles.footerIcon} />
@@ -858,9 +840,9 @@ class ItemDetail extends Component {
                                 <Icon active name="md-arrow-dropdown" style={styles.footerIcon} />
                                 <Label style={styles.footerText}>{rateDown ? rateDown : 0}</Label>
                             </Button>
-                            <Button iconLeft small transparent>
+                            <Button iconLeft small transparent onPress={() => this._onAddComment(comment)} >
                                 <Icon active name="ios-undo" style={styles.footerIcon} />
-                                <Label style={styles.footerText}>{comment.rates_count ? comment.rates_count : 0}</Label>
+                                <Label style={styles.footerText}>{comment.child_count ? comment.child_count : 0}</Label>
                             </Button>
                         </View>
                     </Body>
@@ -884,6 +866,40 @@ class ItemDetail extends Component {
             );
         } else {
             return null;
+        }
+    }
+
+    _renderPostOrUserPetitionCard(item) {
+        return (
+            <View>
+                {this._renderDescription(item)}
+                {this._renderMetadata(item)}
+                <View style={styles.borderContainer} />
+                {this._renderFooter(item)}
+            </View>
+        );
+    }
+
+    _renderGroupCard(item) {
+        return (
+            <Card>
+                {this._renderDescription(item)}
+                {this._renderCarousel(item)}
+                <View style={styles.borderContainer} />
+                {this._renderFooter(item)}
+            </Card>
+        );
+    }
+
+    _renderActivity(item) {
+        switch (item.entity.type) {
+            case 'post':
+            case 'user-petition':
+                return this._renderPostOrUserPetitionCard(item);
+                break;
+            default:
+                return this._renderGroupCard(item);
+                break;
         }
     }
 
@@ -940,10 +956,7 @@ class ItemDetail extends Component {
                             onDisplay={() => this.navTitleView.fadeOut(100)}>
                             {this._renderHeader(item)}
                         </TriggeringView>
-                        {this._renderDescription(item)}
-                        {this._renderMedia(item)}
-                        <View style={styles.borderContainer} />
-                        {this._renderFooter(item)}
+                        {this._renderActivity(item)}
                         <View style={styles.borderContainer} />
                         {this._renderAddComment()}
                         <View style={styles.borderContainer} />
