@@ -439,7 +439,7 @@ class ItemDetail extends Component {
         if (item.zone === 'expired') {
             return (
                 <CardItem footer style={{ height: 35 }}>
-                    <Left style={{ justifyContent: 'flex-end' }}>
+                    <Left style={{ justifyContent: 'flex-start' }}>
                         <Button iconLeft transparent style={styles.footerButton}>
                             <Icon active name="ios-undo" style={styles.footerIcon} />
                             <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
