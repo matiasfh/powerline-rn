@@ -147,6 +147,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-share-extension')
     compile project(':react-native-youtube')
     compile project(':react-native-fbsdk')
     compile fileTree(dir: "libs", include: ["*.jar"])
