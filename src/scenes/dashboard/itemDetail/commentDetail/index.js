@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Thumbnail, CardItem, Label, Spinner, List, ListItem, Item, Input } from 'native-base';
-import { Image, View, StyleSheet, TouchableOpacity, Platform, KeyboardAvoidingView, Keyboard, TextInput, ListView } from 'react-native';
+import { Image, View, StyleSheet, TouchableOpacity, Platform, KeyboardAvoidingView, Keyboard, TextInput, ListView, RefreshControl } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import HeaderImageScrollView, { TriggeringView } from 'react-native-image-header-scroll-view';
 import * as Animatable from 'react-native-animatable';
@@ -37,6 +37,7 @@ class CommentDetail extends Component {
         this.state = {
             isLoading: false,
             isCommentsLoading: false,
+            isRefreshing: false,
             visibleHeight: 50,
             commentText: '',
             dataArray: [],
@@ -58,7 +59,7 @@ class CommentDetail extends Component {
 
     async loadComments() {
         const { props: { token, entityType, dispatch } } = this;
-        this.setState({ isLoading: true });
+        this.setState({ isRefreshing: true });
         try {
             let response = await Promise.race([
                 getChildComments(token, entityType, this.rootComment.id),
@@ -84,7 +85,7 @@ class CommentDetail extends Component {
             }
             return;
         } finally {
-            this.setState({ isLoading: false });
+            this.setState({ isRefreshing: false });
         }
         this.setState({
             dataSource: this.state.dataSource.cloneWithRows(this.state.dataArray),
@@ -193,7 +194,13 @@ class CommentDetail extends Component {
                         </Body>
                         <Right />
                     </Header>
-                    <Content>
+                    <Content
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={this.state.isRefreshing}
+                                onRefresh={this._onRefresh.bind(this)}
+                            />
+                        }>
                         {this._renderRootComment(this.rootComment)}
                         <ListView
                             dataSource={this.state.dataSource} renderRow={(comment) =>
@@ -205,7 +212,7 @@ class CommentDetail extends Component {
                         <OrientationLoadingOverlay visible={this.state.isLoading} />
                     </Content>
                 </Container>
-            </MenuContext>
+            </MenuContext >
         );
     }
 
@@ -379,6 +386,10 @@ class CommentDetail extends Component {
     _onRate(comment, option) {
         const { props: { profile } } = this;
         this.rate(comment, option);
+    }
+
+    _onRefresh() {
+        this.loadComments();
     }
 
     // Private methods
