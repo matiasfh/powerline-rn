@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions, ActionConst } from 'react-native-router-flux';
-import { Container, Header, Title, Content, Button, Footer, FooterTab, Text, Body, Left, Right, Icon, Item, Input, Grid, Row, Col, Badge } from 'native-base';
+import { Container, Header, Title, Content, Button, Footer, FooterTab, Text, Body, Left, Right, Icon, Item, Input, Grid, Row, Col, Badge, Label } from 'native-base';
 
 import { View, Image } from 'react-native';
 
@@ -21,6 +21,7 @@ import { loadUserProfile } from 'PLActions';
 
 // Tab Scenes
 import Newsfeed from './newsfeed/'
+import Friendsfeed from './friendsfeed/';
 
 const { SlideInMenu } = renderers;
 import ShareExtension from 'react-native-share-extension'
@@ -139,7 +140,9 @@ class Home extends Component {
   renderSelectedTab() {
     if (this.state.tab1 === true) {
       return (<Newsfeed />);
-    } else {
+    } else if(this.state.tab2 === true){
+      return (<Friendsfeed/>);
+    }else{
       return (
         <View style={{ flex: 1 }} />
       );
@@ -167,12 +170,14 @@ class Home extends Component {
                 <Icon active name="menu" style={{ color: 'white' }} />
               </Button>
             </Left>
+            {this.state.tab2!=true?
             <Item style={styles.searchBar}>
               <Input style={styles.searchInput} placeholder="Search groups, people, topics" />
               <Icon active name="search" />
-            </Item>
+            </Item>:
+            null}
           </Header>
-
+          {this.state.tab2 != true?
           <View style={styles.groupSelector}>
             <Grid>
               <Row>
@@ -211,7 +216,7 @@ class Home extends Component {
                 </Col>
               </Row>
             </Grid>
-          </View>
+          </View>:null}
 
           {this.renderSelectedTab()}
 
