@@ -1,7 +1,8 @@
 var PLColors = require('PLColors');
-var { StyleSheet } = require('react-native');
+var { StyleSheet, Dimensions } = require('react-native');
 
 const { WINDOW_WIDTH: viewportWidth, WINDOW_HEIGHT: viewportHeight } = require('PLConstants');
+const { width, height } = Dimensions.get('window');
 
 function wp(percentage) {
     const value = (percentage * viewportWidth) / 100;
@@ -124,4 +125,40 @@ export default {
     menuText: {
         color: '#293f53',
     },
+
+    CFooter: {
+        backgroundColor: 'transparent'
+    },
+
+    CFooterItem: {
+        width: width,
+        backgroundColor: 'white',
+        borderTopWidth: 1,
+        borderTopColor: 'rgba(0,0,0,0.1)',
+        paddingLeft: 10
+    },
+
+    sendBtn: {
+        height: 56
+    },
+
+    CFooterItemInput: {
+        paddingLeft: 15
+    },
+
+    groupAvatar: {
+        paddingBottom: 10
+    },
+
+    groupName: {
+        textAlign: 'center',
+        fontSize: 15,
+        fontWeight: '500'
+    },
+
+    groupHeaderContainer: {
+        alignItems: 'center',
+        paddingTop: 10,
+        paddingBottom: 10
+    }
 }

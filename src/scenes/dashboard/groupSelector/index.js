@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import { Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, Spinner, ListItem, Thumbnail, List, Badge } from 'native-base';
 import { View, RefreshControl } from 'react-native';
-import { loadUserGroups, clearGroupsInCache } from 'PLActions';
+import { loadUserGroups, clearGroupsInCache, loadActivities,resetActivities } from 'PLActions';
 import styles from './styles';
 
 const PLColors = require('PLColors');
@@ -192,8 +192,13 @@ class GroupSelector extends Component {
         }
     }
 
-    goToGroupFeed(){
-        Actions.pop();
+    goToGroupFeed(groupId, groupName, avatar,limit){     
+        var { dispatch, token } = this.props;
+        dispatch({type: 'SET_GROUP', data: {id: groupId, name: groupName, avatar: avatar, limit: limit}});
+        
+        dispatch(loadActivities(token, 0, 20, groupId));
+        Actions.pop();        
+        
     }
 
     goToGroupConversation(){
@@ -246,7 +251,7 @@ class GroupSelector extends Component {
                     {this._renderCountryGroup()}
                     <List
                         dataArray={this.otherGroups} renderRow={(group) =>
-                            <ListItem avatar style={{ paddingVertical: 5 }} onPress={() => this.goToGroupFeed()} badge>                                
+                            <ListItem avatar style={{ paddingVertical: 5 }} onPress={() => this.goToGroupFeed(group.id, group.official_name, group.avatar_file_path, group.conversation_view_limit)} badge>                                
                                 <Left style={{position: 'relative'}}>                                
                                     <Thumbnail small source={group.avatar_file_path ? { uri: group.avatar_file_path } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} style={styles.thumbnail} />
                                     {group.priority_item_count!=0?
