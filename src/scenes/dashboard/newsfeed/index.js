@@ -2,10 +2,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
-import { ActionSheet, Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, Spinner, ListItem, Thumbnail, List, Card, CardItem, Label } from 'native-base';
+import { ActionSheet, Container, Header, Title, Content, Text, Button, Icon, Left, Right, Body, Item, Input, Grid, Row, Col, Spinner, ListItem, Thumbnail, List, Card, CardItem, Label, Footer } from 'native-base';
 import { ListView, View, RefreshControl, TouchableOpacity, Image, WebView, Platform, Share } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
-import { loadActivities, resetActivities, votePost, editFollowers, loadActivityByEntityId } from 'PLActions';
+import { loadActivities, resetActivities, votePost, editFollowers, loadActivityByEntityId,createPostToGroup } from 'PLActions';
 import styles, { sliderWidth, itemWidth } from './styles';
 import TimeAgo from 'react-native-timeago';
 import ImageLoad from 'react-native-image-placeholder';
@@ -42,6 +42,8 @@ class Newsfeed extends Component {
             isLoading: false,
             dataArray: [],
             dataSource: ds,
+            text: "",
+            showAvatar: true
         };
     }
 
@@ -94,10 +96,10 @@ class Newsfeed extends Component {
 
     async loadInitialActivities() {
         this.setState({ isRefreshing: true });
-        const { props: { token, dispatch } } = this;
+        const { props: { token, dispatch, page, group } } = this;
         try {
             await Promise.race([
-                dispatch(loadActivities(token)),
+                dispatch(loadActivities(token, 0, 20, group )),
                 timeout(15000),
             ]);
         } catch (e) {
@@ -119,10 +121,10 @@ class Newsfeed extends Component {
 
     async loadNextActivities() {
         this.setState({ isLoadingTail: true });
-        const { props: { token, page, dispatch } } = this;
+        const { props: { token, page, dispatch, group } } = this;
         try {
             await Promise.race([
-                dispatch(loadActivities(token, page)),
+                dispatch(loadActivities(token, page, 20, group)),
                 timeout(15000),
             ]);
         } catch (e) {
@@ -630,38 +632,133 @@ class Newsfeed extends Component {
         );
     }
 
+    onChangeText(text){
+        this.setState({
+            text: text
+        });
+    }
+
+    onCreatePost(){
+        var { token, group, dispatch } = this.props;
+
+        if(this.state.text != "" || this.state.text.trim() != ""){           
+            createPostToGroup(token, group, this.state.text)
+            .then(data => {
+                this.setState({
+                    text: ""
+                });
+                dispatch({type: 'DELETE_ACTIVITIES'});
+                dispatch(loadActivities(token, 0, 20, group ))
+            })
+            .catch(err => {
+
+            })
+        }
+    }
+
     render() {
-        return (
-            <Content
-                refreshControl={
-                    <RefreshControl
-                        refreshing={this.state.isRefreshing}
-                        onRefresh={this._onRefresh.bind(this)}
+        if(this.props.group != 'all' && this.props.payload.length <= this.props.groupLimit){
+            return (
+                <Container>
+                <View style={styles.groupHeaderContainer}>
+                    {this.state.showAvatar && this.props.groupAvatar != '' && this.props.groupAvatar != null?
+                    <Thumbnail square source={{uri: this.props.groupAvatar}} style={styles.groupAvatar}/>: null}
+                    <Text style={styles.groupName}>{this.props.groupName}</Text>
+                </View>
+                <Content 
+                    style={{backgroundColor: 'white'}}
+                    onScroll={(e) => {                           
+                            var height = e.nativeEvent.contentSize.height;
+                            var offset = e.nativeEvent.contentOffset.y;
+                            if ((WINDOW_HEIGHT + offset) >= height && offset > 0) {
+                                this.setState({
+                                    showAvatar: false
+                                });
+                            }else{
+                                this.setState({
+                                    showAvatar: true
+                                });
+                            }
+                        }}>
+                    <List>
+                        {this.props.payload.map((activity, index) => {
+                            return (
+                                <ListItem avatar key={index}>
+                                    <Left>
+                                        <Thumbnail small source={{uri: activity.user.avatar_file_name}}/>
+                                    </Left>
+                                    <Body style={{borderBottomWidth: 0}}>
+                                        <Text style={styles.title}>{activity.user.full_name}</Text>
+                                        <Text note style={styles.subtitle}>{activity.description}</Text>
+                                    </Body>
+                                    <Right style={{borderBottomWidth: 0}}>
+                                        <Text note><TimeAgo time={activity.sent_at}/></Text>
+                                    </Right>
+                                </ListItem>
+                            );
+                        })}                                                
+                    </List>
+                </Content>
+                <Footer style={styles.CFooter}>
+                    <Item style={styles.CFooterItem}>
+                        <Thumbnail small source={{uri: this.props.profile.avatar_file_name}}/>
+                        <Input style={styles.CFooterItemInput} value={this.state.text} onChangeText={(text) => this.onChangeText(text)}/>
+                        <Button transparent style={styles.sendBtn} onPress={() => this.onCreatePost()}>
+                            <Text>SEND</Text>
+                            <Icon name="md-send"/>
+                        </Button>
+                    </Item>
+                </Footer>
+                </Container>
+            );
+        }else{
+            return (
+                <Container>
+                {this.props.group != 'all'?
+                <View style={styles.groupHeaderContainer}>
+                    {this.state.showAvatar && this.props.groupAvatar != '' && this.props.groupAvatar != null?
+                    <Thumbnail square source={{uri: this.props.groupAvatar}} style={styles.groupAvatar}/>: null}
+                    <Text style={styles.groupName}>{this.props.groupName}</Text>
+                </View>:null}
+                <Content
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={this.state.isRefreshing}
+                            onRefresh={this._onRefresh.bind(this)}
+                        />
+                    }
+                    onScroll={(e) => {
+                        var height = e.nativeEvent.contentSize.height;
+                        var offset = e.nativeEvent.contentOffset.y;
+                        if ((WINDOW_HEIGHT + offset) >= height && offset > 0) {
+                            this._onEndReached();
+                            this.setState({
+                                showAvatar: false
+                            })
+                        }else{
+                            this.setState({
+                                showAvatar: true
+                            });
+                        }
+                    }}>
+                    <ListView dataSource={this.state.dataSource} renderRow={item => {
+                        switch (item.entity.type) {
+                            case 'post':
+                            case 'user-petition':
+                                return this.postOrUserPetitionCard(item);
+                                break;
+                            default:
+                                return this.groupCard(item);
+                                break;
+                        }
+                    }}
                     />
-                }
-                onScroll={(e) => {
-                    var height = e.nativeEvent.contentSize.height;
-                    var offset = e.nativeEvent.contentOffset.y;
-                    if ((WINDOW_HEIGHT + offset) >= height && offset > 0) {
-                        this._onEndReached();
-                    }
-                }}>
-                <ListView dataSource={this.state.dataSource} renderRow={item => {
-                    switch (item.entity.type) {
-                        case 'post':
-                        case 'user-petition':
-                            return this.postOrUserPetitionCard(item);
-                            break;
-                        default:
-                            return this.groupCard(item);
-                            break;
-                    }
-                }}
-                />
-                <OrientationLoadingOverlay visible={this.state.isLoading} />
-                {this._renderTailLoading()}
-            </Content >
-        );
+                    <OrientationLoadingOverlay visible={this.state.isLoading} />
+                    {this._renderTailLoading()}
+                </Content >
+                </Container>
+            );
+        }        
     }
 }
 
@@ -686,6 +783,10 @@ const mapStateToProps = state => ({
     payload: state.activities.payload,
     count: state.activities.count,
     profile: state.user.profile,
+    group: state.activities.group,
+    groupName: state.activities.groupName,
+    groupAvatar: state.activities.groupAvatar,
+    groupLimit: state.activities.groupLimit
 });
 
 export default connect(mapStateToProps)(Newsfeed);

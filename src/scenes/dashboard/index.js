@@ -17,7 +17,7 @@ import Menu, {
 import { openDrawer } from '../../actions/drawer';
 import styles from './styles';
 
-import { loadUserProfile } from 'PLActions';
+import { loadUserProfile, loadActivities } from 'PLActions';
 
 // Tab Scenes
 import Newsfeed from './newsfeed/'
@@ -117,6 +117,11 @@ class Home extends Component {
   }
 
   selectGroup(group) {
+    var { token, dispatch } =  this.props;
+    if(group == 'all'){
+      dispatch({type: 'RESET_ACTIVITIES'});
+      dispatch(loadActivities(token, 0, 20, 'all'));
+    }
     this.setState({ group: group });
   }
 
@@ -134,6 +139,9 @@ class Home extends Component {
   }
 
   goToGroupSelector() {
+    this.setState({
+      group: 'more'
+    });
     Actions.groupSelector();
   }
 
@@ -209,7 +217,7 @@ class Home extends Component {
                   <Text style={styles.iconText} onPress={() => this.selectGroup('country')}>Country</Text>
                 </Col>
                 <Col style={styles.col}>
-                  <Button style={styles.iconButton} onPress={() => this.goToGroupSelector()}>
+                  <Button style={this.state.group == 'more' ? styles.iconActiveButton : styles.iconButton} onPress={() => this.goToGroupSelector()}>
                     <Icon active name="more" style={styles.icon} />
                   </Button>
                   <Text style={styles.iconText} onPress={() => this.goToGroupSelector()}>More</Text>
