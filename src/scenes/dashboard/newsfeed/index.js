@@ -24,6 +24,8 @@ import Menu, {
 const PLColors = require('PLColors');
 const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
 const { youTubeAPIKey } = require('PLEnv');
+import { Dimensions } from 'react-native';
+const { width, height } = Dimensions.get('window');
 
 class Newsfeed extends Component {
 
@@ -665,8 +667,7 @@ class Newsfeed extends Component {
                     <Thumbnail square source={{uri: this.props.groupAvatar}} style={styles.groupAvatar}/>: null}
                     <Text style={styles.groupName}>{this.props.groupName}</Text>
                 </View>
-                <Content 
-                    style={{backgroundColor: 'white'}}
+                <Content
                     onScroll={(e) => {                           
                             var height = e.nativeEvent.contentSize.height;
                             var offset = e.nativeEvent.contentOffset.y;
@@ -680,10 +681,11 @@ class Newsfeed extends Component {
                                 });
                             }
                         }}>
+                     <View style={{flex: 1, height:(this.state.showAvatar && this.props.groupAvatar != '' && this.props.groupAvatar != null? (height - 364):( height -  308)), justifyContent: 'flex-end'}}>
                     <List>
                         {this.props.payload.map((activity, index) => {
                             return (
-                                <ListItem avatar key={index}>
+                                <ListItem avatar key={index} style={{backgroundColor: 'white', marginLeft: 0, paddingLeft: 15}}>
                                     <Left>
                                         <Thumbnail small source={{uri: activity.user.avatar_file_name}}/>
                                     </Left>
@@ -692,12 +694,17 @@ class Newsfeed extends Component {
                                         <Text note style={styles.subtitle}>{activity.description}</Text>
                                     </Body>
                                     <Right style={{borderBottomWidth: 0}}>
-                                        <Text note><TimeAgo time={activity.sent_at}/></Text>
+                                        <Text style={styles.activityTime}><TimeAgo time={activity.sent_at}/></Text>
+                                        <Button transparent small onPress={() => this.vote(activity, 'upvote')}>
+                                            <Icon name="md-arrow-dropup" style={activity.upvotes_count!=0? styles.footerIconBlue : styles.footerIcon}/>
+                                            <Label style={activity.upvotes_count!=0? styles.footerTextBlue : styles.footerText}>{activity.upvotes_count ? activity.upvotes_count : 0}</Label>
+                                        </Button>
                                     </Right>
                                 </ListItem>
                             );
                         })}                                                
                     </List>
+                    </View>
                 </Content>
                 <Footer style={styles.CFooter}>
                     <Item style={styles.CFooterItem}>
