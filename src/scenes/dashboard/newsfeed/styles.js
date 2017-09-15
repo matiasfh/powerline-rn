@@ -143,7 +143,8 @@ export default {
     },
 
     CFooterItemInput: {
-        paddingLeft: 15
+        paddingLeft: 15,
+        fontSize: 20
     },
 
     groupAvatar: {
@@ -160,5 +161,11 @@ export default {
         alignItems: 'center',
         paddingTop: 10,
         paddingBottom: 10
+    },
+
+    activityTime: {
+        fontSize: 10,
+        color: 'rgba(0,0,0,0.4)',
+        marginTop: 5
     }
 }
