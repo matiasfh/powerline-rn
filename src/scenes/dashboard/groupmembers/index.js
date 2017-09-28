@@ -93,7 +93,7 @@ class GroupMembers extends Component{
                         </Button>
                     </Left>
                     <Body>
-                        <Title>Group Members</Title>
+                        <Title style={styles.title}>Group Members</Title>
                     </Body>
                 </Header>
                 <Content padder>

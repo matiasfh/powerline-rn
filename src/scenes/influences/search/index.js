@@ -74,8 +74,9 @@ class SearchFollowing extends Component {
                         </Button>
                     </Left>
                     <Body>
-                        <Title>My Influences</Title>
-                    </Body>                    
+                        <Title style={styles.title}>My Influences</Title>
+                    </Body>
+                    <Right/>                   
                 </Header>
                 <Item style={styles.searchBar}>
                     <Input  style={styles.searchInput}  placeholder="Search for influences" value={this.state.queryText} onChangeText={(text) => this.onChangeText(text)}/>

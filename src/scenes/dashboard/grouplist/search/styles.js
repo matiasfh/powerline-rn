@@ -53,5 +53,9 @@ export default {
     joinBtn: {
         color: '#11c1f3',
         fontSize: 25
+    },
+
+    title: {
+        color: 'white'
     }
 }

@@ -47,5 +47,9 @@ export default {
   listItemValueField: {
     color: PLColors.main,
     fontSize: 16
+  },
+
+  title: {
+    color: 'white'
   }
 };

@@ -87,14 +87,15 @@ class Representatives extends Component {
             <MenuContext customStyles={menuContextStyles}>
                 <Container>
                     <Header style={styles.header}>
-                        <Left>
+                        <Left style={{flex: 0.1}}>
                             <Button transparent onPress={this.props.openDrawer}>
                                 <Icon active name="menu" style={{ color: 'white' }} />
                             </Button>
                         </Left>
                         <Body>
-                            <Title>My Representatives</Title>
+                            <Title style={styles.title}>My Representatives</Title>
                         </Body>
+                        <Right style={{flex: 0.1}}/>
                     </Header>
                     <Content
                         refreshControl={

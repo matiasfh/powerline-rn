@@ -17,6 +17,7 @@
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
 
 @implementation AppDelegate
+@synthesize oneSignal = _oneSignal;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -37,6 +38,13 @@
   [self.window makeKeyAndVisible];
   
   [Fabric with:@[[Crashlytics class]]];
+  
+  self.oneSignal = [[RCTOneSignal alloc] initWithLaunchOptions:launchOptions
+                                                         appId:@"6728c7ff-e832-4472-9fef-84dcf2af5328"];
+  // For requiring push notification permissions manually.
+  self.oneSignal = [[RCTOneSignal alloc] initWithLaunchOptions:launchOptions
+                                                         appId:@"6728c7ff-e832-4472-9fef-84dcf2af5328"
+                                                      settings:@{kOSSettingsKeyAutoPrompt: @false}];
   
   return YES;
 }

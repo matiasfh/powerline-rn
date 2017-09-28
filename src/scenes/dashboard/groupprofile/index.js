@@ -192,7 +192,7 @@ class GroupProfile extends Component{
                         </Button>
                     </Left>
                     <Body>
-                        <Title>Group Profile</Title>
+                        <Title style={styles.title}>Group Profile</Title>
                     </Body>
                     <Right>
                         <Button transparent onPress={() => this.invite()}>

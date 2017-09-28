@@ -91,9 +91,32 @@ function getInvites(token){
     });
 }
 
+function registerDevice(token, params){
+    return new Promise((resolve, reject) => {
+        fetch(API_URL + '/v2/devices', {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                'token': token
+            },
+            body: JSON.stringify(params)
+        })
+        .then((res) => res.json())
+        .then(data => {
+            console.log("Register Device API Success", JSON.stringify(data));
+            resolve(data);
+        })
+        .catch(err => {
+            console.log("Register Device API Error", JSON.stringify(err));
+            reject(err);
+        });
+    })
+}
+
 module.exports = {
     loadUserProfile,
     loadUserProfileById,
     loadUserData,
-    getInvites
+    getInvites,
+    registerDevice
 }

@@ -34,5 +34,9 @@ export default {
 
     searchIcon: {
         color: 'white'
+    },
+
+    title: {
+        color: 'white'
     }
 }

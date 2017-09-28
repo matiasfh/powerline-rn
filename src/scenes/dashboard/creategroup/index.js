@@ -141,7 +141,7 @@ class CreateGroup extends Component{
                             </Button>
                         </Left>
                         <Body>
-                            <Title>New Group</Title>
+                            <Title style={styles.title}>New Group</Title>
                         </Body>
                         <Right>
                             <Button transparent onPress={() => this.onSend()}>

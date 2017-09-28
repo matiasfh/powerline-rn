@@ -22,11 +22,54 @@ var { StackNavigator } = require('react-navigation');
 var RegisterScene  = require('./scenes/auth/RegisterScene');
 var TourScene = require('./scenes/auth/TourScene');
 
+import OneSignal from 'react-native-onesignal';
+var DeviceInfo = require('react-native-device-info');
+
 var PLApp = React.createClass({
   displayName: 'PLApp',
-  componentDidMount: function () {
+  componentWillMount: function() {
+    
+    /*
+    OneSignal.addEventListener('registered', function(data){
+        alert("push registered");
+        console.log("push registered", data);
+    });
+    OneSignal.addEventListener('ids', function(data){
+        //alert("push ids");
+        console.log("push ids", data);
+
+        var params = {
+          id: data.userId,
+          identifier: DeviceInfo.getUniqueID(),
+          timezone: DeviceInfo.getTimezone(),
+          version: DeviceInfo.getVersion(),
+          os: DeviceInfo.getSystemName(),
+          model: DeviceInfo.getModel(),
+          type: "ios"
+        }
+        
+
+        
+    });
+
+    OneSignal.addEventListener('received', function(data){
+        alert("push received");
+        console.log("push received", data);
+    });
+    OneSignal.addEventListener('opened', function(data){
+        alert("push opend");
+       console.log("push opened", data);
+    });
+    */
+    
+  },
+
+  componentDidMount: function () { 
+
+
     if (Platform.OS === 'android') {
       SplashScreen.hide();
+      
     }
     AppState.addEventListener('change', this.handleAppStateChange);
   },

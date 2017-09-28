@@ -22,5 +22,9 @@ export default {
         marginLeft: 12,
         marginTop: 10,
         backgroundColor: PLColors.main
+    },
+
+    title: {
+        color: 'white'
     }
 }

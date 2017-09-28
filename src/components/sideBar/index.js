@@ -8,6 +8,7 @@ import { closeDrawer } from '../../actions/drawer';
 import { logOut, logOutWithPrompt } from 'PLActions';
 
 import styles from './style';
+import OneSignal from 'react-native-onesignal';
 
 const datas = [
   {
@@ -110,7 +111,13 @@ class SideBar extends Component {
 
   onSelectItem(route: string) {
     if (route == 'logout') {
-      this.props.logOut();
+      OneSignal.removeEventListener('received', (data) => {
+         console.log("remove listener for push1", JSON.stringify(data));
+      });
+      OneSignal.removeEventListener('opened', (data) => {
+        console.log("remove listener for push2", JSON.stringify(data));        
+      });
+      this.props.logOut();      
     } else if(route == 'takeTour'){
       Actions['takeTour']();
     }else if(route == 'myInfluences'){

@@ -17,14 +17,16 @@ import Menu, {
 import { openDrawer } from '../../actions/drawer';
 import styles from './styles';
 
-import { loadUserProfile, loadActivities } from 'PLActions';
+import { loadUserProfile, loadActivities, registerDevice } from 'PLActions';
 
 // Tab Scenes
 import Newsfeed from './newsfeed/'
 import Friendsfeed from './friendsfeed/';
 
 const { SlideInMenu } = renderers;
-import ShareExtension from 'react-native-share-extension'
+import ShareExtension from 'react-native-share-extension';
+import OneSignal from 'react-native-onesignal';
+var DeviceInfo = require('react-native-device-info');
 
 class Home extends Component {
 
@@ -44,16 +46,59 @@ class Home extends Component {
   }
 
   componentWillMount() {
-    const { props: { profile } } = this;
+    const { props: { profile, token } } = this;
     if (!profile) {
       this.loadCurrentUserProfile();
     }
 
-    ShareExtension.data().then((data) => {
-        if(data.type != "" && data.value != ""){
-          Actions.newpost({data: data});
-        }        
-    });
+    
+    // ShareExtension.data().then((data) => {
+    //     if(data.type != "" && data.value != ""){
+    //       Actions.newpost({data: data});
+    //     }        
+    // }, err => {
+    //     console.log("share extension error",err)
+    // })
+    // .catch(err => {
+    //   console.log("share extension error",err)
+    // });
+
+    //register device
+    OneSignal.addEventListener('ids', function(data){
+      //alert("push ids");
+      console.log("push ids", data);
+
+      var params = {
+        id: data.userId,
+        identifier: DeviceInfo.getUniqueID(),
+        timezone: (new Date()).getTimezoneOffset()* 60,
+        version: DeviceInfo.getVersion(),
+        os: DeviceInfo.getSystemName(),
+        model: DeviceInfo.getModel(),
+        type: "ios"
+      };
+
+      alert(JSON.stringify(params));
+
+      registerDevice(token, params)
+      .then(data => {
+         alert("Register Device okay " + JSON.stringify(data) );
+      })
+      .catch(err => {
+        alert("Register Device error " + JSON.stringify(err));
+      });
+   });
+
+   //define push notification
+   OneSignal.addEventListener('received', (data) =>{
+      console.log("push notification received", JSON.stringify(data));
+      
+   });
+
+   OneSignal.addEventListener('opened', (data) =>{
+      console.log("push notification opened", JSON.stringify(data));
+      
+   });
   }
 
   async loadCurrentUserProfile() {
