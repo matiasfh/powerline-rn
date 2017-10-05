@@ -37,9 +37,5 @@ export default {
         marginLeft: 0,
         paddingLeft: 17,
         borderBottomWidth: 0.6
-    },
-
-    title: {
-        color: 'white'
     }
 }

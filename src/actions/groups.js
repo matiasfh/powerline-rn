@@ -180,7 +180,7 @@ function getGroupMembers(token, id){
 
 function inviteAllFollowers(token, id, users){
     return new Promise((resolve, reject) => {
-        fetch(API_URL + '/v2/groups/' + id + '/users', {
+        fetch(API_URL + '/v2/groups/' + id + '/invites', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -318,6 +318,8 @@ function getGroupPermissions(token, groupId){
     })
 }
 
+
+
 module.exports = {
     loadUserGroups,
     clearGroupsInCache,
@@ -332,5 +334,6 @@ module.exports = {
     unJoinGroup,
     joinGroup,
     loadFieldsToFillOnJoin,
-    getGroupPermissions
+    getGroupPermissions,
+    
 }

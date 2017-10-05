@@ -23,9 +23,5 @@ export default {
 
   text1: {
     fontSize: 10
-  },
-
-  title: {
-    color: 'white'
   }
 };

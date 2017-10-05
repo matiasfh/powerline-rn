@@ -37,9 +37,5 @@ export default {
   formItem: {
     borderWidth: 1,
     borderColor: 'red'//PLColors.textInputBorder
-  },
-
-  title: {
-    color: 'white'
   }
 };

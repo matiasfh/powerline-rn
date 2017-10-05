@@ -24,9 +24,5 @@ export default {
 
     icon: {
         color: PLColors.main
-    },
-
-    title: {
-        color: 'white'
     }
 }

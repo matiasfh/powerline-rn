@@ -51,7 +51,4 @@ export default {
         marginRight: 5
     },
 
-    title: {
-        color: 'white'
-    }
 }

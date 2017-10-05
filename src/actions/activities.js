@@ -84,9 +84,34 @@ function loadActivityByEntityId(token, entityType, entityId) {
     });
 }
 
+function putSocialActivity(token, id, ignore){
+    return new Promise((resolve, reject) => {
+        fetch(API_URL + '/v2/social-activities/' + id, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'token': token
+            },
+            body: JSON.stringify({
+                ignore: ignore
+            })
+        })
+        .then((res) => res.json())
+        .then(data => {
+            console.log("Put Social Activity API Success", data);
+            resolve(data);
+        })
+        .catch(err => {
+            console.log("Put Social Activity API Error", err);
+            reject(err);
+        });
+    });
+}
+
 module.exports = {
     loadActivities,
     resetActivities,
     loadActivitiesByUserId,
     loadActivityByEntityId,
+    putSocialActivity,
 }

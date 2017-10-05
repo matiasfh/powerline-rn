@@ -130,14 +130,13 @@ function createPostToGroup(token, groupId, content){
 }
 
 function createPetition(token, groupId, title, content){
-    var data = {petition_title: title, 
-        petition_body: content, 
-        subject: '.',
-        type: 'petition'
+    var data = {
+        title: title,
+        body: content
     };
 
     return new Promise((resolve, reject) => {
-        fetch(API_URL + '/v2/groups/' + groupId + '/polls', {
+        fetch(API_URL + '/v2.2/groups/' + groupId + '/user-petitions', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

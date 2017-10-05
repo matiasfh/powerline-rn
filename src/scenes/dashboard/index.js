@@ -22,6 +22,7 @@ import { loadUserProfile, loadActivities, registerDevice } from 'PLActions';
 // Tab Scenes
 import Newsfeed from './newsfeed/'
 import Friendsfeed from './friendsfeed/';
+import Notifications from './notifications';
 
 const { SlideInMenu } = renderers;
 import ShareExtension from 'react-native-share-extension';
@@ -51,22 +52,17 @@ class Home extends Component {
       this.loadCurrentUserProfile();
     }
 
-    
-    // ShareExtension.data().then((data) => {
-    //     if(data.type != "" && data.value != ""){
-    //       Actions.newpost({data: data});
-    //     }        
-    // }, err => {
-    //     console.log("share extension error",err)
-    // })
-    // .catch(err => {
-    //   console.log("share extension error",err)
-    // });
+    ShareExtension.data().then((data) => {
+        if(data.type != "" && data.value != ""){
+          Actions.newpost({data: data});
+        }        
+    });
 
     //register device
     OneSignal.addEventListener('ids', function(data){
       //alert("push ids");
       console.log("push ids", data);
+      //alert("device " + data.userId);
 
       var params = {
         id: data.userId,
@@ -75,17 +71,15 @@ class Home extends Component {
         version: DeviceInfo.getVersion(),
         os: DeviceInfo.getSystemName(),
         model: DeviceInfo.getModel(),
-        type: "ios"
+        type: "android"
       };
-
-      alert(JSON.stringify(params));
 
       registerDevice(token, params)
       .then(data => {
-         alert("Register Device okay " + JSON.stringify(data) );
+        //alert("register result " + JSON.stringify(data));
       })
       .catch(err => {
-        alert("Register Device error " + JSON.stringify(err));
+
       });
    });
 
@@ -195,6 +189,8 @@ class Home extends Component {
       return (<Newsfeed />);
     } else if(this.state.tab2 === true){
       return (<Friendsfeed/>);
+    } else if(this.state.tab4 === true){
+      return (<Notifications/>);
     }else{
       return (
         <View style={{ flex: 1 }} />
@@ -223,14 +219,14 @@ class Home extends Component {
                 <Icon active name="menu" style={{ color: 'white' }} />
               </Button>
             </Left>
-            {this.state.tab2!=true?
+            {this.state.tab2!=true && this.state.tab4!=true?
             <Item style={styles.searchBar}>
               <Input style={styles.searchInput} placeholder="Search groups, people, topics" />
               <Icon active name="search" />
             </Item>:
             null}
           </Header>
-          {this.state.tab2 != true?
+          {this.state.tab2 != true && this.state.tab4 != true ?
           <View style={styles.groupSelector}>
             <Grid>
               <Row>

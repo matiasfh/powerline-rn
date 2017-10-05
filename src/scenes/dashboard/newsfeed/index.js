@@ -258,7 +258,6 @@ class Newsfeed extends Component {
         if (entry.type === "image") {
             return (
                 <ImageLoad
-                    placeholderSource={require('img/empty_image.png')}
                     source={{ uri: entry.imageSrc }}
                     style={styles.image}
                 />
@@ -405,7 +404,7 @@ class Newsfeed extends Component {
                 break;
         }
         return (
-            <CardItem style={{ paddingBottom: 0 }}>
+            <CardItem style={{ paddingBottom: 0, paddingLeft: 15, paddingRight: 15 }}>
                 <Left>
                     <Thumbnail small source={thumbnail ? { uri: thumbnail } : require("img/blank_person.png")} defaultSource={require("img/blank_person.png")} />
                     <Body>
@@ -459,7 +458,7 @@ class Newsfeed extends Component {
             case 'user-petition':
                 return (
                     <CardItem footer style={{ height: 35 }}>
-                        <Left style={{ justifyContent: 'flex-end' }}>
+                        <Left style={{ justifyContent: 'flex-start' }}>
                             <Button iconLeft transparent style={styles.footerButton}>
                                 <Icon name="md-arrow-dropdown" style={styles.footerIcon} />
                                 <Label style={styles.footerText}>Sign</Label>
@@ -475,7 +474,7 @@ class Newsfeed extends Component {
             case 'question':
                 return (
                     <CardItem footer style={{ height: 35 }}>
-                        <Left style={{ justifyContent: 'flex-end' }}>
+                        <Left style={{ justifyContent: 'flex-start' }}>
                             <Button iconLeft transparent style={styles.footerButton}>
                                 <Icon name="md-arrow-dropdown" style={styles.footerIcon} />
                                 <Label style={styles.footerText}>Answer</Label>
@@ -491,7 +490,7 @@ class Newsfeed extends Component {
             case 'payment-request':
                 return (
                     <CardItem footer style={{ height: 35 }}>
-                        <Left style={{ justifyContent: 'flex-end' }}>
+                        <Left style={{ justifyContent: 'flex-start' }}>
                             <Button iconLeft transparent style={styles.footerButton}>
                                 <Icon name="md-arrow-dropdown" style={styles.footerIcon} />
                                 <Label style={styles.footerText}>Pay</Label>
@@ -507,7 +506,7 @@ class Newsfeed extends Component {
             case 'leader-event':
                 return (
                     <CardItem footer style={{ height: 35 }}>
-                        <Left style={{ justifyContent: 'flex-end' }}>
+                        <Left style={{ justifyContent: 'flex-start' }}>
                             <Button iconLeft transparent style={styles.footerButton}>
                                 <Icon name="md-arrow-dropdown" style={styles.footerIcon} />
                                 <Label style={styles.footerText}>RSVP</Label>
@@ -523,7 +522,7 @@ class Newsfeed extends Component {
             case 'leader-news':
                 return (
                     <CardItem footer style={{ height: 35 }}>
-                        <Left style={{ justifyContent: 'flex-end' }}>
+                        <Left style={{ justifyContent: 'flex-start' }}>
                             <Button iconLeft transparent style={styles.footerButton}>
                                 <Icon name="md-arrow-dropdown" style={styles.footerIcon} />
                                 <Label style={styles.footerText}>Discuss</Label>
@@ -539,7 +538,7 @@ class Newsfeed extends Component {
             default:
                 return (
                     <CardItem footer style={{ height: 35 }}>
-                        <Left style={{ justifyContent: 'flex-end' }}>
+                        <Left style={{ justifyContent: 'space-between' }}>
                             <Button iconLeft transparent style={styles.footerButton}>
                                 <Icon name="md-arrow-dropup" style={styles.footerIcon} />
                                 <Label style={styles.footerText}>Upvote {item.rate_up ? item.rate_up : 0}</Label>
@@ -561,7 +560,7 @@ class Newsfeed extends Component {
 
     _renderDescription(item) {
         return (
-            <CardItem>
+            <CardItem style={{paddingLeft: 15, paddingRight: 15}}>
                 <Left>
                     <View style={styles.descLeftContainer}>
                         {this._renderZoneIcon(item)}

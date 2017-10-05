@@ -113,7 +113,7 @@ class GroupSearch extends Component{
                         </Button>
                     </Left>
                     <Body>
-                        <Title style={styles.title}>Group Search</Title>
+                        <Title>Group Search</Title>
                     </Body>
                     <Right>
                         <Button transparent onPress={() => this.onCreate()}>

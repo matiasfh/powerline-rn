@@ -26,7 +26,7 @@ import {
 } from 'react-native';
 import styles  from './styles';
 const PLColors = require('PLColors');
-import { getGroupDetails, inviteAllFollowers, getFollowings, unJoinGroup, getGroupPermissions } from 'PLActions';
+import { getGroupDetails, inviteAllFollowers, getFollowers, unJoinGroup, getGroupPermissions } from 'PLActions';
 
 class GroupProfile extends Component{
     static propTypes = {
@@ -123,7 +123,7 @@ class GroupProfile extends Component{
                     text: 'OK',
                     onPress: () => {
                         var  { token } = this.props;
-                        getFollowings(token, 1, 10).then(data => {
+                        getFollowers(token, 1, 10).then(data => {
                             var users = [];
                             for (var i = 0; i < data.payload.length; i++){
                                 users.push(data.payload[i].username);
@@ -192,7 +192,7 @@ class GroupProfile extends Component{
                         </Button>
                     </Left>
                     <Body>
-                        <Title style={styles.title}>Group Profile</Title>
+                        <Title>Group Profile</Title>
                     </Body>
                     <Right>
                         <Button transparent onPress={() => this.invite()}>

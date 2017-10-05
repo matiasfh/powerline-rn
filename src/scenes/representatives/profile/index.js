@@ -112,9 +112,8 @@ class RepresentatyProfile extends Component{
                         </Button>
                     </Left>
                     <Body>
-                        <Title style={styles.title}>Rep Profile</Title>
+                        <Title>Rep Profile</Title>
                     </Body>
-                    <Right/>
                 </Header>
                 <Content
                     refreshControl={

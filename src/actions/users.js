@@ -113,10 +113,31 @@ function registerDevice(token, params){
     })
 }
 
+function unregisterDevice(token, id){
+    return new Promise((resolve, reject) => {
+        fetch(API_URL + '/v2/devices/' + id, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'token': token
+            }
+        })
+        .then(data => {
+            console.log("Unregister Device API Success", JSON.stringify(data));
+            resolve(data);
+        })
+        .catch(err => {
+            console.log("Unregistere Device API Error", JSON.stringify(err));
+            reject(err);
+        });
+    });
+}
+
 module.exports = {
     loadUserProfile,
     loadUserProfileById,
     loadUserData,
     getInvites,
-    registerDevice
+    registerDevice,
+    unregisterDevice
 }

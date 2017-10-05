@@ -124,7 +124,7 @@ class GroupList extends Component{
                             </Button>
                         </Left>
                         <Body>
-                            <Title style={styles.title}>My Groups</Title>
+                            <Title>My Groups</Title>
                         </Body>
                         <Right>
                             <Button transparent onPress={() => this.goToSearch()}>

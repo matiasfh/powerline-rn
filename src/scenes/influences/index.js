@@ -38,7 +38,7 @@ class Influences extends Component {
                             </Button>
                         </Left>
                         <Body>
-                            <Title style={styles.title}>My Influences</Title>
+                            <Title>My Influences</Title>
                         </Body>
                         <Right>
                             <Button transparent onPress={this.searchFollowings}>
