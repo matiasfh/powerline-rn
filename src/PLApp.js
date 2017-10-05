@@ -24,9 +24,15 @@ var TourScene = require('./scenes/auth/TourScene');
 
 var PLApp = React.createClass({
   displayName: 'PLApp',
-  componentDidMount: function () {
+  componentWillMount: function() {
+  },
+
+  componentDidMount: function () { 
+
+
     if (Platform.OS === 'android') {
       SplashScreen.hide();
+      
     }
     AppState.addEventListener('change', this.handleAppStateChange);
   },

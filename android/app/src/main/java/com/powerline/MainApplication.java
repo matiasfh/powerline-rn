@@ -4,6 +4,8 @@ import android.app.Application;
 
 import com.crashlytics.android.Crashlytics;
 import com.facebook.react.ReactApplication;
+import com.learnium.RNDeviceInfo.RNDeviceInfo;
+import com.geektime.rnonesignalandroid.ReactNativeOneSignalPackage;
 import com.alinz.parkerdan.shareextension.SharePackage;
 import com.inprogress.reactnativeyoutube.ReactNativeYouTube;
 import com.facebook.reactnative.androidsdk.FBSDKPackage;
@@ -40,8 +42,10 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
               new MainReactPackage(),
-            new SharePackage(),
-            new ReactNativeYouTube(),
+              new RNDeviceInfo(),
+              new ReactNativeOneSignalPackage(),
+              new SharePackage(),
+              new ReactNativeYouTube(),
               new FBSDKPackage(mCallbackManager),
               new SplashScreenReactPackage(),
               new LinearGradientPackage()

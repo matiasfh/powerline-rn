@@ -17,14 +17,17 @@ import Menu, {
 import { openDrawer } from '../../actions/drawer';
 import styles from './styles';
 
-import { loadUserProfile, loadActivities } from 'PLActions';
+import { loadUserProfile, loadActivities, registerDevice } from 'PLActions';
 
 // Tab Scenes
 import Newsfeed from './newsfeed/'
 import Friendsfeed from './friendsfeed/';
+import Notifications from './notifications';
 
 const { SlideInMenu } = renderers;
-import ShareExtension from 'react-native-share-extension'
+import ShareExtension from 'react-native-share-extension';
+import OneSignal from 'react-native-onesignal';
+var DeviceInfo = require('react-native-device-info');
 
 class Home extends Component {
 
@@ -44,7 +47,7 @@ class Home extends Component {
   }
 
   componentWillMount() {
-    const { props: { profile } } = this;
+    const { props: { profile, token } } = this;
     if (!profile) {
       this.loadCurrentUserProfile();
     }
@@ -54,6 +57,42 @@ class Home extends Component {
           Actions.newpost({data: data});
         }        
     });
+
+    //register device
+    OneSignal.addEventListener('ids', function(data){
+      //alert("push ids");
+      console.log("push ids", data);
+      //alert("device " + data.userId);
+
+      var params = {
+        id: data.userId,
+        identifier: DeviceInfo.getUniqueID(),
+        timezone: (new Date()).getTimezoneOffset()* 60,
+        version: DeviceInfo.getVersion(),
+        os: DeviceInfo.getSystemName(),
+        model: DeviceInfo.getModel(),
+        type: "android"
+      };
+
+      registerDevice(token, params)
+      .then(data => {
+        //alert("register result " + JSON.stringify(data));
+      })
+      .catch(err => {
+
+      });
+   });
+
+   //define push notification
+   OneSignal.addEventListener('received', (data) =>{
+      console.log("push notification received", JSON.stringify(data));
+      
+   });
+
+   OneSignal.addEventListener('opened', (data) =>{
+      console.log("push notification opened", JSON.stringify(data));
+      
+   });
   }
 
   async loadCurrentUserProfile() {
@@ -150,6 +189,8 @@ class Home extends Component {
       return (<Newsfeed />);
     } else if(this.state.tab2 === true){
       return (<Friendsfeed/>);
+    } else if(this.state.tab4 === true){
+      return (<Notifications/>);
     }else{
       return (
         <View style={{ flex: 1 }} />
@@ -178,14 +219,14 @@ class Home extends Component {
                 <Icon active name="menu" style={{ color: 'white' }} />
               </Button>
             </Left>
-            {this.state.tab2!=true?
+            {this.state.tab2!=true && this.state.tab4!=true?
             <Item style={styles.searchBar}>
               <Input style={styles.searchInput} placeholder="Search groups, people, topics" />
               <Icon active name="search" />
             </Item>:
             null}
           </Header>
-          {this.state.tab2 != true?
+          {this.state.tab2 != true && this.state.tab4 != true ?
           <View style={styles.groupSelector}>
             <Grid>
               <Row>

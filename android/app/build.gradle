@@ -105,7 +105,7 @@ def enableProguardInReleaseBuilds = false
 
 android {
     compileSdkVersion 25
-    buildToolsVersion '25.0.0'
+    buildToolsVersion '25.0.3'
 
     defaultConfig {
         applicationId "com.powerline"
@@ -116,6 +116,8 @@ android {
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
+        manifestPlaceholders = [onesignal_app_id: "6728c7ff-e832-4472-9fef-84dcf2af5328",
+                                onesignal_google_project_number: "795839139618"]
     }
     splits {
         abi {
@@ -147,6 +149,8 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-device-info')
+    compile project(':react-native-onesignal')
     compile project(':react-native-share-extension')
     compile project(':react-native-youtube')
     compile project(':react-native-fbsdk')

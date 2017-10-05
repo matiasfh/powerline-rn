@@ -5,9 +5,10 @@ import { Container, Content, Text, ListItem, List, Left, Icon, Right } from 'nat
 import { Actions } from 'react-native-router-flux';
 
 import { closeDrawer } from '../../actions/drawer';
-import { logOut, logOutWithPrompt } from 'PLActions';
+import { logOut, logOutWithPrompt, unregisterDevice } from 'PLActions';
 
 import styles from './style';
+import OneSignal from 'react-native-onesignal';
 
 const datas = [
   {
@@ -110,7 +111,18 @@ class SideBar extends Component {
 
   onSelectItem(route: string) {
     if (route == 'logout') {
-      this.props.logOut();
+      var { token } = this.props;
+
+      OneSignal.addEventListener('ids', function(data){
+          unregisterDevice(token, data.userId)
+          .then(data => {
+            //alert("Success");
+            this.props.logOut();
+          })
+          .catch(err => {
+             
+          });
+      });            
     } else if(route == 'takeTour'){
       Actions['takeTour']();
     }else if(route == 'myInfluences'){
@@ -162,4 +174,8 @@ function bindAction(dispatch) {
   };
 }
 
-export default connect(null, bindAction)(SideBar);
+const mapStateToProps = state => ({
+  token: state.user.token
+});
+
+export default connect(mapStateToProps, bindAction)(SideBar);
