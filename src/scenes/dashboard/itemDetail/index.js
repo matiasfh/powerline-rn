@@ -19,6 +19,7 @@ import Menu, {
 } from 'react-native-popup-menu';
 import OrientationLoadingOverlay from 'react-native-orientation-loading-overlay';
 import { getComments, votePost, addComment, rateComment, loadActivityByEntityId } from 'PLActions';
+import AnalyticsButton from './analyticsButton'
 
 const { youTubeAPIKey } = require('PLEnv');
 const { WINDOW_WIDTH, WINDOW_HEIGHT } = require('PLConstants');
@@ -444,6 +445,7 @@ class ItemDetail extends Component {
                             <Icon active name="ios-undo" style={styles.footerIcon} />
                             <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
                         </Button>
+                        <AnalyticsButton/>
                     </Left>
                 </CardItem>
             );
@@ -474,6 +476,7 @@ class ItemDetail extends Component {
                             <Icon active name="ios-undo" style={styles.footerIcon} />
                             <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
                         </Button>
+                        <AnalyticsButton/>
                     </Left>
                 </CardItem>
             );
@@ -552,6 +555,7 @@ class ItemDetail extends Component {
                                 <Icon active name="ios-undo" style={styles.footerIcon} />
                                 <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
                             </Button>
+                            <AnalyticsButton/>
                         </Left>
                     </CardItem>
                 );
@@ -636,6 +640,7 @@ class ItemDetail extends Component {
                                 <Icon active name="ios-undo" style={styles.footerIcon} />
                                 <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
                             </Button>
+                            <AnalyticsButton/>
                         </Left>
                     </CardItem>
                 );
