@@ -5,6 +5,34 @@
 
 'use strict';
 
+// Analytics
+export type RenderMode = 'ALL' | 'UPVOTES' | 'DOWNVOTES' | '%UPVOTES' | '%DOWNVOTES';
+export type FilterMode = 'ELECTED' | 'AUTHOR' | 'TOPLEADERS' | 'TOPTOWNS' | 'MAP' | 'CUSTOM';
+export type Representative = {
+  id: number,
+  first_name: string,
+  last_name: string,
+  official_title: string,
+  upvotes: number,
+  downvotes: number,
+  user?: boolean,
+  author?: boolean,
+  percUpvotes: number,
+  percDownvotes: number,
+  total: number
+}
+export type AnalyticsData = {
+  upvotes: number,
+  downvotes: number,
+  representatives: Array<Representative>,
+  most_popular: Array<Representative>,
+  list: Array<Representative>,
+  renderMode: RenderMode,
+  filterMode: FilterMode
+};
+
+//
+
 export type Action =
   { type: 'LOGGED_IN', source: ?string; data: { id: string; username: string; token: string; is_registeration_complete: ?boolean; } }
   | { type: 'LOGGED_OUT' }
@@ -22,6 +50,7 @@ export type Action =
   | { type: 'LOADED_ACTIVITIES', data: { page: number; items: number; totalItems: number; payload: Array<Object> } }
   | { type: 'RESET_ACTIVITIES' }
   | { type: 'LOADED_USER_PROFILE', data: Object }
+  | { type: 'ANALYTICS_LOADED', payload: AnalyticsData }
 
 export type Dispatch = (action: Action | ThunkAction | PromiseAction | Array<Action>) => any;
 export type GetState = () => Object;

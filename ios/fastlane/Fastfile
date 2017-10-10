@@ -25,3 +25,7 @@
     #   message: "Successfully uploaded a beta release - see it at https://fabric.io/_/beta"
     # )
   end
+
+  lane :build do
+    gym(scheme: 'Powerline', export_method: 'development')
+  end
