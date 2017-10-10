@@ -445,7 +445,7 @@ class ItemDetail extends Component {
                             <Icon active name="ios-undo" style={styles.footerIcon} />
                             <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
                         </Button>
-                        <AnalyticsButton/>
+                        <AnalyticsButton  description={item.description} id={item.entity.id} />
                     </Left>
                 </CardItem>
             );
@@ -476,7 +476,7 @@ class ItemDetail extends Component {
                             <Icon active name="ios-undo" style={styles.footerIcon} />
                             <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
                         </Button>
-                        <AnalyticsButton/>
+                        <AnalyticsButton  description={item.description} id={item.entity.id} />
                     </Left>
                 </CardItem>
             );
@@ -555,7 +555,7 @@ class ItemDetail extends Component {
                                 <Icon active name="ios-undo" style={styles.footerIcon} />
                                 <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
                             </Button>
-                            <AnalyticsButton/>
+                            <AnalyticsButton  description={item.description} id={item.entity.id} />
                         </Left>
                     </CardItem>
                 );
@@ -640,7 +640,7 @@ class ItemDetail extends Component {
                                 <Icon active name="ios-undo" style={styles.footerIcon} />
                                 <Label style={styles.footerText}>Reply {item.comments_count ? item.comments_count : 0}</Label>
                             </Button>
-                            <AnalyticsButton/>
+                            <AnalyticsButton  description={item.description} id={item.entity.id} />
                         </Left>
                     </CardItem>
                 );

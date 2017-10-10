@@ -5,10 +5,13 @@
 
 'use strict';
 
-import { applyMiddleware, createStore } from 'redux';
+import { applyMiddleware, createStore, compose } from 'redux';
 import thunk from 'redux-thunk';
 import { createLogger } from 'redux-logger';
 import { persistStore, autoRehydrate } from 'redux-persist';
+import createSagaMiddleware from 'redux-saga';
+import rootSaga from 'src/sagas/'
+
 
 var promise = require('./promise');
 var array = require('./array');
@@ -24,16 +27,35 @@ var logger = createLogger({
   duration: true,
 });
 
-var createPLStore = applyMiddleware(thunk, promise, array, analytics, logger)(createStore);
+
+const customCompose  = (__DEV__) ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : compose
+
+const sagaMiddleware = createSagaMiddleware();
 
 function configureStore(onComplete: ?() => void) {
   // TODO(frantic): reconsider usage of redux-persist, maybe add cache breaker
-  const store = autoRehydrate()(createPLStore)(reducers);
+
+  const store = createStore(
+    reducers,
+    undefined,
+    customCompose(
+      applyMiddleware(thunk, promise, array, analytics, sagaMiddleware),
+      autoRehydrate()
+    )
+  )
   persistStore(store, { storage: AsyncStorage }, onComplete);
   if (isDebuggingInChrome) {
     window.store = store;
   }
+  
+  if(module.hot) {
+    module.hot.accept(() => {
+      const nextRootReducer = require('../reducers').default
+      store.replaceReducer(nextRootReducer)
+    })
+  }
+  sagaMiddleware.run(rootSaga);
   return store;
-}
 
+}
 module.exports = configureStore;

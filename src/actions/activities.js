@@ -74,11 +74,9 @@ function loadActivityByEntityId(token, entityType, entityId) {
         })
             .then((res) => res.json())
             .then(data => {
-                console.log("Load Activity by Entity Id API success", data);
                 resolve(data);
             })
             .catch(err => {
-                console.log("Load Activity by Entity Id API error", err);
                 reject(err);
             })
     });
